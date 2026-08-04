@@ -1,0 +1,12 @@
+.git
+.gitignore
+.env
+venv/
+.venv/
+env/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+node_modules/
+.next/
