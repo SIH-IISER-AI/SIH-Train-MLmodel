@@ -1,26 +1,86 @@
 @import "tailwindcss";
 
+/*
+ * Palette is taken from a relay-interlocking domino panel: a slate carcass with
+ * etched white track lines and lamp-coloured indications. The signal colours are
+ * NOT decoration -- red/yellow/green mean exactly what they mean on the ground,
+ * so they are reserved for aspect and severity and used nowhere else. Freight
+ * is deliberately colourless: low priority reads as low contrast.
+ */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --panel-bg: #131619;
+  --panel-raised: #191D21;
+  --panel-line: #2B3137;
+  --panel-hover: #202529;
+  --panel-grid: #1B1F23;
+
+  --panel-text: #DDE2E7;
+  --panel-muted: #7E8791;
+
+  --panel-rail: #333A40;
+  --panel-rail-live: #6E7981;
+
+  --aspect-red: #FF4438;
+  --aspect-yellow: #F5B324;
+  --aspect-green: #3FD07A;
+  --freight: #8A9199;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-background: var(--panel-bg);
+  --color-foreground: var(--panel-text);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html,
+body {
+  height: 100%;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--panel-bg);
+  color: var(--panel-text);
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  /* A control panel is a fixed surface. Scrolling happens inside regions. */
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Numeric columns must not jitter as digits change ten times a second. */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+::selection {
+  background: var(--aspect-yellow);
+  color: #0F1113;
+}
+
+/* Thin scrollbars so the roster and advisory columns keep their density. */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--panel-line) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: var(--panel-line);
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }

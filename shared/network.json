@@ -1,0 +1,29 @@
+{
+  "meta": {
+    "section_id": "NDLS-AGC-04",
+    "block_length_km": 4.0
+  },
+  "stations": [
+    { "id": "NDLS", "name": "New Delhi", "lat": 28.6431, "lng": 77.2197, "loops": [{ "id": "LOOP-NDLS-01", "usable_length_m": 760 }] },
+    { "id": "NZM", "name": "Hazrat Nizamuddin", "lat": 28.5883, "lng": 77.2533, "loops": [{ "id": "LOOP-NZM-01", "usable_length_m": 740 }] },
+    { "id": "FDB", "name": "Faridabad", "lat": 28.3900, "lng": 77.3100, "loops": [{ "id": "LOOP-FDB-01", "usable_length_m": 690 }] },
+    { "id": "BVH", "name": "Ballabgarh", "lat": 28.3400, "lng": 77.3200, "loops": [] },
+    { "id": "PWL", "name": "Palwal", "lat": 28.1487, "lng": 77.3320, "loops": [{ "id": "LOOP-PWL-01", "usable_length_m": 750 }, { "id": "LOOP-PWL-02", "usable_length_m": 640 }] },
+    { "id": "KSV", "name": "Kosi Kalan", "lat": 27.7960, "lng": 77.4360, "loops": [{ "id": "LOOP-KSV-01", "usable_length_m": 720 }] },
+    { "id": "MTJ", "name": "Mathura Jn", "lat": 27.4924, "lng": 77.6737, "loops": [{ "id": "LOOP-MTJ-01", "usable_length_m": 780 }] },
+    { "id": "BTSR", "name": "Bhuteshwar", "lat": 27.4600, "lng": 77.6900, "loops": [] },
+    { "id": "RKM", "name": "Raja Ki Mandi", "lat": 27.1990, "lng": 78.0100, "loops": [{ "id": "LOOP-RKM-01", "usable_length_m": 650 }] },
+    { "id": "AGC", "name": "Agra Cantt", "lat": 27.1591, "lng": 78.0100, "loops": [{ "id": "LOOP-AGC-01", "usable_length_m": 800 }] }
+  ],
+  "links": [
+    { "from": "NDLS", "to": "NZM",  "distance_km": 8.0,  "max_speed_kmh": 60.0,  "single_line": false },
+    { "from": "NZM",  "to": "FDB",  "distance_km": 22.0, "max_speed_kmh": 110.0, "single_line": false },
+    { "from": "FDB",  "to": "BVH",  "distance_km": 6.0,  "max_speed_kmh": 100.0, "single_line": false },
+    { "from": "BVH",  "to": "PWL",  "distance_km": 22.0, "max_speed_kmh": 130.0, "single_line": false },
+    { "from": "PWL",  "to": "KSV",  "distance_km": 40.0, "max_speed_kmh": 100.0, "single_line": true  },
+    { "from": "KSV",  "to": "MTJ",  "distance_km": 40.0, "max_speed_kmh": 130.0, "single_line": false },
+    { "from": "MTJ",  "to": "BTSR", "distance_km": 5.0,  "max_speed_kmh": 75.0,  "single_line": true  },
+    { "from": "BTSR", "to": "RKM",  "distance_km": 47.0, "max_speed_kmh": 130.0, "single_line": false },
+    { "from": "RKM",  "to": "AGC",  "distance_km": 5.0,  "max_speed_kmh": 60.0,  "single_line": false }
+  ]
+}

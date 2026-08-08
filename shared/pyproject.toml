@@ -1,0 +1,14 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "railsim"
+version = "0.1.0"
+description = "Shared kinematics, topology, and contracts for SIH Co-Pilot"
+dependencies = [
+    "pydantic"
+]
+
+[tool.setuptools.packages.find]
+where = ["."]

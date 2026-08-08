@@ -1,4 +1,5 @@
 version: '3.8'
+
 services:
   redis:
     image: redis:7-alpine
@@ -7,6 +8,45 @@ services:
     command: redis-server --appendonly yes
     volumes:
       - redis_data:/data
+
+  ws-server:
+    build:
+      context: .
+      dockerfile: ws-server/Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - ALLOWED_ORIGINS=http://localhost:3000
+    depends_on:
+      - redis
+
+  simulator:
+    build:
+      context: .
+      dockerfile: simulator/Dockerfile
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - TICK_SECONDS=2.0
+      - TIME_MULTIPLIER=5
+      - NETWORK_PATH=/app/shared/network.json
+      - SCENARIO_PATH=/app/shared/scenario.json
+    depends_on:
+      - redis
+
+  ai-engine:
+    build:
+      context: .
+      dockerfile: ai-engine/Dockerfile
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - NETWORK_PATH=/app/shared/network.json
+      - SCENARIO_PATH=/app/shared/scenario.json
+    depends_on:
+      - redis
 
 volumes:
   redis_data:

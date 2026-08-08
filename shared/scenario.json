@@ -1,0 +1,12 @@
+{
+  "meta": {
+    "sim_start_iso": "2026-08-07T06:00:00+05:30"
+  },
+  "trains": [
+    { "train_id": "12626", "train_name": "Kerala Express", "train_type": "EXPRESS", "priority_weight": 6.4, "max_speed_kmh": 130.0, "scheduled_speed_kmh": 95.0, "route": ["NDLS","NZM","FDB","BVH","PWL","KSV","MTJ","BTSR","RKM","AGC"], "start_offset_km": 44.0, "initial_delay_seconds": 420 },
+    { "train_id": "12002", "train_name": "Bhopal Shatabdi", "train_type": "SHATABDI", "priority_weight": 9.2, "max_speed_kmh": 150.0, "scheduled_speed_kmh": 110.0, "route": ["NDLS","NZM","FDB","BVH","PWL","KSV","MTJ","BTSR","RKM","AGC"], "start_offset_km": 18.0, "initial_delay_seconds": 0 },
+    { "train_id": "40201", "train_name": "BOXN Rake 402", "train_type": "FREIGHT", "priority_weight": 2.0, "max_speed_kmh": 60.0, "scheduled_speed_kmh": 45.0, "route": ["NDLS","NZM","FDB","BVH","PWL","KSV","MTJ","BTSR","RKM","AGC"], "start_offset_km": 54.0, "initial_delay_seconds": 1500 },
+    { "train_id": "12280", "train_name": "Taj Express", "train_type": "EXPRESS", "priority_weight": 6.0, "max_speed_kmh": 110.0, "scheduled_speed_kmh": 82.0, "route": ["AGC","RKM","BTSR","MTJ","KSV","PWL","BVH","FDB","NZM","NDLS"], "start_offset_km": 70.0, "initial_delay_seconds": 180 },
+    { "train_id": "54402", "train_name": "Palwal Passenger", "train_type": "PASSENGER", "priority_weight": 4.0, "max_speed_kmh": 80.0, "scheduled_speed_kmh": 55.0, "route": ["AGC","RKM","BTSR","MTJ","KSV","PWL","BVH","FDB","NZM","NDLS"], "start_offset_km": 20.0, "initial_delay_seconds": 900 }
+  ]
+}

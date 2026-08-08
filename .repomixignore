@@ -1,0 +1,41 @@
+# Version control
+.git/
+
+# Node Dependencies
+node_modules/
+
+# Python Dependencies
+.venv/
+venv/
+env/
+
+# Next.js build output
+.next/
+out/
+build/
+
+# Python artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# Environment variables (Security risk - keep these out of your prompts)
+.env
+.env.local
+.env.*.local
+
+# IDE and OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+*.log
+
+# Prevent recursive packing of previous Repomix outputs
+repomix-output.txt
+repomix-output.xml
+repomix-output.json
