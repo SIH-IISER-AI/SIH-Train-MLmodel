@@ -7,6 +7,24 @@ This repository contains the infrastructure and AI Decision Support System for I
 The system operates as a closed-loop digital twin:
 **Python Simulator** (Fake IRCTC) $\rightarrow$ **Redis Streams** (Message Broker) $\rightarrow$ **FastAPI** (WebSocket Bridge) $\leftrightarrow$ **Next.js** (Controller Dashboard)
 
+## Running
+
+```bash
+docker compose up --build
+```
+
+Dashboard on `http://localhost:3000`, WebSocket bridge on `http://localhost:8000`.
+
+### Teardown
+
+```bash
+docker compose down -v
+```
+
+Redis holds no durable state: the simulator rebuilds topology, fleet, and epoch
+on every boot, and clients are fenced to the current epoch. `-v` is the default
+teardown so a stray anonymous volume cannot reintroduce cross-run state.
+
 ## Data Contracts
 
 All microservices communicate via Redis using strict JSON payloads. 

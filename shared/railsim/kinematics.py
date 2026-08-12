@@ -70,6 +70,40 @@ def braking_distance_m(speed_ms: float, decel_ms2: float) -> float:
     return (speed_ms ** 2) / (2.0 * decel_ms2)
 
 
+def traverse_seconds_accelerating(
+    length_m: float,
+    entry_ms: float,
+    target_ms: float,
+    accel_ms2: float,
+) -> float:
+    """Time to cover `length_m`, accelerating from `entry_ms` toward `target_ms`.
+
+    The general case. `traverse_seconds_running` is entry == target and
+    `traverse_seconds_from_stop` is entry == 0; both are kept as named wrappers
+    because the call sites read better, not because they compute anything this
+    does not.
+
+    Instantaneous speed is the wrong basis for a projection minutes long: a
+    freight pulling away from a loop at 5 km/h does not take eight hours to
+    clear a 40 km section. Entry speed is where the train actually is, so a
+    train standing at a signal starts from zero rather than being clamped to a
+    fictional crawl.
+    """
+    if length_m <= 0:
+        return 0.0
+
+    vt = max(target_ms, entry_ms)
+    if vt <= 0:
+        return math.inf
+    if entry_ms >= vt or accel_ms2 <= 0:
+        return math.inf if entry_ms <= 0 else length_m / entry_ms
+
+    accel_distance = (vt ** 2 - entry_ms ** 2) / (2.0 * accel_ms2)
+    if length_m <= accel_distance:
+        return (-entry_ms + math.sqrt(entry_ms ** 2 + 2.0 * accel_ms2 * length_m)) / accel_ms2
+    return (vt - entry_ms) / accel_ms2 + (length_m - accel_distance) / vt
+
+
 def stop_restart_penalty_s(speed_ms: float, decel_ms2: float, accel_ms2: float) -> float:
     """Time lost to a full stop and restart, EXCLUDING the stand time itself.
 
@@ -96,9 +130,7 @@ def stop_restart_penalty_s(speed_ms: float, decel_ms2: float, accel_ms2: float) 
 
 def traverse_seconds_running(length_m: float, speed_ms: float) -> float:
     """Time to clear a block at constant speed, from head-in to tail-out."""
-    if speed_ms <= 0:
-        return math.inf
-    return length_m / speed_ms
+    return traverse_seconds_accelerating(length_m, speed_ms, speed_ms, 0.0)
 
 
 def traverse_seconds_from_stop(length_m: float, target_ms: float, accel_ms2: float) -> float:
@@ -108,14 +140,7 @@ def traverse_seconds_from_stop(length_m: float, target_ms: float, accel_ms2: flo
     a real operational cost of holding: the held train then blocks the section
     for the next train too.
     """
-    if target_ms <= 0 or accel_ms2 <= 0:
-        return math.inf
-    accel_distance = (target_ms ** 2) / (2.0 * accel_ms2)
-    if accel_distance >= length_m:
-        # Still accelerating when the tail clears: L = 1/2 a t^2
-        return math.sqrt(2.0 * length_m / accel_ms2)
-    accel_time = target_ms / accel_ms2
-    return accel_time + (length_m - accel_distance) / target_ms
+    return traverse_seconds_accelerating(length_m, 0.0, target_ms, accel_ms2)
 
 
 def earliest_arrival_s(distance_m: float, speed_ms: float) -> float:

@@ -19,20 +19,39 @@ Variables, per train i
     entry[i]      integer second at which the head enters the bottleneck
     occupancy[i]  seconds from head-in to tail-out (longer if starting from rest)
     exit[i]       entry[i] + occupancy[i]
-    stopped[i]    boolean -- was the train brought to a stand (looped) or merely
-                  regulated on the approach?
+    stopped[i]    was the train brought to a stand at all?
+    in_loop[i]    ...berthed in a crossing loop
+    on_main[i]    ...or standing on the running line, which costs more
     wait[i]       entry[i] - earliest_arrival[i], i.e. seconds lost to the conflict
-    delay[i]      wait[i] plus the stop/restart penalty when stopped[i] is true
+    delay[i]      wait[i] plus the appropriate stop/restart penalty
 
 Everything is integer seconds. CP-SAT is an integer solver; floats are scaled
 to integers at the boundary and never appear inside the model.
+
+Speed model
+-----------
+Approach times and block occupancies are computed by accelerating each train
+from its CURRENT speed toward min(its own maximum, the line speed). This is the
+same model the detector projects conflict windows with, and it must stay that
+way: if the two sides assume different physics, the engine will raise a conflict
+whose optimal resolution is "do nothing", and the controller has no way to tell
+which half is lying.
+
+Ranking
+-------
+Scenarios are ordered LEXICOGRAPHICALLY over IR priority classes, not by a
+scalar. There is deliberately no numeric score: a single float cannot represent
+an ordinal comparison, and publishing one produced the absurdity of the
+second-ranked scenario having less total delay than the first. Each scenario
+instead carries its rank and the trade-off it makes against the leader, in the
+terms a controller would state it.
 """
 
 from __future__ import annotations
 
 import itertools
 import math
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Any, Dict, List, Optional, Sequence, Tuple
 
 from ortools.sat.python import cp_model
@@ -80,6 +99,20 @@ CLASS_GOODS = 0           # Freight / goods
 
 PRIORITY_CLASS_COUNT = 9
 
+#: Controller-facing name per class. Used in the rationale text so the IR
+#: precedence rule is visible on the card rather than buried in the sort.
+CLASS_LABELS: Dict[int, str] = {
+    CLASS_RELIEF: "Relief",
+    CLASS_VVIP: "VVIP",
+    CLASS_SUBURBAN_PEAK: "Suburban (peak)",
+    CLASS_PREMIER: "Premier",
+    CLASS_PREMIER_ECONOMY: "Premier Economy",
+    CLASS_SUPERFAST: "Superfast",
+    CLASS_MAIL_EXPRESS: "Mail/Express",
+    CLASS_ORDINARY: "Ordinary",
+    CLASS_GOODS: "Goods",
+}
+
 #: train_type (as it appears on the wire) -> precedence class.
 IR_PRECEDENCE: Dict[str, int] = {
     "ARME": CLASS_RELIEF, "ART": CLASS_RELIEF, "RELIEF": CLASS_RELIEF,
@@ -101,16 +134,16 @@ IR_PRECEDENCE: Dict[str, int] = {
 
 #: Suggested priority_weight per class, for INTRA-class tie-breaking only. The
 #: class decides precedence; the weight only separates trains inside one class.
-#: Nothing about the ordering depends on these numbers any more, which is the
-#: point -- a judge asking "why 9.5?" now gets "it doesn't decide anything".
 SUGGESTED_WEIGHTS: Dict[int, float] = {
     CLASS_RELIEF: 10.0, CLASS_VVIP: 9.9, CLASS_SUBURBAN_PEAK: 9.5,
     CLASS_PREMIER: 9.0, CLASS_PREMIER_ECONOMY: 8.0, CLASS_SUPERFAST: 7.0,
     CLASS_MAIL_EXPRESS: 6.0, CLASS_ORDINARY: 4.0, CLASS_GOODS: 2.0,
 }
 
+
 def priority_class(train_type: str, peak_direction: bool = False) -> int:
     """Precedence class from the IR category, NOT from a numeric weight.
+
     `peak_direction` elevates a suburban/EMU/MEMU service above premier trains,
     which is what IR actually does and what a static type lookup gets wrong. The
     caller supplies it because it depends on time of day and direction of
@@ -121,6 +154,7 @@ def priority_class(train_type: str, peak_direction: bool = False) -> int:
     if peak_direction and key in ("SUBURBAN", "EMU", "MEMU", "DEMU"):
         return CLASS_SUBURBAN_PEAK
     return base
+
 
 #: Priority weights arrive as floats (9.5, 2.0). CP-SAT needs integers, so they
 #: are scaled. Scale 10 preserves one decimal: 9.5 -> 95, 2.0 -> 20. Rounding to
@@ -133,21 +167,38 @@ WEIGHT_SCALE = 10
 #: penalty is piecewise-linear with increasing slope, which keeps the model
 #: linear (CP-SAT friendly) while approximating a convex cost curve.
 #:
-#: cost(d) = 1.0*min(d,300) + 3.0*min(max(d-300,0),600) + 8.0*max(d-900,0)
+#: cost(d) = 1.0*min(d,300) + 2.0*min(max(d-300,0),600) + 4.0*max(d-900,0)
 DELAY_TIER_BREAKS_S = (300, 900)          # 5 min, 15 min
 DELAY_TIER_MULTIPLIERS = (10, 20, 40)     # x1.0, x2.0, x4.0, scaled by 10
 
-#: Hard ceiling on any single train's delay. Without it, a strongly convex or
-#: strongly weighted objective will happily starve a freight for hours to save
-#: an express thirty seconds. Real dispatch has no such option and a judge will
-#: notice if yours does.
-DEFAULT_MAX_HOLD_SECONDS = 45 * 60
+#: Anti-starvation ceiling on the DISCRETIONARY part of a train's delay -- the
+#: part above what the queue ahead physically forces. Capping total delay
+#: instead was the original design and it was wrong: on a 40 km single line most
+#: of a train's wait is the block being occupied, not the optimiser choosing to
+#: starve anyone, so the flag fired on every multi-train conflict and meant
+#: nothing. See forced_s in _solve_order.
+DEFAULT_MAX_HOLD_SECONDS = 15 * 60
 
-#: Extra cost of standing a train on the running line because no loop is
-#: available or the rake does not fit one. The train is then itself an
-#: obstruction to everything behind it, and the controller needs a caution order
-#: to restart it. Without this term the model treats a main-line stand as free
-#: and will cheerfully block a running line.
+#: Grace on top of the solved delay before the SIMULATOR abandons a directive
+#: on its own. A liveness backstop in the sim, not the solver's anti-starvation
+#: cap. Distinct name, distinct wire field.
+DIRECTIVE_RELEASE_TIMEOUT_S = 1800
+
+#: A scenario earns a slot on the card only by saving at least this much for
+#: some train. The card speaks in whole minutes, so anything smaller is not a
+#: difference a controller can act on.
+MEANINGFUL_IMPROVEMENT_S = 60
+
+#: Ceiling used when a train arrives without a stated maximum speed. Only ever
+#: reached on malformed input; the detector supplies the real figure from the
+#: fleet registry.
+FALLBACK_MAX_SPEED_KMH = 110.0
+
+#: Extra cost of standing a train on the running line rather than in a loop. The
+#: train is then itself an obstruction to everything behind it, and the
+#: controller needs a caution order to restart it. Without this term the model
+#: treats a main-line stand as equivalent to a loop berth and will block a
+#: running line for free.
 MAIN_LINE_STOP_PENALTY_S = 180
 
 #: Minimum separation between one train's tail clearing and the next train's
@@ -181,19 +232,22 @@ class _ConflictTrain:
     priority_weight: float
     weight_scaled: int
 
-    speed_ms: float
+    speed_ms: float              # speed the train is making right now
+    target_ms: float             # min(own maximum, line speed) -- what it runs up to
     distance_m: float
     existing_delay_s: int
 
     earliest_arrival_s: int      # unimpeded run time to the block entry
-    occupancy_running_s: int     # head-in to tail-out at line speed
+    occupancy_running_s: int     # head-in to tail-out, arriving in motion
     occupancy_from_stop_s: int   # same, but starting from a stand
     restart_penalty_s: int       # time lost to decelerate + re-accelerate
-    stop_penalty_s: int          # restart penalty, plus a surcharge if no loop
+    loop_stop_penalty_s: int     # stopping in a loop: restart cost only
+    main_stop_penalty_s: int     # stopping on the running line: restart + surcharge
     absorbable_s: int            # max delay shed by regulation, no stop
     loop_available: bool
     loop_id: Optional[str]
     loop_station: Optional[str]
+    approach_station: Optional[str]
 
 
 def _prepare(
@@ -214,11 +268,33 @@ def _prepare(
         profile = kin.profile_for(train_type)
         train_length_m = float(raw.get("train_length_m", profile.train_length_m))
 
-        speed_ms = kin.kmh_to_ms(float(raw["current_speed"]))
-        # A stationary train has no finite arrival time; treat it as crawling so
-        # the model stays feasible rather than throwing at a demo.
-        speed_ms = max(speed_ms, kin.kmh_to_ms(5.0))
-        traverse_speed_ms = min(speed_ms, line_speed_ms)
+        # Entry speed is what the train is ACTUALLY making, including zero.
+        # Target is what it will run up to. Both approach time and occupancy are
+        # then integrals of an accelerating run, which is the detector's model,
+        # so a conflict the detector raises is priced on the same physics that
+        # raised it.
+        #
+        # There is deliberately no floor on the entry speed. The old 5 km/h
+        # clamp existed to keep a stationary train from producing an infinite
+        # arrival time, and did so by inventing a crawl the train never makes --
+        # on a 40 km section that turned a stopped freight into eight hours of
+        # block occupancy, which forced the policy relaxation on almost every
+        # recommendation.
+        speed_ms = max(0.0, kin.kmh_to_ms(float(raw["current_speed"])))
+        target_ms = min(
+            kin.kmh_to_ms(
+                float(
+                    raw.get("target_speed_kmh")
+                    or raw.get("max_speed_kmh")
+                    or FALLBACK_MAX_SPEED_KMH
+                )
+            ),
+            line_speed_ms,
+        )
+        # A train already exceeding the notional target is not going to brake
+        # for the model's benefit.
+        target_ms = max(target_ms, speed_ms)
+
         distance_m = max(0.0, float(raw["distance_to_bottleneck"]))
         swept_m = block_length_m + train_length_m
 
@@ -243,12 +319,30 @@ def _prepare(
                  if float(loop.get("usable_length_m", 0.0)) >= train_length_m),
                 None,
             )
+        # A loop with no identity cannot be berthed against under the loop
+        # capacity constraint, so treat it as unavailable rather than let two
+        # trains share an anonymous slot.
+        if usable_loop is not None and not usable_loop.get("id"):
+            usable_loop = None
 
         restart_penalty = int(
             math.ceil(
                 kin.stop_restart_penalty_s(
                     speed_ms, profile.service_decel_ms2, profile.accel_ms2
                 )
+            )
+        )
+
+        occupancy_running = int(
+            math.ceil(
+                kin.traverse_seconds_accelerating(
+                    swept_m, speed_ms, target_ms, profile.accel_ms2
+                )
+            )
+        )
+        occupancy_from_stop = int(
+            math.ceil(
+                kin.traverse_seconds_from_stop(swept_m, target_ms, profile.accel_ms2)
             )
         )
 
@@ -260,30 +354,32 @@ def _prepare(
                 priority_weight=float(raw["priority_weight"]),
                 weight_scaled=max(1, int(round(float(raw["priority_weight"]) * WEIGHT_SCALE))),
                 speed_ms=speed_ms,
+                target_ms=target_ms,
                 distance_m=distance_m,
                 existing_delay_s=int(raw.get("existing_delay_seconds", 0)),
                 earliest_arrival_s=int(
-                    math.ceil(kin.earliest_arrival_s(distance_m, speed_ms))
-                ),
-                occupancy_running_s=int(
-                    math.ceil(kin.traverse_seconds_running(swept_m, traverse_speed_ms))
-                ),
-                occupancy_from_stop_s=int(
                     math.ceil(
-                        kin.traverse_seconds_from_stop(
-                            swept_m, traverse_speed_ms, profile.accel_ms2
+                        kin.traverse_seconds_accelerating(
+                            distance_m, speed_ms, target_ms, profile.accel_ms2
                         )
                     )
                 ),
+                occupancy_running_s=occupancy_running,
+                # Starting from a stand can never beat starting in motion, but
+                # the CP variable below needs lb <= ub to hold unconditionally.
+                occupancy_from_stop_s=max(occupancy_from_stop, occupancy_running),
                 restart_penalty_s=restart_penalty,
-                stop_penalty_s=restart_penalty
-                + (0 if usable_loop is not None else MAIN_LINE_STOP_PENALTY_S),
+                loop_stop_penalty_s=restart_penalty,
+                main_stop_penalty_s=restart_penalty + MAIN_LINE_STOP_PENALTY_S,
                 absorbable_s=int(
                     min(max_regulation_s, kin.absorbable_delay_s(distance_m, speed_ms))
                 ),
                 loop_available=usable_loop is not None,
                 loop_id=(usable_loop or {}).get("id"),
                 loop_station=(usable_loop or {}).get("station_id"),
+                approach_station=(
+                    str(raw["hold_station_id"]) if raw.get("hold_station_id") else None
+                ),
             )
         )
 
@@ -299,6 +395,22 @@ def _solve_order(
     headway_s = int(topology.get("headway_seconds", DEFAULT_HEADWAY_SECONDS))
     max_hold_s = int(topology.get("max_hold_seconds", DEFAULT_MAX_HOLD_SECONDS))
 
+    # Delay forced on each train by the trains ahead of it in THIS order. The
+    # order is fixed for this solve, so these are constants, not variables.
+    #
+    # This is the part of a train's wait that no dispatch decision can remove:
+    # the block is physically occupied. Only delay ABOVE this figure is a choice
+    # the optimiser made, and only that part is starvation. 
+    forced_s: Dict[int, int] = {}
+    block_free_at = 0
+    for index in order:
+        queued = trains[index]
+        start = max(block_free_at, queued.earliest_arrival_s)
+        forced_s[index] = start - queued.earliest_arrival_s
+        block_free_at = start + queued.occupancy_running_s + headway_s
+
+    cap_s = {i: forced_s[i] + max_hold_s for i in range(len(trains))}
+
     model = cp_model.CpModel()
 
     # Horizon must comfortably exceed the worst legal schedule or the model is
@@ -311,6 +423,7 @@ def _solve_order(
     )
 
     entry, exit_, occupancy, stopped, wait, delay, intervals = {}, {}, {}, {}, {}, {}, []
+    in_loop, on_main = {}, {}
 
     for i, train in enumerate(trains):
         # ---- entry / occupancy / exit -----------------------------------
@@ -319,15 +432,22 @@ def _solve_order(
         # artefact of the solver being allowed to teleport trains forward.
         entry[i] = model.NewIntVar(train.earliest_arrival_s, horizon, f"entry_{i}")
 
-        # Standing the train is always physically possible; whether it stands
-        # in a loop or on the running line only changes the cost. Forbidding a
-        # main-line stand outright would make the model report "no plan" for
-        # sections without loops, when what a controller needs there is the
-        # least-bad plan.
         stopped[i] = model.NewBoolVar(f"stopped_{i}")
 
+        # A stopped train is either berthed in a loop or standing on the running
+        # line. Both are always modelled: forbidding the main-line option would
+        # make a conflict infeasible whenever two trains need the same loop, and
+        # "no advice" is a worse answer to a CRITICAL alert than "least-bad".
+        in_loop[i] = model.NewBoolVar(f"in_loop_{i}")
+        on_main[i] = model.NewBoolVar(f"on_main_{i}")
+        model.Add(in_loop[i] + on_main[i] == stopped[i])
+        if not train.loop_available:
+            model.Add(in_loop[i] == 0)
+
         occupancy[i] = model.NewIntVar(
-            train.occupancy_running_s, train.occupancy_from_stop_s, f"occ_{i}"
+            train.occupancy_running_s,
+            max(train.occupancy_from_stop_s, train.occupancy_running_s),
+            f"occ_{i}",
         )
         # Linear in a boolean: occupancy = running + (from_stop - running)*stopped.
         # A train restarting from a stand clears the block more slowly, so
@@ -347,7 +467,7 @@ def _solve_order(
         )
 
         # ---- wait ---------------------------------------------------------
-        wait[i] = model.NewIntVar(0, max_hold_s, f"wait_{i}")
+        wait[i] = model.NewIntVar(0, cap_s[i], f"wait_{i}")
         model.Add(wait[i] == entry[i] - train.earliest_arrival_s)
 
         # CONSTRAINT 2 (Kinematics), part A: a train may only avoid stopping if
@@ -357,13 +477,19 @@ def _solve_order(
         model.Add(wait[i] >= train.absorbable_s + 1).OnlyEnforceIf(stopped[i])
 
         # CONSTRAINT 2, part B: a train brought to a stand loses the
-        # deceleration and re-acceleration time on top of the wait itself.
-        # delay = wait + penalty * stopped
-        delay[i] = model.NewIntVar(0, max_hold_s, f"delay_{i}")
-        model.Add(delay[i] == wait[i] + train.stop_penalty_s * stopped[i])
+        # deceleration and re-acceleration time on top of the wait itself, plus
+        # a surcharge if it has to stand on the running line.
+        delay[i] = model.NewIntVar(0, cap_s[i], f"delay_{i}")
+        model.Add(
+            delay[i]
+            == wait[i]
+            + train.loop_stop_penalty_s * in_loop[i]
+            + train.main_stop_penalty_s * on_main[i]
+        )
 
-        # Anti-starvation ceiling. See DEFAULT_MAX_HOLD_SECONDS.
-        model.Add(delay[i] <= max_hold_s)
+        # Anti-starvation ceiling: at most max_hold_s of DISCRETIONARY delay on
+        # top of what the queue ahead physically forces. See forced_s above.
+        model.Add(delay[i] <= cap_s[i])
 
     # ---- CONSTRAINT 1 (Safety) -------------------------------------------
     # No two occupancy windows may overlap on a single-track block. NoOverlap is
@@ -378,6 +504,24 @@ def _solve_order(
     for previous, following in zip(order, order[1:]):
         model.Add(entry[following] >= exit_[previous] + headway_s)
 
+    # ---- CONSTRAINT 3 (Loop capacity) ------------------------------------
+    # A crossing loop is one berthed road. Without this the solver assigns two
+    # trains to the same loop for the same crossing -- a plan no station master
+    # can execute. The train holds its loop from the moment it would have
+    # arrived until it is released into the block, which is exactly wait[i].
+    loop_intervals: Dict[str, List[Any]] = {}
+    for i, train in enumerate(trains):
+        if not train.loop_available or not train.loop_id:
+            continue
+        loop_intervals.setdefault(train.loop_id, []).append(
+            model.NewOptionalIntervalVar(
+                train.earliest_arrival_s, wait[i], entry[i], in_loop[i], f"loop_{i}"
+            )
+        )
+    for intervals_on_loop in loop_intervals.values():
+        if len(intervals_on_loop) > 1:
+            model.AddNoOverlap(intervals_on_loop)
+
     # ---- OBJECTIVE --------------------------------------------------------
     # Minimise total weighted, convex-penalised delay:
     #
@@ -391,7 +535,7 @@ def _solve_order(
     objective_terms = []
     for i, train in enumerate(trains):
         first_break, second_break = DELAY_TIER_BREAKS_S
-        segment_caps = (first_break, second_break - first_break, max_hold_s)
+        segment_caps = (first_break, second_break - first_break, cap_s[i])
         segments = [
             model.NewIntVar(0, cap, f"seg{k}_{i}") for k, cap in enumerate(segment_caps)
         ]
@@ -434,97 +578,263 @@ def _solve_order(
                 "exit_s": solver.Value(exit_[i]),
                 "wait_s": solver.Value(wait[i]),
                 "delay_s": solver.Value(delay[i]),
+                "forced_s": forced_s[i],
+                "discretionary_s": max(0, solver.Value(delay[i]) - forced_s[i]),
                 "stopped": bool(solver.Value(stopped[i])),
+                "in_loop": bool(solver.Value(in_loop[i])),
+                "on_main": bool(solver.Value(on_main[i])),
             }
             for i in range(len(trains))
         },
     }
 
 
+def _lower_first(text: str) -> str:
+    """Lowercase only the leading verb when joining clauses.
+
+    `.lower()` on the whole clause flattens train names, loop IDs and station
+    codes -- "LOOP-KSV-01 at KSV" became "loop-ksv-01 at ksv" on the
+    controller's screen.
+    """
+    return f"{text[:1].lower()}{text[1:]}" if text else text
+
+
+def _class_index(position: int) -> int:
+    """class_costs is stored most-important-first; map a position back."""
+    return PRIORITY_CLASS_COUNT - 1 - position
+
+
+def _leader_rationale(
+    best: Dict[str, Any],
+    runner_up: Optional[Dict[str, Any]],
+    trains: List[_ConflictTrain],
+) -> str:
+    """Why the leading scenario leads, in IR precedence terms.
+
+    Two facts, in the order a controller cares about them: which class this
+    plan gets through untouched, and the highest class on which it beats the
+    next-ranked order. Naming only the second reads as a claim that the trains
+    named are the ones protected, which is false whenever the deciding class is
+    also the one absorbing the delay.
+    """
+    by_class: Dict[int, List[_ConflictTrain]] = {}
+    for train in trains:
+        by_class.setdefault(priority_class(train.train_type), []).append(train)
+
+    def named(cls: int) -> str:
+        members = by_class.get(cls, [])
+        return ", ".join(f"{t.train_name} {t.train_id}" for t in members)
+
+    clauses: List[str] = []
+
+    highest = max(by_class)
+    if all(
+        int(best["per_train"].get(t.train_id, {}).get("delay_s", 0)) < 60
+        for t in by_class[highest]
+    ):
+        label = CLASS_LABELS.get(highest, f"class {highest}")
+        clauses.append(f"{label} ({named(highest)}) runs unimpeded")
+
+    if runner_up is not None:
+        for position, (leader_cost, other_cost) in enumerate(
+            zip(best["class_costs"], runner_up["class_costs"])
+        ):
+            if leader_cost != other_cost:
+                cls = _class_index(position)
+                label = CLASS_LABELS.get(cls, f"class {cls}")
+                who = f" ({named(cls)})" if named(cls) else ""
+                clauses.append(f"least {label} delay of any order{who}")
+                break
+
+    if clauses:
+        return "; ".join(clauses)
+    return (
+        "Only viable plan for this conflict"
+        if runner_up is None
+        else "Lowest total weighted delay"
+    )
+
+def _sacrificed_class(
+    best: Dict[str, Any], candidate: Dict[str, Any]
+) -> Optional[str]:
+    """The precedence class this scenario gives up to gain what it gains.
+
+    class_costs is ordered most-important-first and `best` sorted ahead of
+    `candidate`, so the first position where they differ is the class the
+    lexicographic rule ranked on -- the reason this scenario placed second,
+    stated in the terms the rule is written in.
+    """
+    for position, (leader_cost, other_cost) in enumerate(
+        zip(best["class_costs"], candidate["class_costs"])
+    ):
+        if other_cost != leader_cost:
+            cls = _class_index(position)
+            return CLASS_LABELS.get(cls, f"class {cls}")
+    return None
+
+def _tradeoff(
+    best: Dict[str, Any],
+    candidate: Dict[str, Any],
+    trains: List[_ConflictTrain],
+) -> str:
+    """What this scenario gives up, and gains, relative to the leader.
+
+    A controller reasons in physical trade-offs -- "ten minutes off the BOXN
+    rake, two onto the express" -- not in ratios. This is the sentence that
+    replaces the score.
+    """
+    by_id = {t.train_id: t for t in trains}
+    saves: List[str] = []
+    costs: List[str] = []
+
+    for train_id, result in candidate["per_train"].items():
+        reference = best["per_train"].get(train_id)
+        if reference is None:
+            continue
+        minutes = round((result["delay_s"] - reference["delay_s"]) / 60)
+        name = by_id[train_id].train_name if train_id in by_id else train_id
+        if minutes <= -1:
+            saves.append(f"{name} {abs(minutes)} min")
+        elif minutes >= 1:
+            costs.append(f"{name} {minutes} min")
+
+    parts = []
+    if saves:
+        parts.append("saves " + ", ".join(saves))
+    if costs:
+        parts.append("costs " + ", ".join(costs))
+    return "; ".join(parts) if parts else "Same delay, different precedence"
+
+def _improves_on(candidate: Dict[str, Any], leader: Dict[str, Any]) -> bool:
+    """Does this scenario save meaningful time for at least one train?
+
+    Pareto dominance is the wrong bar for a card. A scenario that is neither
+    better nor worse than the leader is not a trade-off -- it is the same
+    physical outcome reached by a different permutation, and asking a
+    controller to choose between two identical realities is worse than
+    offering one option.
+    """
+    for train_id, result in candidate["per_train"].items():
+        reference = leader["per_train"].get(train_id)
+        if reference is None:
+            return True
+        if int(result["delay_s"]) - int(reference["delay_s"]) < -MEANINGFUL_IMPROVEMENT_S:
+            return True
+    return False
+
+
 def _describe(
     solution: Dict[str, Any],
     trains: List[_ConflictTrain],
     topology: Dict[str, Any],
-) -> Tuple[str, str, List[Dict[str, Any]]]:
-    """Turn a solved schedule into the controller-facing action and impact."""
+) -> Tuple[str, str, List[Dict[str, Any]], List[Dict[str, Any]]]:
+    """Turn a solved schedule into the controller-facing action and impact.
+
+    Every intervention is rendered into the action string. Rendering only the
+    two heaviest under-reported what Approve actually executes: a four-train
+    conflict produces three directives, all three are submitted to the
+    simulator, and the controller was shown two of them.
+    """
     by_id = {t.train_id: t for t in trains}
     block_id = topology.get("block_id", "the bottleneck block")
 
     interventions: List[Tuple[int, str]] = []
     impacts: List[str] = []
     directives: List[Dict[str, Any]] = []
+    breakdown: List[Dict[str, Any]] = []
     lead_train_id = trains[solution["order"][0]].train_id
 
     for train_id, result in solution["per_train"].items():
         train = by_id[train_id]
-        delay_min = round(result["delay_s"] / 60)
-        impacts.append(f"{train.train_name} {train_id} delayed by {delay_min} min")
+        delay_s = int(result["delay_s"])
+        delay_min = round(delay_s / 60)
+
+        # forced_s is the delay this ORDER POSITION imposes: the block is
+        # occupied by the trains ahead. A train arriving after the queue has
+        # already cleared incurs less than that, so the queued component is
+        # clamped to the delay actually taken. Whatever remains above it is the
+        # part the optimiser chose, and it is the only part worth arguing about.
+        queued_s = min(int(result.get("forced_s", 0)), delay_s)
+        choice_s = delay_s - queued_s
+
+        breakdown.append({
+            "train_id": train_id,
+            "train_name": train.train_name,
+            "delay_seconds": delay_s,
+            "queued_seconds": queued_s,
+            "dispatch_choice_seconds": choice_s,
+        })
+
+        if queued_s > 0:
+            impacts.append(
+                f"{train.train_name} {train_id} delayed by {delay_min} min "
+                f"({round(queued_s / 60)} queued, {round(choice_s / 60)} dispatch choice)"
+            )
+        else:
+            impacts.append(f"{train.train_name} {train_id} delayed by {delay_min} min")
 
         if result["wait_s"] <= 0:
             continue
-        if result["stopped"] and train.loop_available:
+
+        if result["stopped"] and result.get("in_loop"):
             station = f" at {train.loop_station}" if train.loop_station else ""
             interventions.append(
                 (
-                    result["delay_s"],
-                    f"Hold {train.train_name} {train_id} at {train.loop_id}{station}",
+                    delay_s,
+                    f"Hold {train.train_name} {train_id} at {train.loop_id}{station} "
+                    f"for {delay_min} min",
                 )
             )
-            # HOLD in a loop
             directives.append({
                 "kind": "HOLD_AT_LOOP", "train_id": train_id,
                 "station_id": train.loop_station, "loop_id": train.loop_id,
                 "until_train_id": lead_train_id,
-                "max_hold_seconds": result["delay_s"] + 600,
+                "release_timeout_seconds": delay_s + DIRECTIVE_RELEASE_TIMEOUT_S,
             })
         elif result["stopped"]:
+            stand_station = train.approach_station or topology.get("junction_id")
             interventions.append(
                 (
-                    result["delay_s"],
+                    delay_s,
                     f"Stand {train.train_name} {train_id} on the running line "
-                    f"short of {block_id} -- no loop this rake fits",
+                    f"short of {block_id} for {delay_min} min",
                 )
             )
+            if stand_station:
+                directives.append({
+                    "kind": "STAND_ON_MAIN", "train_id": train_id,
+                    "station_id": stand_station,
+                    "until_train_id": lead_train_id,
+                    "release_timeout_seconds": delay_s + DIRECTIVE_RELEASE_TIMEOUT_S,
+                })
         else:
             target = round(
                 kin.regulated_speed_kmh(train.distance_m, train.speed_ms, result["wait_s"])
             )
             interventions.append(
                 (
-                    result["delay_s"],
-                    f"Regulate {train.train_name} {train_id} to {target} km/h on approach",
+                    delay_s,
+                    f"Regulate {train.train_name} {train_id} to {target} km/h "
+                    f"on approach ({delay_min} min)",
                 )
             )
-            # REGULATE on the approach
             directives.append({
                 "kind": "REGULATE", "train_id": train_id,
                 "target_speed_kmh": float(target),
             })
 
     if not interventions:
-        first_id = trains[solution["order"][0]].train_id
-        action = f"Clear {first_id} through {block_id} without regulation"
+        action = f"Clear {lead_train_id} through {block_id} without regulation"
     else:
-        # Name the heaviest intervention first; it is the decision being made.
+        # Heaviest intervention first -- it is the decision being made -- but
+        # every one of them is named.
         interventions.sort(reverse=True)
-        action = interventions[0][1]
-        if len(interventions) > 1:
-            action += f"; {interventions[1][1].lower()}"
+        clauses = [interventions[0][1]] + [
+            _lower_first(text) for _, text in interventions[1:]
+        ]
+        action = "; ".join(clauses)
 
-    return action, ". ".join(impacts) + ".", directives
-
-
-def _score(best: Dict[str, Any], candidate: Dict[str, Any]) -> float:
-    """Compare on the highest priority class where the two scenarios differ.
-    A single scalar ratio is meaningless once ranking is lexicographic: two
-    scenarios may be separated purely by their treatment of a Shatabdi while
-    their totals are dominated by freight. Scoring on the deciding class is
-    what the number is actually claiming.
-    """
-    for best_class, candidate_class in zip(best["class_costs"], candidate["class_costs"]):
-        if best_class != candidate_class:
-            return min(1.0, (best_class + 1.0) / (candidate_class + 1.0))
-    return min(1.0, (best["objective"] + 1.0) / (candidate["objective"] + 1.0))
+    return action, ". ".join(impacts) + ".", directives, breakdown
 
 
 def optimize_precedence(
@@ -537,15 +847,19 @@ def optimize_precedence(
     Returns up to `max_scenarios` dictionaries, best first:
 
         {"scenario_id": "OPT-1",
-         "action": "Hold BOXN Rake 402 40201 at LOOP-PWL-01 at PWL",
+         "rank": 1,
+         "action": "Hold BOXN Rake 402 40201 at LOOP-PWL-01 at PWL for 51 min",
+         "rationale": "Protects Premier precedence (Bhopal Shatabdi 12002)",
          "network_impact": "...",
-         "score": 1.0}
+         "delay_breakdown": [...],
+         "directives": [...]}
 
-    `score` is the ratio of the best objective to this scenario's objective, so
-    the leading scenario scores 1.0 and a scenario costing twice as much
-    weighted delay scores 0.5. It is a comparison between the options actually
-    on the table, which is the only normalisation that means anything -- there
-    is no absolute scale for "how good is a dispatch decision".
+    There is no numeric score. The ordering is lexicographic over IR priority
+    classes, and a scalar cannot express an ordinal comparison: the previous
+    ratio produced a second-ranked scenario with LESS total delay scoring 0.00
+    against a leader scoring 1.00, which is a true statement about precedence
+    rendered as an obviously false statement about quality. `rank` says where a
+    scenario placed; `rationale` says why, in the terms a controller argues in.
     """
     if len(trains_in_conflict) < 2:
         return []
@@ -566,11 +880,11 @@ def optimize_precedence(
 
     solutions = solve_all(track_topology)
 
-    # A long single-line section with several trains queued can exceed
-    # max_hold_seconds under EVERY ordering, and the honest consequence of
+    # A long single-line section with several trains queued can exceed the
+    # discretionary cap under EVERY ordering, and the honest consequence of
     # returning [] is that the controller sees a CRITICAL alert with no advice
-    # at all. Relax the policy cap, solve again, and label the result -- a plan
-    # that breaks a guideline beats no plan, provided it says so.
+    # at all. Relax the cap, solve again, and label the result -- a plan that
+    # breaks a guideline beats no plan, provided it says so.
     policy_exceeded = False
     if not solutions:
         relaxed = dict(track_topology)
@@ -587,22 +901,46 @@ def optimize_precedence(
     # tie-break WITHIN the winning class profile.
     solutions.sort(key=lambda s: (s["class_costs"], s["objective"]))
     best_solution = solutions[0]
-    best = best_solution["objective"]
+    runner_up = solutions[1] if len(solutions) > 1 else None
+
+    offered = [best_solution]
+    for candidate in solutions[1:]:
+        if len(offered) >= max_scenarios:
+            break
+        if _improves_on(candidate, best_solution):
+            offered.append(candidate)
 
     scenarios = []
-    for index, solution in enumerate(solutions[:max_scenarios], start=1):
-        action, impact, directives = _describe(solution, trains, track_topology)
-        
-        score = _score(best_solution, solution)
-        
+    for index, solution in enumerate(offered, start=1):
+        action, impact, directives, breakdown = _describe(solution, trains, track_topology)
+
+        if index == 1:
+            rationale = _leader_rationale(best_solution, runner_up, trains)
+            if len(offered) == 1 and len(solutions) > 1:
+                others = len(solutions) - 1
+                rationale += (
+                    f" -- no alternative offered: none of the {others} other "
+                    f"feasible precedence order{'s' if others != 1 else ''} "
+                    f"improves any train's delay"
+                )
+        else:
+            rationale = _tradeoff(best_solution, solution, trains)
+            sacrificed = _sacrificed_class(best_solution, solution)
+            if sacrificed:
+                rationale += (
+                    f" -- ranked second: adds delay to {sacrificed} precedence"
+                )
+
         scenarios.append(
             {
                 "scenario_id": f"OPT-{index}",
+                "rank": index,
                 "action": action,
+                "rationale": rationale,
                 "network_impact": impact,
-                "score": round(min(1.0, score), 4),
                 "policy_exceeded": policy_exceeded,
                 "directives": directives,
+                "delay_breakdown": breakdown,
             }
         )
 

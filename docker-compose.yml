@@ -1,13 +1,13 @@
-version: '3.8'
-
 services:
   redis:
     image: redis:7-alpine
     ports:
       - "6379:6379"
-    command: redis-server --appendonly yes
-    volumes:
-      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 2s
+      timeout: 2s
+      retries: 15
 
   ws-server:
     build:
@@ -20,7 +20,8 @@ services:
       - REDIS_PORT=6379
       - ALLOWED_ORIGINS=http://localhost:3000
     depends_on:
-      - redis
+      redis:
+        condition: service_healthy
 
   simulator:
     build:
@@ -31,10 +32,11 @@ services:
       - REDIS_PORT=6379
       - TICK_SECONDS=2.0
       - TIME_MULTIPLIER=5
-      - NETWORK_PATH=/app/shared/network.json
-      - SCENARIO_PATH=/app/shared/scenario.json
+      - NETWORK_PATH=/app/data/network.json
+      - SCENARIO_PATH=/app/data/scenario.json
     depends_on:
-      - redis
+      redis:
+        condition: service_healthy
 
   ai-engine:
     build:
@@ -43,10 +45,6 @@ services:
     environment:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
-      - NETWORK_PATH=/app/shared/network.json
-      - SCENARIO_PATH=/app/shared/scenario.json
     depends_on:
-      - redis
-
-volumes:
-  redis_data:
+      redis:
+        condition: service_healthy
