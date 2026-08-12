@@ -68,8 +68,12 @@ function pointAt(progress: number) {
   };
 }
 
+const CORRIDOR_LENGTH_KM = 195;
+
 function telemetryFor(train: MockTrain): TrainTelemetry {
   const { coordinates, nextStation, blockIndex } = pointAt(train.progress);
+  const trackId = "TRK-DOWN-MAIN";
+  const blockId = `BLK-${100 + blockIndex}${String.fromCharCode(65 + (blockIndex % 3))}`;
   return {
     event_type: "TRAIN_TELEMETRY",
     train_id: train.id,
@@ -77,15 +81,26 @@ function telemetryFor(train: MockTrain): TrainTelemetry {
     train_type: train.type,
     priority_weight: train.priority,
     current_section_id: "NDLS-AGC-04",
-    current_block_id: `BLK-${100 + blockIndex}${String.fromCharCode(65 + (blockIndex % 3))}`,
+    current_block_id: blockId,
     coordinates,
     speed_kmh: Math.round(train.speedKmh * 10) / 10,
     max_allowed_speed_kmh: train.maxSpeed,
+    scheduled_speed_kmh: Math.round(train.maxSpeed * 0.75),
     schedule_status: train.delaySeconds > 120 ? "DELAYED" : "ON_TIME",
     delay_seconds: Math.round(train.delaySeconds),
     next_station_id: nextStation,
     eta_next_station: Date.now() + 1000 * 60 * (2 + Math.random() * 12),
     signal_aspect: train.aspect,
+    route_progress_km: Math.round(train.progress * CORRIDOR_LENGTH_KM * 1000) / 1000,
+    resource_id: `${trackId}|${blockId}`,
+    track_id: trackId,
+    direction: "DOWN",
+    hold_station_id: null,
+    hold_loop_id: null,
+    in_loop_id: null,
+    standing_on_main: false,
+    hold_until_train_id: null,
+    hold_expires_in_s: null,
   };
 }
 
@@ -107,21 +122,72 @@ const MOCK_RECOMMENDATION: DispatchRecommendation = {
   scenarios: [
     {
       scenario_id: "OPT-1",
-      action: "Hold BOXN Rake 402 at Palwal loop line",
-      network_impact: "Kerala Express 12626 delayed 0 min. Rake 402 delayed 45 min. Section throughput unchanged.",
-      score: 0.88,
+      rank: 1,
+      action: "Hold BOXN Rake 402 40201 at LOOP-PWL-01 at PWL for 45 min",
+      rationale:
+        "Protects Premier precedence (Kerala Express 12626). No ordering saves the freight without costing a higher class.",
+      network_impact:
+        "Kerala Express 12626 delayed by 0 min. BOXN Rake 402 40201 delayed by 45 min (38 queued, 7 dispatch choice).",
+      directives: [
+        {
+          kind: "HOLD_AT_LOOP",
+          train_id: "40201",
+          station_id: "PWL",
+          loop_id: "LOOP-PWL-01",
+          until_train_id: "12626",
+          max_hold_seconds: 3300,
+        },
+      ],
+      delay_breakdown: [
+        {
+          train_id: "12626",
+          train_name: "Kerala Express",
+          delay_seconds: 0,
+          queued_seconds: 0,
+          dispatch_choice_seconds: 0,
+        },
+        {
+          train_id: "40201",
+          train_name: "BOXN Rake 402",
+          delay_seconds: 2700,
+          queued_seconds: 2280,
+          dispatch_choice_seconds: 420,
+        },
+      ],
+      policy_exceeded: false,
     },
     {
       scenario_id: "OPT-2",
-      action: "Regulate Kerala Express 12626 to 70 km/h behind the rake",
-      network_impact: "Kerala Express 12626 delayed 15 min. Rake 402 delayed 0 min. Two downstream connections at risk.",
-      score: 0.32,
-    },
-    {
-      scenario_id: "OPT-3",
-      action: "Divert BOXN Rake 402 to the up main under caution order",
-      network_impact: "Kerala Express 12626 delayed 3 min. Rake 402 delayed 12 min. Requires point clearance at JNC-PALWAL-02.",
-      score: 0.61,
+      rank: 2,
+      action: "Regulate Kerala Express 12626 to 70 km/h on approach (15 min)",
+      rationale:
+        "Costs Kerala Express 15 min to save BOXN Rake 402 45 min. Trades a Premier class loss for an Ordinary Goods gain, which precedence does not permit.",
+      network_impact:
+        "Kerala Express 12626 delayed by 15 min. BOXN Rake 402 40201 delayed by 0 min.",
+      directives: [
+        {
+          kind: "REGULATE",
+          train_id: "12626",
+          target_speed_kmh: 70,
+        },
+      ],
+      delay_breakdown: [
+        {
+          train_id: "12626",
+          train_name: "Kerala Express",
+          delay_seconds: 900,
+          queued_seconds: 0,
+          dispatch_choice_seconds: 900,
+        },
+        {
+          train_id: "40201",
+          train_name: "BOXN Rake 402",
+          delay_seconds: 0,
+          queued_seconds: 0,
+          dispatch_choice_seconds: 0,
+        },
+      ],
+      policy_exceeded: false,
     },
   ],
 };

@@ -77,7 +77,12 @@ export function useRailwayTelemetry() {
       ws.onerror = () => ws.close();
 
       ws.onclose = () => {
-        socketRef.current = null;
+        // Only disown the ref if it still points at THIS socket. A closing
+        // socket's onclose fires asynchronously and can land after a newer
+        // socket has already claimed the ref -- StrictMode's double-mount does
+        // this on every dev reload, and nulling it there kills the write path
+        // while the newer socket keeps the read path alive.
+        if (socketRef.current === ws) socketRef.current = null;
         if (disposed) return;
         // Exponential backoff with jitter. Without this, one restart of the
         // ws-server leaves the panel dark until someone reloads the browser.
@@ -93,7 +98,9 @@ export function useRailwayTelemetry() {
     return () => {
       disposed = true;
       if (retryTimer) clearTimeout(retryTimer);
-      socketRef.current?.close();
+      const owned = socketRef.current;
+      socketRef.current = null;
+      owned?.close();
       store.dispose();
     };
   }, [store]);
@@ -105,10 +112,12 @@ export function useRailwayTelemetry() {
    */
   const dispatchAction = useCallback(
     (conflictId: string, scenarioId: string) => {
+      const recommendation = store.recommendations.get(conflictId);
       const action: ControllerAction = {
         event_type: "CONTROLLER_ACTION",
         conflict_id: conflictId,
         scenario_id: scenarioId,
+        epoch: recommendation?.epoch ?? "",
         timestamp: Date.now(),
       };
 
@@ -120,7 +129,9 @@ export function useRailwayTelemetry() {
         return false;
       }
 
-      store.resolveConflict(conflictId);
+      // The card is NOT cleared here. It clears when the simulator rules on it,
+      // so a rejection is visible instead of looking identical to a success.
+      store.markPending(conflictId, scenarioId);
       return true;
     },
     [store],
@@ -167,6 +178,7 @@ export function useConflicts(store: TelemetryStore) {
   return useMemo(
     () => ({
       conflicts: store.openConflicts(),
+      acknowledged: store.acknowledgedConflicts(),
       recommendations: store.recommendations,
     }),
     [store, version],

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { formatCountdown } from "@/lib/contracts";
 import { TelemetryStore } from "@/lib/telemetryStore";
 import { useConflicts } from "@/hooks/useRailwayTelemetry";
@@ -11,39 +11,104 @@ interface Props {
 }
 
 export default function ConflictDeck({ store, onCommit }: Props) {
-  const { conflicts, recommendations } = useConflicts(store);
-  const [now, setNow] = useState(() => Date.now());
-  const [committing, setCommitting] = useState<string | null>(null);
+  const { conflicts, acknowledged, recommendations } = useConflicts(store);
+  const [, setTick] = useState(0);
+
+const firstSeen = useRef<Map<string, number>>(new Map());
+
+  // predicted_time_to_conflict_seconds is a snapshot taken when the engine
+  // published, and the alert carries no timestamp -- so the countdown needs a
+  // local anchor. A new prediction for the same conflict re-anchors.
+  const seenAt = useRef(new Map<string, { seconds: number; at: number }>());
+
+  const anchorFor = (conflictId: string, seconds: number) => {
+    const prior = seenAt.current.get(conflictId);
+    if (!prior || prior.seconds !== seconds) {
+      const fresh = { seconds, at: Date.now() };
+      seenAt.current.set(conflictId, fresh);
+      return fresh;
+    }
+    return prior;
+  };
 
   useEffect(() => {
-    const id = setInterval(() => setNow(Date.now()), 1000);
+    const id = setInterval(() => setTick((n) => n + 1), 200);
     return () => clearInterval(id);
   }, []);
 
-  if (conflicts.length === 0) {
+  if (conflicts.length === 0 && acknowledged.length === 0) {
+    // A stopped train projects no future occupancy, so a queue standing at red
+    // produces no detected overlap -- correct, and absurd to display as "clear".
+    // No conflict means nothing to DECIDE, not that the section is running.
+    const stopped = [...store.trains.values()].filter(
+      (t) => t.telemetry.speed_kmh < 1,
+    );
+    const stalled = stopped.length > 0;
+
     return (
       <div className="flex h-full flex-col items-center justify-center gap-2 px-6 text-center">
-        <span className="inline-block h-2 w-2 rounded-full bg-[var(--aspect-green)]" />
+        <span
+          className="inline-block h-2 w-2 rounded-full"
+          style={{
+            backgroundColor: stalled ? "var(--aspect-yellow)" : "var(--aspect-green)",
+          }}
+        />
         <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-[var(--panel-muted)]">
-          Section clear
+          {stalled ? "No decision pending" : "Section clear"}
         </p>
-        <p className="max-w-[26ch] font-sans text-[11px] leading-5 text-[var(--panel-line)]">
-          No spatial-temporal overlap predicted on the current horizon.
+        <p className="max-w-[30ch] font-sans text-[11px] leading-5 text-[var(--panel-muted)]">
+          {stalled
+            ? `${stopped.length} train${stopped.length > 1 ? "s" : ""} stationary — ` +
+              `held or signal-checked. Nothing stopped projects a future overlap, ` +
+              `so there is no precedence decision to make until the queue moves.`
+            : "No spatial-temporal overlap predicted on the current horizon."}
         </p>
       </div>
     );
   }
 
+  const inForceStrip = acknowledged.map((conflict) => {
+    const plan = store.planFor(conflict.conflict_id);
+    return (
+      <article
+        key={conflict.conflict_id}
+        className="border border-[var(--panel-line)] bg-[var(--panel-raised)]/60 px-3 py-2"
+      >
+        <div className="flex items-baseline justify-between gap-3">
+          <span className="font-mono text-[9px] font-bold uppercase tracking-[0.22em] text-[var(--aspect-green)]">
+            Plan in force · {plan?.scenarioId ?? conflict.plan_in_force ?? "--"}
+          </span>
+          <span className="font-mono text-[9px] uppercase tracking-[0.18em] text-[var(--panel-muted)]">
+            {conflict.conflict_id}
+          </span>
+        </div>
+        <p className="mt-1 font-sans text-[11px] leading-[1.45] text-[var(--panel-muted)]">
+          Still being re-solved every tick. The engine currently recommends the
+          plan already executing, so there is nothing new to approve.
+        </p>
+      </article>
+    );
+  });
+
   return (
     <div className="h-full space-y-3 overflow-y-auto p-3">
+      {inForceStrip}
       {conflicts.map((conflict) => {
         const recommendation = recommendations.get(conflict.conflict_id);
-        const scenarios = [...(recommendation?.scenarios ?? [])].sort((a, b) => b.score - a.score);
-        const secondsLeft = Math.max(
-          0,
-          conflict.predicted_time_to_conflict_seconds - Math.floor((now % 1000) / 1000),
+        const scenarios = [...(recommendation?.scenarios ?? [])].sort(
+          (a, b) => (a.rank ?? 0) - (b.rank ?? 0),
         );
+
+        const secondsLeft = store.secondsToConflict(conflict);
+
         const relaxed = scenarios.some((s) => s.policy_exceeded);
+        const pending = store.pendingActions.get(conflict.conflict_id);
+        const committed = store.planFor(conflict.conflict_id);
+        const diverged = conflict.plan_state === "DIVERGED";
+        const feedback =
+          store.lastFeedback?.conflictId === conflict.conflict_id
+            ? store.lastFeedback
+            : null;
 
         return (
           <article
@@ -71,10 +136,6 @@ export default function ConflictDeck({ store, onCommit }: Props) {
               </div>
             </header>
 
-            {/* Every scenario for this conflict needed the hold cap relaxed. The
-                controller is about to authorise something outside standing
-                instructions and has to be told so BEFORE they click, not asked
-                about it afterwards by an auditor. */}
             {relaxed && (
               <div
                 role="alert"
@@ -92,11 +153,12 @@ export default function ConflictDeck({ store, onCommit }: Props) {
                     Capacity exceeded · policy relaxation applied
                   </div>
                   <p className="mt-1 font-sans text-[11px] leading-[1.45] text-[var(--panel-text)]">
-                    No precedence order resolves this conflict inside the
-                    standard 45-minute maximum hold. The solver relaxed that
-                    limit to prevent a deadlock, so every option below detains a
-                    train beyond standing instructions. Requires supervisory
-                    authority.
+                    No precedence order resolves this conflict within the
+                    standing limit on discretionary delay -- the wait a train
+                    absorbs beyond what the occupied block physically forces.
+                    The solver relaxed that limit to prevent a deadlock,
+                    so every option below detains a train beyond standing
+                    instructions. Requires supervisory authority.
                   </p>
                 </div>
               </div>
@@ -107,7 +169,7 @@ export default function ConflictDeck({ store, onCommit }: Props) {
                 {conflict.root_cause}
               </p>
               <p className="mt-2 font-mono text-[10px] uppercase tracking-[0.14em] text-[var(--panel-muted)]">
-                Cascading impact if unresolved:{" "}
+                Section clearance time:{" "}
                 <span className="text-[var(--aspect-yellow)]">
                   {conflict.estimated_cascading_impact_minutes} min
                 </span>
@@ -119,33 +181,88 @@ export default function ConflictDeck({ store, onCommit }: Props) {
                 Dispatch options
               </h3>
 
-              {scenarios.length === 0 ? (
-                <p className="px-3 pb-3 pt-2 font-mono text-[10px] text-[var(--panel-line)]">
-                  Solver running. Options appear when the OR engine returns.
+              {diverged && (
+                <p
+                  role="alert"
+                  className="mx-3 mt-2 border border-[var(--aspect-yellow)]/50 bg-[var(--aspect-yellow)]/[0.10] px-2.5 py-2 font-sans text-[11px] leading-[1.45] text-[var(--panel-text)]"
+                >
+                  <span className="font-mono text-[10px] font-bold uppercase tracking-[0.16em] text-[var(--aspect-yellow)]">
+                    Plan superseded
+                  </span>
+                  <br />
+                  The physical situation has moved since{" "}
+                  {conflict.plan_in_force ?? "the accepted plan"} was approved.
+                  Re-solving now returns a different precedence order. The
+                  options below replace it.
                 </p>
+              )}
+
+              {committed && !diverged && (
+                <p
+                  role="status"
+                  className="px-3 pt-2 font-mono text-[10px] uppercase tracking-[0.16em] text-[var(--aspect-green)]"
+                >
+                  {committed.scenarioId} already committed · re-approval is a no-op
+                </p>
+              )}
+
+              {pending && (
+                <p
+                  role="status"
+                  className="px-3 pt-2 font-mono text-[10px] uppercase tracking-[0.16em] text-[var(--panel-muted)]"
+                >
+                  {pending.scenarioId} sent · awaiting simulator
+                </p>
+              )}
+
+              {!pending && feedback?.outcome === "rejected" && (
+                <p
+                  role="alert"
+                  className="px-3 pt-2 font-mono text-[10px] uppercase tracking-[0.16em] text-[var(--aspect-red)]"
+                >
+                  {feedback.scenarioId} rejected · {feedback.reason}
+                </p>
+              )}
+
+              {scenarios.length === 0 ? (
+                (() => {
+                  // "Solver running" is true for about a second. Past that,
+                  // an empty scenario list is a RESULT -- every precedence
+                  // order came back infeasible -- and saying "running" forever
+                  // reads as a hang rather than an answer.
+                  const seen = firstSeen.current;
+                  if (!seen.has(conflict.conflict_id)) {
+                    seen.set(conflict.conflict_id, Date.now());
+                  }
+                  const waited = Date.now() - (seen.get(conflict.conflict_id) ?? 0);
+                  return (
+                    <p className="px-3 pb-3 pt-2 font-mono text-[10px] leading-[1.5] text-[var(--panel-muted)]">
+                      {waited < 8000
+                        ? "Solver running. Options appear when the OR engine returns."
+                        : "No feasible precedence order. Every ordering searched leaves a train committed to the resource with no loop to clear into — this conflict resolves by block-following, not by dispatch."}
+                    </p>
+                  );
+                })()
               ) : (
                 <ul className="space-y-px p-3 pt-2">
-                  {scenarios.map((scenario, index) => {
-                    const recommended = index === 0;
-                    const key = `${conflict.conflict_id}:${scenario.scenario_id}`;
+                  {scenarios.map((scenario) => {
+                    const recommended = scenario.rank === 1;
                     const holds = (scenario.directives ?? []).filter(
                       (d) => d.kind === "HOLD_AT_LOOP",
                     ).length;
+                    const alreadySent =
+                      committed?.scenarioId === scenario.scenario_id && !diverged;
 
                     return (
                       <li key={scenario.scenario_id}>
                         <button
                           type="button"
-                          disabled={committing !== null}
-                          onClick={() => {
-                            setCommitting(key);
-                            const ok = onCommit(conflict.conflict_id, scenario.scenario_id);
-                            if (!ok) setCommitting(null);
-                          }}
+                          disabled={pending !== undefined || alreadySent}
+                          onClick={() => onCommit(conflict.conflict_id, scenario.scenario_id)}
                           className={[
                             "group w-full border px-3 py-2.5 text-left transition-colors",
                             "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--panel-text)]",
-                            "disabled:cursor-wait disabled:opacity-50",
+                            "disabled:cursor-not-allowed disabled:opacity-50",
                             scenario.policy_exceeded
                               ? "border-[var(--aspect-yellow)]/50 bg-[var(--aspect-yellow)]/[0.06] hover:bg-[var(--aspect-yellow)]/[0.12]"
                               : recommended
@@ -164,9 +281,11 @@ export default function ConflictDeck({ store, onCommit }: Props) {
                                   Exceeds policy
                                 </span>
                               )}
-                            </span>
-                            <span className="font-mono text-[12px] font-semibold tabular-nums text-[var(--panel-text)]">
-                              {scenario.score.toFixed(2)}
+                              {alreadySent && (
+                                <span className="ml-2 text-[var(--aspect-green)]">
+                                  Committed
+                                </span>
+                              )}
                             </span>
                           </div>
                           <div className="mt-1 font-sans text-[12px] font-medium leading-5 text-[var(--panel-text)]">
@@ -175,11 +294,13 @@ export default function ConflictDeck({ store, onCommit }: Props) {
                           <div className="mt-1 font-sans text-[11px] leading-5 text-[var(--panel-muted)]">
                             {scenario.network_impact}
                           </div>
-                          {/* A grouped scenario is all-or-nothing at the
-                              simulator. Showing the count makes that visible
-                              rather than implying one button holds one train. */}
+                          {scenario.rationale && (
+                            <div className="mt-1.5 font-sans text-[11px] leading-5 text-[var(--panel-muted)]">
+                              {scenario.rationale}
+                            </div>
+                          )}
                           {holds > 1 && (
-                            <div className="mt-1.5 font-mono text-[9px] uppercase tracking-[0.16em] text-[var(--panel-line)]">
+                            <div className="mt-1.5 font-mono text-[9px] uppercase tracking-[0.16em] text-[var(--panel-muted)]">
                               {holds} coordinated holds · applied together
                             </div>
                           )}
@@ -187,12 +308,11 @@ export default function ConflictDeck({ store, onCommit }: Props) {
                             <div
                               className={
                                 scenario.policy_exceeded
-                                  ? "h-full bg-[var(--aspect-yellow)]"
+                                  ? "h-full w-full bg-[var(--aspect-yellow)]"
                                   : recommended
-                                    ? "h-full bg-[var(--aspect-green)]"
-                                    : "h-full bg-[var(--panel-rail-live)]"
+                                    ? "h-full w-full bg-[var(--aspect-green)]"
+                                    : "h-full w-full bg-[var(--panel-rail-live)]"
                               }
-                              style={{ width: `${Math.min(100, scenario.score * 100)}%` }}
                             />
                           </div>
                         </button>

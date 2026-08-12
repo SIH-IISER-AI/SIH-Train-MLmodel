@@ -1,5 +1,7 @@
 "use client";
 
+import { useRef } from "react";
+
 import { formatClock } from "@/lib/contracts";
 import { TelemetryStore } from "@/lib/telemetryStore";
 import { ConnectionState, useClock, useTrains } from "@/hooks/useRailwayTelemetry";
@@ -21,6 +23,9 @@ const CONNECTION_COPY: Record<ConnectionState, { label: string; color: string }>
   reconnecting: { label: "Reconnecting", color: "var(--aspect-yellow)" },
   offline: { label: "Feed lost", color: "var(--aspect-red)" },
 };
+
+/** Samples kept in the section-flow rolling mean (~80s of ticks). */
+const FLOW_WINDOW = 40;
 
 function Stat({
   label,
@@ -54,11 +59,44 @@ function Stat({
 export default function PanelHeader({ store, connection }: Props) {
   const clock = useClock(store);
   const trains = useTrains(store);
+  const flowSamples = useRef<number[]>([]);
 
   const conflicts = store.openConflicts();
   const totalDelay = store.totalDelayMinutes();
   const health = clock?.network_health_score ?? 0;
   const status = CONNECTION_COPY[connection];
+
+  // Fleet delay is near-conserved on a single line -- capacity is fixed, so
+  // someone waits regardless. What dispatch decides is WHO. network_health_score
+  // averages every train equally and so cannot see that decision at all, which
+  // is why the top precedence class present gets its own figure here.
+  const ranked = [...trains].sort(
+    (a, b) => b.telemetry.priority_weight - a.telemetry.priority_weight,
+  );
+  const topClass = ranked[0];
+  const topClassDelay = topClass
+    ? Math.round(
+        ranked
+          .filter((t) => t.telemetry.priority_weight === topClass.telemetry.priority_weight)
+          .reduce((sum, t) => sum + Math.max(0, t.telemetry.delay_seconds), 0) / 60,
+      )
+    : 0;
+
+  // Trains never leave this section, so trains-per-hour is structurally zero.
+  // Fleet train-km/h is the throughput measure that works with a fixed roster.
+  // Instantaneous fleet speed swings with wherever the trains happen to be in
+  // their accel/brake cycle, so a single sample says nothing about throughput --
+  // a rolling mean stops one unlucky frame reading as "the controlled section
+  // flows worse than the uncontrolled one".
+  const instantFlow = trains.reduce(
+    (sum, t) => sum + Math.max(0, t.telemetry.speed_kmh),
+    0,
+  );
+  const samples = [...flowSamples.current, instantFlow].slice(-FLOW_WINDOW);
+  flowSamples.current = samples;
+  const sectionFlow = Math.round(
+    samples.reduce((sum, value) => sum + value, 0) / samples.length,
+  );
 
   return (
     <header className="flex flex-wrap items-stretch justify-between gap-y-2 border-b border-[var(--panel-line)] bg-[var(--panel-raised)]">
@@ -78,10 +116,34 @@ export default function PanelHeader({ store, connection }: Props) {
         <Stat label="Rate" value={`${clock?.time_multiplier ?? 1}×`} />
         <Stat label="On section" value={trains.length} />
         <Stat
-          label="Held delay"
+          label="Section flow"
+          value={sectionFlow}
+          unit="train-km/h"
+          tone={
+            sectionFlow >= 300
+              ? "var(--aspect-green)"
+              : sectionFlow >= 150
+                ? "var(--aspect-yellow)"
+                : "var(--aspect-red)"
+          }
+        />
+        <Stat
+          label="Fleet delay"
           value={totalDelay}
           unit="min"
           tone={totalDelay > 60 ? "var(--aspect-red)" : undefined}
+        />
+        <Stat
+          label="Premier delay"
+          value={topClassDelay}
+          unit="min"
+          tone={
+            topClassDelay <= 10
+              ? "var(--aspect-green)"
+              : topClassDelay <= 30
+                ? "var(--aspect-yellow)"
+                : "var(--aspect-red)"
+          }
         />
         <Stat
           label="Conflicts"

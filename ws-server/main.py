@@ -18,11 +18,11 @@ ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS", "http://localhost:3000").split(",
 TELEMETRY_STREAM = "telemetry_stream"
 DECISION_STREAM = "decision_stream"
 ACTION_STREAM = "action_stream"
+CONTROL_STREAM = "control_stream"
 
-# How much history a newly connected dashboard gets. Without this, a browser
-# refresh shows an empty panel until every train re-reports -- up to 3s of
-# blankness, which is exactly when a judge is looking at the screen.
-BACKFILL_COUNT = 200
+# Ceiling on the server-side scan, not on what is sent. Deduplication decides
+# the send size; this only bounds how far back a scan will walk.
+SCAN_LIMIT = 2000
 
 app.add_middleware(
     CORSMiddleware,
@@ -44,30 +44,106 @@ async def healthz():
         return {"status": "degraded", "error": str(exc)}
 
 
-async def _backfill(websocket: WebSocket, stream: str) -> str:
-    """Replay recent entries so a fresh client has a populated panel at once.
+def _snapshot_key(event: dict):
+    """Identity under which an event supersedes an older one of the same kind.
 
-    Returns the last id seen, so the live loop picks up exactly where this left
-    off with no gap and no duplicates.
+    The only place in this service that knows contract field names.
     """
-    entries = await redis_client.xrevrange(stream, count=BACKFILL_COUNT)
-    last_id = "0-0"
-    for message_id, fields in reversed(entries):
+    kind = event.get("event_type")
+    if kind in ("CONFLICT_PREDICTED", "DISPATCH_RECOMMENDATION"):
+        return (kind, event.get("conflict_id"))
+    if kind == "CONTROLLER_ACTION_RESULT":
+        return (kind, event.get("conflict_id"), event.get("scenario_id"))
+    if kind == "TRAIN_TELEMETRY":
+        return (kind, event.get("train_id"))
+    if kind == "SIMULATION_TICK":
+        return (kind,)
+    return None
+
+
+async def _boot_floor():
+    """Stream id of the current run's SYSTEM_READY, plus its payload.
+
+    Scans for SYSTEM_READY specifically rather than taking the newest entry:
+    control_stream also carries action verdicts, so the last entry is usually a
+    result, and flooring on that would hide every conflict raised before the
+    controller's most recent button press.
+
+    Redis stream ids are monotonic and the simulator writes SYSTEM_READY after
+    committing static state and before the first tick, so anything with a higher
+    id belongs to the current epoch with no per-message field to trust.
+    """
+    entries = await redis_client.xrevrange(CONTROL_STREAM, count=SCAN_LIMIT)
+    for message_id, fields in entries:
         payload = fields.get("payload")
-        if payload:
-            await websocket.send_text(payload)
-        last_id = message_id
-    return last_id if entries else "$"
+        if not payload:
+            continue
+        try:
+            event = json.loads(payload)
+        except json.JSONDecodeError:
+            continue
+        if event.get("event_type") == "SYSTEM_READY":
+            return message_id, payload
+    return None, None
+
+
+async def _snapshot_since(websocket: WebSocket, stream: str, floor_id: str) -> str:
+    """Send current state, not history: the newest entry per key since boot.
+
+    Returns the cursor for the live loop -- gap-free and duplicate-free.
+    """
+    entries = await redis_client.xrevrange(
+        stream, max="+", min=f"({floor_id}", count=SCAN_LIMIT
+    )
+    if not entries:
+        return floor_id
+
+    seen = set()
+    latest = []
+    for _, fields in entries:
+        payload = fields.get("payload")
+        if not payload:
+            continue
+        try:
+            event = json.loads(payload)
+        except json.JSONDecodeError:
+            continue
+        key = _snapshot_key(event)
+        if key is None or key in seen:
+            continue
+        seen.add(key)
+        latest.append(payload)
+
+    for payload in reversed(latest):
+        await websocket.send_text(payload)
+
+    return entries[0][0]
 
 
 async def _pump(websocket: WebSocket) -> None:
-    """Redis -> browser. Reads both streams so telemetry and decisions arrive
-    interleaved on one socket, which is what the client's event_type switch
-    already expects."""
-    cursors = {
-        TELEMETRY_STREAM: await _backfill(websocket, TELEMETRY_STREAM),
-        DECISION_STREAM: await _backfill(websocket, DECISION_STREAM), # Fixed
-    }
+    """Redis -> browser. Telemetry, decisions and control frames interleave on
+    one socket, which is what the client's event_type switch already expects.
+
+    Order matters. SYSTEM_READY goes first so the client flushes before it
+    repopulates, and the control snapshot goes LAST so action verdicts retire
+    conflicts that the decision snapshot has just replayed.
+    """
+    floor_id, ready_payload = await _boot_floor()
+
+    if floor_id is None:
+        cursors = {
+            TELEMETRY_STREAM: "$",
+            DECISION_STREAM: "$",
+            CONTROL_STREAM: "0-0",
+        }
+    else:
+        if ready_payload:
+            await websocket.send_text(ready_payload)
+        cursors = {
+            TELEMETRY_STREAM: await _snapshot_since(websocket, TELEMETRY_STREAM, floor_id),
+            DECISION_STREAM: await _snapshot_since(websocket, DECISION_STREAM, floor_id),
+            CONTROL_STREAM: await _snapshot_since(websocket, CONTROL_STREAM, floor_id),
+        }
 
     while True:
         messages = await redis_client.xread(cursors, count=100, block=1000)
@@ -98,7 +174,7 @@ async def _listen(websocket: WebSocket) -> None:
         await redis_client.xadd(ACTION_STREAM, {"payload": json.dumps(action)})
         print(
             f"Controller committed {action.get('scenario_id')} "
-            f"for {action.get('conflict_id')}"
+            f"for {action.get('conflict_id')} @ {action.get('epoch') or '<unset>'}"
         )
 
 

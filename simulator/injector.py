@@ -38,7 +38,6 @@ from typing import Any, Dict, Iterator, List, Optional, Set
 import railsim.kinematics as kin
 from railsim.topology import Leg, Topology
 
-DEFAULT_SEED_PATH = Path(__file__).with_name("seed_data.json")
 
 MINIMAL_KEYS = (
     "event_type", "train_id", "current_block_id",
@@ -58,6 +57,22 @@ PROBE_STEP_KM = 0.25
 
 #: Minimum scan distance, so a stationary train still sees the section ahead.
 MIN_LOOKAHEAD_KM = 6.0
+
+STAND_CLEARANCE_KM = 0.05
+
+HEALTH_ZERO_DELAY_S = 1800.0
+HEALTH_BREAK_1_S = 300.0
+HEALTH_BREAK_2_S = 900.0
+
+
+def _delay_cost(delay_s: float) -> float:
+    first = min(delay_s, HEALTH_BREAK_1_S)
+    second = min(
+        max(0.0, delay_s - HEALTH_BREAK_1_S),
+        HEALTH_BREAK_2_S - HEALTH_BREAK_1_S,
+    )
+    third = max(0.0, delay_s - HEALTH_BREAK_2_S)
+    return first + 2.0 * second + 4.0 * third
 
 
 @dataclass
@@ -93,6 +108,7 @@ class TrainRuntime:
     #: optimiser, which knows who is being given precedence.
     hold_until_train_id: Optional[str] = None
     hold_expires_sim_s: Optional[float] = None
+    standing_on_main: bool = False
 
     position: Optional[Position] = field(default=None, repr=False)
 
@@ -123,16 +139,15 @@ class LiveTelemetryInjector:
 
     def __init__(
         self,
-        network_path: str | Path,
-        scenario_path: str | Path,
+        network: dict,
+        scenario: dict,
         tick_seconds: float = 2.0,
         time_multiplier: int = 5,
         start_epoch_ms: Optional[int] = None,
         recycle_at_terminus: bool = True,
     ) -> None:
-        self.topology = Topology.from_file(network_path)
-        scenario = json.loads(Path(scenario_path).read_text(encoding="utf-8"))
-        
+        self.topology = Topology(network)
+
         self.tick_seconds = float(tick_seconds)
         self.time_multiplier = int(time_multiplier)
         self.recycle_at_terminus = bool(recycle_at_terminus)
@@ -255,11 +270,50 @@ class LiveTelemetryInjector:
                 train.in_loop = None
                 train.regulated_to_kmh = None
                 train.standing_since_tick = None
+                train.standing_on_main = False
             elif kind == "REGULATE":
                 train.regulated_to_kmh = float(directive["target_speed_kmh"])
                 train.hold_station_id = None
+                train.standing_on_main = False
+            elif kind == "STAND_ON_MAIN":
+                station_id = directive.get("station_id")
+                if station_id is None:
+                    continue
+                station_km = train.station_km.get(station_id)
+                if station_km is None or station_km < train.distance_km - 0.05:
+                    print(
+                        f"[sim] {train.train_id} has passed {station_id}; "
+                        f"cannot stand short of it"
+                    )
+                    continue
+                other = self.trains.get(str(directive.get("until_train_id") or ""))
+                if other is not None and (
+                    other.position.direction == train.position.direction
+                ):
+                    print(
+                        f"[sim] {train.train_id} cannot stand on the main for "
+                        f"same-direction {other.train_id}: an overtake needs a loop"
+                    )
+                    continue
+                train.hold_station_id = station_id
+                train.hold_loop_id = None
+                train.standing_on_main = True
+                train.hold_until_train_id = directive.get("until_train_id")
+                train.hold_expires_sim_s = self.elapsed_sim_seconds + float(
+                    directive.get("release_timeout_seconds")
+                    or directive.get("max_hold_seconds", 1800)
+                )
+                train.regulated_to_kmh = None
             else:
                 station_id = directive.get("station_id") or self._next_loop_station(train)
+                if station_id is not None:
+                    station_km = train.station_km.get(station_id)
+                    if station_km is None or station_km < train.distance_km - 0.05:
+                        print(
+                            f"[sim] {train.train_id} has passed {station_id}; "
+                            f"re-targeting hold to the next loop ahead"
+                        )
+                        station_id = self._next_loop_station(train)
                 if station_id is None:
                     continue
                 loop = self.topology.loop_at(station_id, train.train_length_m)
@@ -267,9 +321,11 @@ class LiveTelemetryInjector:
                 train.hold_loop_id = directive.get("loop_id") or (loop.id if loop else None)
                 train.hold_until_train_id = directive.get("until_train_id")
                 train.hold_expires_sim_s = self.elapsed_sim_seconds + float(
-                    directive.get("max_hold_seconds", 1800)
+                    directive.get("release_timeout_seconds")
+                    or directive.get("max_hold_seconds", 1800)
                 )
                 train.regulated_to_kmh = None
+                train.standing_on_main = False
 
             self.applied_directives.append({**directive, "tick_id": self.tick_id})
 
@@ -349,7 +405,10 @@ class LiveTelemetryInjector:
         if train.hold_station_id is not None and train.in_loop is None:
             hold_km = train.station_km.get(train.hold_station_id)
             if hold_km is not None and hold_km >= train.distance_km - 0.05:
-                limit = min(limit, hold_km)
+                if train.standing_on_main:
+                    limit = min(limit, hold_km - STAND_CLEARANCE_KM)
+                else:
+                    limit = min(limit, hold_km)
 
         probe = PROBE_STEP_KM
         while probe <= lookahead:
@@ -398,7 +457,8 @@ class LiveTelemetryInjector:
             math.sqrt(2.0 * train.decel_ms2 * max(0.0, gap_km * 1000.0))
         )
 
-        line_limit = min(train.max_speed_kmh, self._permitted_speed(train))
+        booked_limit = min(train.scheduled_speed_kmh, self._permitted_speed(train))
+        line_limit = booked_limit
         if train.regulated_to_kmh is not None:
             line_limit = min(line_limit, train.regulated_to_kmh)
 
@@ -420,9 +480,15 @@ class LiveTelemetryInjector:
         if train.distance_km >= train.authority_km - 1e-9 and proposed > train.authority_km:
             train.speed_kmh = 0.0
 
+        schedule_limit = min(
+            train.scheduled_speed_kmh,
+            self._permitted_speed_at(
+                train, train.scheduled_distance_km, train.scheduled_speed_kmh
+            ),
+        )
         train.scheduled_distance_km = min(
             train.route_length_km,
-            train.scheduled_distance_km + train.scheduled_speed_kmh * hours,
+            train.scheduled_distance_km + schedule_limit * hours,
         )
         train.position = self.topology.resolve(train.legs, train.distance_km)
         train.speed_kmh = min(train.speed_kmh, train.position.link_max_speed_kmh)
@@ -430,7 +496,14 @@ class LiveTelemetryInjector:
         # Arrived at the holding station: divert into the loop.
         if train.hold_station_id is not None and train.hold_loop_id is not None:
             hold_km = train.station_km.get(train.hold_station_id)
-            if hold_km is not None and train.distance_km >= hold_km - 0.35:
+            if hold_km is None:
+                pass
+            elif train.distance_km > hold_km + 0.05 and train.in_loop is None:
+                train.hold_station_id = None
+                train.hold_loop_id = None
+                train.hold_until_train_id = None
+                train.hold_expires_sim_s = None
+            elif train.distance_km >= hold_km - 0.35:
                 train.distance_km = max(train.distance_km, hold_km - 0.05)
                 train.in_loop = train.hold_loop_id
                 train.speed_kmh = 0.0
@@ -446,6 +519,12 @@ class LiveTelemetryInjector:
         # the road ahead looks clear defeats the purpose: the road looks clear
         # precisely because the train being given precedence has not arrived
         # yet, and the held train would pull out in front of it again.
+        if train.standing_on_main and self._hold_discharged(train):
+            train.standing_on_main = False
+            train.hold_station_id = None
+            train.hold_until_train_id = None
+            train.hold_expires_sim_s = None
+
         if train.in_loop is not None and self._hold_discharged(train):
             # Pulling out of a loop means re-occupying the running line AT the
             # station, not just the road beyond it. Checking only the road ahead
@@ -486,18 +565,23 @@ class LiveTelemetryInjector:
             return True
         return other.distance_km > marker + 1.0
 
-    def _permitted_speed(self, train: TrainRuntime) -> float:
-        speed_ms = kin.kmh_to_ms(max(train.speed_kmh, 30.0))
+    def _permitted_speed_at(
+        self, train: TrainRuntime, at_km: float, reference_kmh: float
+    ) -> float:
+        speed_ms = kin.kmh_to_ms(max(reference_kmh, 30.0))
         braking_km = kin.braking_distance_m(speed_ms, train.decel_ms2) / 1000.0
-        limit = train.position.link_max_speed_kmh
+        limit = self.topology.resolve(train.legs, at_km).link_max_speed_kmh
         probe = 0.5
         while probe <= braking_km:
-            ahead = self.topology.resolve(train.legs, train.distance_km + probe)
+            ahead = self.topology.resolve(train.legs, at_km + probe)
             limit = min(limit, ahead.link_max_speed_kmh)
             if ahead.at_terminus:
                 break
             probe += 0.5
         return limit
+
+    def _permitted_speed(self, train: TrainRuntime) -> float:
+        return self._permitted_speed_at(train, train.distance_km, train.speed_kmh)
 
     def _set_aspect(self, train: TrainRuntime) -> None:
         """Aspect is DERIVED from movement authority, never the other way round."""
@@ -552,6 +636,7 @@ class LiveTelemetryInjector:
             "max_allowed_speed_kmh": round(
                 min(train.max_speed_kmh, position.link_max_speed_kmh), 1
             ),
+            "scheduled_speed_kmh": round(train.scheduled_speed_kmh, 1),
             "schedule_status": self._schedule_status(train, delay_seconds),
             "delay_seconds": delay_seconds,
             "next_station_id": position.next_station_id,
@@ -566,17 +651,36 @@ class LiveTelemetryInjector:
             "resource_id": position.resource_id,
             "track_id": position.track_id,
             "direction": position.direction,
+            # ---- hold state -------------------------------------------------
+            # hold_station_id is INTENT (a directive is accepted, the train is
+            # still running). in_loop_id is REALISATION (the rake is standing in
+            # the loop and has released the running line). They are not the same
+            # fact and neither is derivable from speed or schedule_status.
+            "hold_station_id": train.hold_station_id,
+            "hold_loop_id": train.hold_loop_id,
+            "in_loop_id": train.in_loop,
+            "standing_on_main": train.standing_on_main,
+            "hold_until_train_id": train.hold_until_train_id,
+            "hold_expires_in_s": (
+                None if train.hold_expires_sim_s is None
+                else round(max(0.0, train.hold_expires_sim_s - self.elapsed_sim_seconds), 1)
+            ),
         }
 
     def tick_event(self) -> dict:
-        healthy = sum(1 for t in self.trains.values() if self._delay_seconds(t) <= 300)
+        ceiling = _delay_cost(HEALTH_ZERO_DELAY_S)
+        scores = [
+            max(0.0, 1.0 - _delay_cost(self._delay_seconds(train)) / ceiling)
+            for train in self.trains.values()
+        ]
+        health = sum(scores) / len(scores) * 100.0 if scores else 100.0
         return {
             "event_type": "SIMULATION_TICK",
             "timestamp": self.sim_epoch_ms,
             "tick_id": self.tick_id,
             "time_multiplier": self.time_multiplier,
             "active_train_count": self.active_train_count,
-            "network_health_score": round(healthy / max(1, len(self.trains)) * 100, 1),
+            "network_health_score": round(health, 1),
         }
 
 

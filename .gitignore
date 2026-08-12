@@ -63,3 +63,6 @@ appendonly.aof
 *.njsproj
 *.sln
 *.sw?
+
+
+*.log
