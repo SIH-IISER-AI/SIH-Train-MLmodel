@@ -400,14 +400,7 @@ class Engine:
             if not scenarios:
                 continue
 
-            top = scenarios[0]
-            for row in top.get("delay_breakdown", []):
-                print(
-                    f"[probe7] {conflict_id} {row['train_id']} "
-                    f"delay={row['delay_seconds']} queued={row['queued_seconds']} "
-                    f"choice={row['dispatch_choice_seconds']} "
-                    f"exceeded={top.get('policy_exceeded')}"
-                )
+            
 
             self.published[conflict_id] = {
                 "train_ids": train_ids,

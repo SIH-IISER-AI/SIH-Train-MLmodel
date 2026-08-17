@@ -370,12 +370,6 @@ class ConflictDetector:
                 break
 
         if not found:
-            occupants = ",".join(
-                f"{o.train_id}:"
-                f"{self.topology.resolve(o.legs, min(o.distance_km, self.topology.route_length_km(o.legs) - 1e-6)).resource_id}"
-                for o in self.trains.values()
-                if o.train_id != train.train_id
-            )
             return float(self.horizon_seconds)
 
         return min(float(self.horizon_seconds), release + self.headway_seconds)
@@ -779,7 +773,11 @@ class ConflictDetector:
                     "train_id": train_id,
                     "train_name": train.telemetry["train_name"],
                     "train_type": train.telemetry["train_type"],
-                    "current_speed": train.speed_kmh,
+                    # Raw speed, not the projection floor. The floor exists so a
+                    # crawling train doesn't project an eight-hour occupancy; the
+                    # solver models acceleration from rest explicitly and must see
+                    # a stand as a stand.
+                    "current_speed": float(train.telemetry["speed_kmh"]),
                     "target_speed_kmh": self._target_speed.get(
                         train_id, FALLBACK_MAX_SPEED_KMH
                     ),

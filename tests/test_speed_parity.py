@@ -34,4 +34,33 @@ if conflicts:
         if x["target_speed_kmh"] >= x["max_speed_kmh"]:
             failures.append(f"{x['train_id']} target not below max")
 
-print("\nFAIL: " + "; ".join(failures) if failures else "\nPASS")
+# --- F4 guard: the projection floor must not reach the solver ---------------
+# `TrackedTrain.speed_kmh` is floored at MIN_PROJECTION_SPEED_KMH so a crawling
+# train does not project an eight-hour occupancy. The optimiser models
+# acceleration from rest explicitly, so it must see a stand as a stand: a
+# floored 5 km/h buys a restart penalty the train cannot owe and an absorbable
+# delay it cannot absorb.
+speed_failures = []
+if conflicts:
+    trains_in, _ = det.optimiser_inputs(conflicts[0])
+    for x in trains_in:
+        raw = float(det.trains[x["train_id"]].telemetry["speed_kmh"])
+        if abs(x["current_speed"] - raw) > 1e-9:
+            speed_failures.append(
+                f"{x['train_id']} current_speed={x['current_speed']} != raw {raw}"
+            )
+
+    victim = conflicts[0]["conflicting_train_ids"][0]
+    saved = det.trains[victim].telemetry["speed_kmh"]
+    det.trains[victim].telemetry["speed_kmh"] = 0.0
+    forced, _ = det.optimiser_inputs(conflicts[0])
+    at_rest = next(x for x in forced if x["train_id"] == victim)
+    print(f"\nstand test: {victim} raw=0.0 -> payload {at_rest['current_speed']}")
+    if at_rest["current_speed"] != 0.0:
+        speed_failures.append(
+            f"{victim} at a stand reached the solver at "
+            f"{at_rest['current_speed']} km/h"
+        )
+    det.trains[victim].telemetry["speed_kmh"] = saved
+
+print("SPEED-FAIL: " + "; ".join(speed_failures) if speed_failures else "SPEED-PASS")

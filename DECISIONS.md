@@ -321,6 +321,3 @@ target by the end of every resource) is physically correct but did not remove it
 so the cause is elsewhere. Invisible at the displayed resolution — the countdown
 reads in minutes.
 
-**`scikit-learn` is declared in `ai-engine/requirements.txt` and imported
-nowhere.** There are no learned parameters in this system by design; the
-dependency claims otherwise. Remove it.

@@ -51,6 +51,7 @@ from __future__ import annotations
 
 import itertools
 import math
+import time
 from dataclasses import dataclass
 from typing import Any, Dict, List, Optional, Sequence, Tuple
 
@@ -219,7 +220,19 @@ TIEBREAK_COEFFICIENT = 1
 #: Factorial growth. Five trains is 120 models, each solved in microseconds.
 MAX_TRAINS_ENUMERATED = 5
 
-SOLVER_TIME_LIMIT_S = 2.0
+#: Backstop against a pathological model, not a working budget. Every solve in
+#: this model class finishes in microseconds; anything that hits this limit is a
+#: bug, and 120 of them at 2 s each is a hung demo.
+SOLVER_TIME_LIMIT_S = 0.25
+
+#: Search workers per solve. Module-level so the benchmark can A/B it without
+#: editing the solver body.
+SOLVER_WORKERS = 1
+
+#: Wall-clock ceiling on one full permutation enumeration. A truncated
+#: enumeration is no longer provably the global lexicographic optimum -- that
+#: admission is cheaper than a frozen screen in front of a judge.
+ENUMERATION_BUDGET_S = 5.0
 
 
 @dataclass
@@ -551,8 +564,12 @@ def _solve_order(
     model.Minimize(sum(objective_terms))
 
     solver = cp_model.CpSolver()
+    # Single worker: the model is ~60 variables and solves in microseconds, so a
+    # 4-way parallel portfolio spends more on thread setup and sync than on
+    # search -- multiplied by n! constructions. A short limit is a backstop for
+    # pathological infeasibility, not a working budget.
     solver.parameters.max_time_in_seconds = SOLVER_TIME_LIMIT_S
-    solver.parameters.num_search_workers = 4
+    solver.parameters.num_search_workers = SOLVER_WORKERS
     status = solver.Solve(model)
 
     if status not in (cp_model.OPTIMAL, cp_model.FEASIBLE):
@@ -863,12 +880,27 @@ def optimize_precedence(
     """
     if len(trains_in_conflict) < 2:
         return []
+
+    # Sorted unconditionally, not only when truncating. itertools.permutations
+    # yields in lexicographic INDEX order, so a budget-truncated enumeration
+    # keeps only orders that lead with index 0 -- and index 0 was whatever the
+    # detector happened to list first. Sorting by priority first means a
+    # truncated search explores highest-priority-first orders, which is where
+    # the lexicographic optimum almost always sits. For <= MAX_TRAINS_ENUMERATED
+    # trains this only relabels indices: the permutation SET is identical, so
+    # the answer is unchanged.
+    trains_in_conflict = sorted(
+        trains_in_conflict, key=lambda t: -float(t["priority_weight"])
+    )
     if len(trains_in_conflict) > MAX_TRAINS_ENUMERATED:
-        trains_in_conflict = sorted(
-            trains_in_conflict, key=lambda t: -float(t["priority_weight"])
-        )[:MAX_TRAINS_ENUMERATED]
+        trains_in_conflict = trains_in_conflict[:MAX_TRAINS_ENUMERATED]
 
     trains = _prepare(trains_in_conflict, track_topology)
+
+    # One budget per CONFLICT, not per enumeration pass. solve_all runs twice
+    # when the discretionary cap is unreachable -- a per-call deadline would
+    # make the real worst case 2 x ENUMERATION_BUDGET_S.
+    enumeration_deadline = time.monotonic() + ENUMERATION_BUDGET_S
 
     def solve_all(topology: Dict[str, Any]) -> List[Dict[str, Any]]:
         found = []
@@ -876,6 +908,8 @@ def optimize_precedence(
             solved = _solve_order(order, trains, topology)
             if solved is not None:
                 found.append(solved)
+            if time.monotonic() > enumeration_deadline:
+                break
         return found
 
     solutions = solve_all(track_topology)
