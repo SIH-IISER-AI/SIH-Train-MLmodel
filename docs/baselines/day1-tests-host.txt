@@ -1,0 +1,153 @@
+==============================================================
+ENVIRONMENT
+==============================================================
+utc      2026-08-17 15:27:14
+python   Python 3.14.3
+venv     /Users/bijaya/sih-digital-copilot/.venv
+git      b8c11f6 on improvement-plan
+dirty          13 file(s) modified
+
+--- pinned deps ---
+ortools==9.15.6755
+pydantic==2.13.4
+pydantic_core==2.46.4
+redis==8.1.0
+
+--- requirements.txt as committed ---
+ortools==9.15.6755
+pydantic==2.13.4
+pydantic_core==2.46.4
+redis==8.1.0
+==============================================================
+FIX VERIFICATION (grep assertions on the eight changes)
+==============================================================
+  OK    F1  scikit-learn gone
+  OK    F1b ortools pinned
+  OK    F2  probe7 gone
+  OK    F3  occupants string gone
+  OK    F4  raw speed to solver
+  OK    F5  solver limit 0.25
+  OK    F5  single search worker
+  OK    F6  enumeration budget const
+  OK    F6  time imported
+  OK    F7  deadline hoisted
+  OK    F8  unconditional priority sort
+
+==============================================================
+SYNTAX
+==============================================================
+  OK     ai-engine/detector.py
+  OK     ai-engine/optimizer.py
+  OK     ai-engine/main.py
+  OK     simulator/injector.py
+  OK     shared/railsim/kinematics.py
+  OK     shared/railsim/topology.py
+
+==============================================================
+TEST  test_speed_parity.py
+==============================================================
+12626  Kerala Express       spd=  95.0 book=  95.0 permitted= 130.0 delay=  420s
+12002  Bhopal Shatabdi      spd= 110.0 book= 110.0 permitted= 110.0 delay=    0s
+40201  BOXN Rake 402        spd=  45.0 book=  45.0 permitted=  60.0 delay= 1500s
+12280  Taj Express          spd=  82.0 book=  82.0 permitted= 110.0 delay=  180s
+54402  Palwal Passenger     spd=  55.0 book=  55.0 permitted=  80.0 delay=  900s
+
+optimiser payload:
+  12626  target=  95.0 max= 130.0
+  40201  target=  45.0 max=  60.0
+  12280  target=  82.0 max= 110.0
+  12002  target= 110.0 max= 150.0
+
+stand test: 12626 raw=0.0 -> payload 0.0
+SPEED-PASS
+--- test_speed_parity.py: exit=0  wall=1s
+--- test_speed_parity.py: passed
+
+==============================================================
+TEST  test_stand.py
+==============================================================
+before: [('SEC-PWL-KSV', ['12002', '12280', '12626', '40201']), ('TRK-DOWN-MAIN|BLK-115D', ['12626', '40201'])]
+flags: {'hold_station_id': 'KSV', 'hold_loop_id': None, 'in_loop_id': None, 'standing_on_main': True, 'hold_until_train_id': '12626', 'hold_expires_in_s': 2990.0}
+after : [('SEC-PWL-KSV', ['12002', '12626', '40201']), ('TRK-DOWN-MAIN|BLK-115D', ['12626', '40201'])]
+tick 121: 12280 STANDING at 96.85 km (KSV is 97.00)
+in_loop (must be None): None
+occupies: {'TRK-UP-MAIN|BLK-126U'}
+standing conflicts: [('SEC-PWL-KSV', ['12002', '40201']), ('TRK-DOWN-MAIN|BLK-115D', ['12002', '12626'])]
+tick 306: discharged, speed 0.0
+--- test_stand.py: exit=0  wall=0s
+--- test_stand.py: passed
+
+==============================================================
+TEST  test_hold_release.py
+==============================================================
+plan: Hold BOXN Rake 402 40201 at LOOP-PWL-01 at PWL for 102 min; hold Taj Express 12280 at LOOP-KSV-01 at KSV for 55 min; hold Kerala Express 12626 at LOOP-PWL-02 at PWL for 38 min
+
+watched 101 sim minutes after the plan
+
+ok   12626  held at PWL until 12002
+       stopped 8.7 min   released 46.7 min
+       in_loop=None standing_on_main=False hold_station=None speed=95
+       km=144.77 authority=195.00 timeout_at=4090s elapsed=6060s
+       leader 12002 at 193.19 km, marker 59.00 km, PASSED
+
+ok   12280  held at KSV until 12002
+       stopped 19.7 min   released 71.2 min
+       in_loop=None standing_on_main=False hold_station=None speed=82
+       km=137.88 authority=195.00 timeout_at=5123s elapsed=6060s
+       leader 12002 at 193.19 km, marker 99.00 km, PASSED
+
+ok   40201  held at PWL until 12002
+       stopped 5.0 min   released 101.0 min
+       in_loop=None standing_on_main=False hold_station=None speed=4
+       km=59.21 authority=195.00 timeout_at=7936s elapsed=6060s
+       leader 12002 at 193.19 km, marker 59.00 km, PASSED
+
+PASS
+--- test_hold_release.py: exit=0  wall=51s
+--- test_hold_release.py: passed
+
+==============================================================
+TEST  test_policy_cap.py
+==============================================================
+ok   default cap: 900 (want 900)
+ok   default regulation ceiling: 300 (want 300)
+ok   env cap: 600 (want 600)
+ok   cap reaches the solver: 600 (want 600)
+ok   regulation ceiling reaches the solver: 240 (want 240)
+
+resource SEC-PWL-KSV  trains ['12626', '40201', '12280', '12002']
+scenarios offered: 2  policy_exceeded=False
+  OPT-1: Hold BOXN Rake 402 40201 at LOOP-PWL-01 at PWL for 102 min; hold Taj Express 12280 at LOOP-KSV-01 at KSV for 55 min; hold Kerala Express 12626 at LOOP-PWL-02 at PWL for 38 min
+      Premier (Bhopal Shatabdi 12002) runs unimpeded; least Mail/Express delay of any order (Kerala Express 12626, Taj Express 12280)
+  OPT-2: Hold BOXN Rake 402 40201 at LOOP-PWL-01 at PWL for 102 min; hold Kerala Express 12626 at LOOP-PWL-02 at PWL for 70 min; hold Taj Express 12280 at LOOP-KSV-01 at KSV for 27 min
+      saves Taj Express 28 min; costs Kerala Express 32 min -- ranked second: adds delay to Mail/Express precedence
+ok   HOLD_AT_LOOP carries a release timeout: True (want True)
+ok   HOLD_AT_LOOP carries a release timeout: True (want True)
+ok   HOLD_AT_LOOP carries a release timeout: True (want True)
+
+PASS
+--- test_policy_cap.py: exit=0  wall=1s
+--- test_policy_cap.py: passed
+
+==============================================================
+TEST  test_hysteresis.py
+==============================================================
+ok   first sighting publishes raw: HIGH (want HIGH)
+ok   flap across the band is absorbed by the margin: HIGH (want HIGH)
+ok   flap back publishes nothing new: HIGH (want HIGH)
+ok   real de-escalation starts the dwell: HIGH (want HIGH)
+ok   still inside the dwell: HIGH (want HIGH)
+ok   de-escalates past the dwell: MEDIUM (want MEDIUM)
+ok   escalation is never delayed: CRITICAL (want CRITICAL)
+
+PASS
+--- test_hysteresis.py: exit=0  wall=1s
+--- test_hysteresis.py: passed
+
+==============================================================
+SUMMARY
+==============================================================
+fix checks broken: 0
+tests failed:      0  -- all green
+
+Report written to run-report.txt

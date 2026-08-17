@@ -1,0 +1,17 @@
+ Container sih-digital-copilot-ai-engine-run-402b7f58f438 Creating 
+ Container sih-digital-copilot-ai-engine-run-402b7f58f438 Created 
+scenario: 5 trains, 2 solvable conflicts at tick 30
+  SEC-PWL-KSV              group=4 enumerated=4 dropped=0
+  TRK-DOWN-MAIN|BLK-115D   group=2 enumerated=2 dropped=0
+
+arm                             median       min       max   per-conflict medians
+--------------------------------------------------------------------------------------------
+old   workers=4 limit=2.00       58.7ms      7.8ms    109.6ms   110ms  8ms
+cross workers=4 limit=0.25       61.6ms      8.1ms    115.2ms   115ms  8ms
+cross workers=1 limit=2.00       28.2ms      2.6ms     53.8ms   54ms  3ms
+new   workers=1 limit=0.25       28.0ms      2.6ms     53.5ms   53ms  3ms
+
+Slowest single conflict under the NEW settings is the number that goes
+in the merge gate. If old and new are within noise, the two minutes you
+were chasing are somewhere other than the solver -- find out where before
+you spend a week rewriting it.
