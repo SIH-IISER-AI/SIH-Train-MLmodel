@@ -51,6 +51,7 @@ from __future__ import annotations
 
 import itertools
 import math
+import os
 import time
 from dataclasses import dataclass
 from typing import Any, Dict, List, Optional, Sequence, Tuple
@@ -218,7 +219,9 @@ DEFAULT_MAX_REGULATION_SECONDS = 300
 TIEBREAK_COEFFICIENT = 1
 
 #: Factorial growth. Five trains is 120 models, each solved in microseconds.
-MAX_TRAINS_ENUMERATED = 5
+#: Overridable so the day-2 cap sweep can measure the n! growth curve without
+#: editing source between runs. Production default stays 5.
+MAX_TRAINS_ENUMERATED = int(os.getenv("MAX_TRAINS_ENUMERATED", "5"))
 
 #: Backstop against a pathological model, not a working budget. Every solve in
 #: this model class finishes in microseconds; anything that hits this limit is a
@@ -231,8 +234,11 @@ SOLVER_WORKERS = 1
 
 #: Wall-clock ceiling on one full permutation enumeration. A truncated
 #: enumeration is no longer provably the global lexicographic optimum -- that
-#: admission is cheaper than a frozen screen in front of a judge.
-ENUMERATION_BUDGET_S = 5.0
+#: admission is cheaper than a frozen screen in front of a judge. Overridable
+#: alongside MAX_TRAINS_ENUMERATED: with the budget in force a cap sweep
+#: measures the budget rather than the engine and flattens into a false
+#: plateau at cap 7.
+ENUMERATION_BUDGET_S = float(os.getenv("ENUMERATION_BUDGET_S", "5.0"))
 
 
 @dataclass

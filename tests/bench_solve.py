@@ -27,7 +27,8 @@ WARMUP = 1
 TICKS = 30
 
 network = json.load(open("data/network.json"))
-scenario = json.load(open("data/scenario.json"))
+scenario_path = sys.argv[1] if len(sys.argv) > 1 else "data/scenario.json"
+scenario = json.load(open(scenario_path))
 fleet = {t["train_id"]: t for t in scenario["trains"]}
 
 inj = LiveTelemetryInjector(network, scenario)

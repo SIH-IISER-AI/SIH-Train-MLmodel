@@ -1,0 +1,47 @@
+scenario: data/scenario10.json   conflicts solved: 6
+directives emitted (OPT-1): 13
+refused by the simulator  : 1   (8%)
+
+  emitted:HOLD_AT_LOOP            3
+  emitted:REGULATE                7
+  emitted:STAND_ON_MAIN           3
+  policy_exceeded                 0
+  refused:passed_station          1
+  retargeted:passed_station       1
+
+detail
+  CONF-3A766850   40208  HOLD_AT_LOOP   MTJ already passed
+  CONF-29AC6D7B   40201  STAND_ON_MAIN  BVH already passed
+
+loop bookings (cross-conflict contention is the unexecutable case)
+  LOOP-KSV-01        1 train(s) from 1 conflict(s)
+      CONF-B109F472  12138
+  LOOP-MTJ-01        1 train(s) from 1 conflict(s)
+      CONF-3A766850  40208
+  LOOP-PWL-02        1 train(s) from 1 conflict(s)
+      CONF-B109F472  12050
+
+cross-conflict directive collisions
+  12138  3 directives from 3 conflicts  <-- CONTRADICTORY
+      CONF-B109F472  HOLD_AT_LOOP   station=KSV until=12001
+      CONF-3A766850  REGULATE       station=None until=None target=86.0km/h
+      CONF-0B11FF25  REGULATE       station=None until=None target=37.0km/h
+  12280  3 directives from 3 conflicts  <-- CONTRADICTORY
+      CONF-3A766850  REGULATE       station=None until=None target=73.0km/h
+      CONF-0B11FF25  REGULATE       station=None until=None target=43.0km/h
+      CONF-3BEEF531  REGULATE       station=None until=None target=33.0km/h
+  20172  3 directives from 3 conflicts  <-- CONTRADICTORY
+      CONF-B109F472  STAND_ON_MAIN  station=PWL until=12001
+      CONF-29AC6D7B  REGULATE       station=None until=None target=103.0km/h
+      CONF-D3EE6385  REGULATE       station=None until=None target=54.0km/h
+  trains with contradictory instructions: 3
+
+directive coverage
+  CONF-B109F472  group=9 kept=5 targeted=4 dropped-and-targeted=0 lead=1 uncovered=4
+  CONF-3A766850  group=4 kept=4 targeted=3 dropped-and-targeted=0 lead=1 uncovered=0
+  CONF-29AC6D7B  group=4 kept=4 targeted=2 dropped-and-targeted=0 lead=1 uncovered=1
+  CONF-0B11FF25  group=3 kept=3 targeted=2 dropped-and-targeted=0 lead=1 uncovered=0
+  CONF-3BEEF531  group=2 kept=2 targeted=1 dropped-and-targeted=0 lead=1 uncovered=0
+  CONF-D3EE6385  group=2 kept=2 targeted=1 dropped-and-targeted=0 lead=1 uncovered=0
+
+summary: refused=1  contested_loops=0  contradictory_instructions=3  uncovered_trains=5  policy_exceeded=0

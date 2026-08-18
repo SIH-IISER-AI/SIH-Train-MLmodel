@@ -116,6 +116,34 @@ def hold_train_ids(directives: Any) -> Tuple[str, ...]:
     )
 
 
+def solvable_conflicts(detector) -> Tuple[Dict[str, Dict[str, Any]], Dict[str, int]]:
+    """The conflicts that reach the solver, plus the count at each filter stage.
+
+    Extracted from evaluate() so measurement tooling cannot drift from
+    production. Two day-2 defects came from a tool reimplementing this chain
+    slightly differently and being masked by a tick where the rules agreed.
+    """
+    counts = {"raw": 0, "within_horizon": 0, "actionable": 0}
+    candidates: Dict[str, Dict[str, Any]] = {}
+    for conflict in detector.detect_grouped():
+        counts["raw"] += 1
+        if conflict["predicted_time_to_conflict_seconds"] > SOLVE_WITHIN_S:
+            continue
+        counts["within_horizon"] += 1
+        if not conflict["actionable"]:
+            continue
+        counts["actionable"] += 1
+        conflict_id = conflict_id_for(conflict)
+        incumbent = candidates.get(conflict_id)
+        if incumbent is None or (
+            conflict["predicted_time_to_conflict_seconds"]
+            < incumbent["predicted_time_to_conflict_seconds"]
+        ):
+            candidates[conflict_id] = conflict
+    counts["distinct"] = len(candidates)
+    return candidates, counts
+
+
 class Engine:
     def __init__(self, client: redis.Redis) -> None:
         self.client = client
@@ -294,28 +322,17 @@ class Engine:
 
         self.severity_pending.pop(conflict_id, None)
         return raw
+    
+    
 
     def evaluate(self) -> None:
         now = time.monotonic()
         section_id = self.detector.topology.section_id
 
-        candidates: Dict[str, Dict[str, Any]] = {}
-        for conflict in self.detector.detect_grouped():
-            if conflict["predicted_time_to_conflict_seconds"] > SOLVE_WITHIN_S:
-                continue
-            # An unactionable conflict still warrants an alert, but there is no
-            # point running the solver: the train that would give way is already
-            # committed to the resource.
-            if not conflict["actionable"]:
-                continue
-
-            conflict_id = conflict_id_for(conflict)
-            incumbent = candidates.get(conflict_id)
-            if incumbent is None or (
-                conflict["predicted_time_to_conflict_seconds"]
-                < incumbent["predicted_time_to_conflict_seconds"]
-            ):
-                candidates[conflict_id] = conflict
+        # An unactionable conflict still warrants an alert, but there is no
+        # point running the solver: the train that would give way is already
+        # committed to the resource. See solvable_conflicts().
+        candidates, _ = solvable_conflicts(self.detector)
 
         for conflict_id, conflict in candidates.items():
             severity = self._stable_severity(

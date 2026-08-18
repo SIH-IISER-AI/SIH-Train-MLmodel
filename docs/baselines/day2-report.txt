@@ -1,0 +1,133 @@
+==============================================================
+day-2 measurement sweep
+scenario : data/scenario10.json
+date     : 2026-08-18T09:12:26+00:00
+python   : Python 3.11.16
+==============================================================
+
+### 1. scenario verification
+scenario: data/scenario10.json   trains=10
+legal start: OK (no two trains seeded in one interlocking resource)
+
+filter chain per evaluate()
+  raw contention groups             15
+  within SOLVE_WITHIN_S=1500        15
+  actionable                        15
+  distinct conflict_ids -> solver    6
+  CP solves per evaluate           178   (MAX_TRAINS_ENUMERATED=5)
+
+CONF-B109F472  SEC-PWL-KSV  group=9  dropped=4  severity=MEDIUM  t=611s
+  classes: {'Mail/Express': 2, 'Goods': 2, 'Premier': 4, 'Superfast': 1}  distinct=4
+    DROP  40201 BOXN Rake 402        FREIGHT       w=2.0   t_in=    422s t_out=   3678s
+    DROP  12626 Kerala Express       EXPRESS       w=6.4   t_in=    611s t_out=   2150s
+    KEPT  12001 Bhopal Shatabdi Up   SHATABDI      w=9.0   t_in=    694s t_out=   2019s
+    DROP  40208 BOXN Rake 408        FREIGHT       w=2.0   t_in=    878s t_out=   4134s
+    KEPT  12050 Gatimaan Express     GATIMAAN      w=9.4   t_in=    944s t_out=   2158s
+    KEPT  12138 Punjab Mail          SUPERFAST     w=7.0   t_in=   1054s t_out=   2678s
+    KEPT  20172 RKMP Vande Bharat    VANDE_BHARAT  w=8.8   t_in=   1145s t_out=   2410s
+    DROP  12280 Taj Express          EXPRESS       w=6.0   t_in=   1360s t_out=   3142s
+    KEPT  12002 Bhopal Shatabdi      SHATABDI      w=9.2   t_in=   1507s t_out=   2833s
+
+CONF-3A766850  TRK-UP-MAIN|BLK-127U  group=4  dropped=0  severity=HIGH  t=399s
+  classes: {'Premier': 1, 'Goods': 1, 'Superfast': 1, 'Mail/Express': 1}  distinct=4
+    KEPT  40208 BOXN Rake 408        FREIGHT       w=2.0   t_in=    126s t_out=    502s
+    KEPT  12001 Bhopal Shatabdi Up   SHATABDI      w=9.0   t_in=    399s t_out=    546s
+    KEPT  12138 Punjab Mail          SUPERFAST     w=7.0   t_in=    686s t_out=    870s
+    KEPT  12280 Taj Express          EXPRESS       w=6.0   t_in=    956s t_out=   1158s
+
+CONF-29AC6D7B  TRK-DOWN-MAIN|BLK-115D  group=4  dropped=0  severity=MEDIUM  t=450s
+  classes: {'Mail/Express': 1, 'Goods': 1, 'Premier': 2}  distinct=3
+    KEPT  40201 BOXN Rake 402        FREIGHT       w=2.0   t_in=     73s t_out=    422s
+    KEPT  12626 Kerala Express       EXPRESS       w=6.4   t_in=    450s t_out=    611s
+    KEPT  12050 Gatimaan Express     GATIMAAN      w=9.4   t_in=    821s t_out=    944s
+    KEPT  20172 RKMP Vande Bharat    VANDE_BHARAT  w=8.8   t_in=   1018s t_out=   1145s
+
+CONF-0B11FF25  TRK-UP-MAIN|BLK-130U  group=3  dropped=0  severity=CRITICAL  t=134s
+  classes: {'Premier': 1, 'Superfast': 1, 'Mail/Express': 1}  distinct=3
+    KEPT  12001 Bhopal Shatabdi Up   SHATABDI      w=9.0   t_in=      0s t_out=    105s
+    KEPT  12138 Punjab Mail          SUPERFAST     w=7.0   t_in=    134s t_out=    318s
+    KEPT  12280 Taj Express          EXPRESS       w=6.0   t_in=    350s t_out=    552s
+
+CONF-3BEEF531  TRK-UP-MAIN|BLK-131U  group=2  dropped=0  severity=CRITICAL  t=148s
+  classes: {'Superfast': 1, 'Mail/Express': 1}  distinct=2
+    KEPT  12138 Punjab Mail          SUPERFAST     w=7.0   t_in=      0s t_out=    134s
+    KEPT  12280 Taj Express          EXPRESS       w=6.0   t_in=    148s t_out=    350s
+
+CONF-D3EE6385  TRK-DOWN-MAIN|BLK-108D  group=2  dropped=0  severity=CRITICAL  t=147s
+  classes: {'Premier': 2}  distinct=1
+    KEPT  12050 Gatimaan Express     GATIMAAN      w=9.4   t_in=      0s t_out=     78s
+    KEPT  20172 RKMP Vande Bharat    VANDE_BHARAT  w=8.8   t_in=    147s t_out=    258s
+
+### 2. solver benchmark (cap=5, production default)
+scenario: 10 trains, 10 solvable conflicts at tick 30
+  SEC-PWL-KSV              group=9 enumerated=5 dropped=4
+  TRK-UP-MAIN|BLK-126U     group=3 enumerated=3 dropped=0
+  TRK-DOWN-MAIN|BLK-115D   group=4 enumerated=4 dropped=0
+  TRK-UP-MAIN|BLK-128U     group=2 enumerated=2 dropped=0
+  TRK-UP-MAIN|BLK-129U     group=2 enumerated=2 dropped=0
+  TRK-DOWN-MAIN|BLK-111D   group=2 enumerated=2 dropped=0
+  TRK-DOWN-MAIN|BLK-112D   group=2 enumerated=2 dropped=0
+  TRK-DOWN-MAIN|BLK-113D   group=2 enumerated=2 dropped=0
+  TRK-DOWN-MAIN|BLK-114D   group=2 enumerated=2 dropped=0
+  TRK-UP-MAIN|BLK-127U     group=2 enumerated=2 dropped=0
+
+arm                             median       min       max   per-conflict medians
+--------------------------------------------------------------------------------------------
+old   workers=4 limit=2.00        6.7ms      4.7ms    560.1ms   560ms  22ms  86ms  7ms  6ms  7ms  6ms  5ms  5ms  7ms
+cross workers=4 limit=0.25        7.2ms      5.5ms    724.2ms   724ms  23ms  72ms  7ms  7ms  7ms  5ms  6ms  7ms  8ms
+cross workers=1 limit=2.00        1.7ms      1.5ms    204.3ms   204ms  7ms  28ms  2ms  2ms  2ms  2ms  2ms  2ms  2ms
+new   workers=1 limit=0.25        1.7ms      1.5ms    204.1ms   204ms  8ms  28ms  2ms  2ms  2ms  2ms  2ms  2ms  2ms
+
+Slowest single conflict under the NEW settings is the number that goes
+in the merge gate. If old and new are within noise, the two minutes you
+were chasing are somewhere other than the solver -- find out where before
+you spend a week rewriting it.
+
+### 3. cap sweep (budget disabled -- measuring the engine, not the cap)
+data/scenario10.json: largest group SEC-PWL-KSV with 9 trains
+
+ cap  trains     perms      median   per-solve
+------------------------------------------------
+   4       9        24       0.03s       1.39ms
+   5       9       120       0.21s       1.73ms
+   6       9       720       1.52s       2.11ms
+   7       9      5040      12.73s       2.53ms
+   8       9     40320     113.46s       2.81ms
+
+Extrapolate the remaining caps from the per-solve column x n!.
+Report the measured points and the extrapolation separately.
+
+### 4. predicted directive refusals (OPT-1, tick 0)
+scenario: data/scenario10.json   conflicts solved: 6
+directives emitted (OPT-1): 13
+refused by the simulator  : 1   (8%)
+
+  emitted:HOLD_AT_LOOP            3
+  emitted:REGULATE                7
+  emitted:STAND_ON_MAIN           3
+  refused:passed_station          1
+  retargeted:passed_station       1
+
+detail
+  CONF-3A766850   40208  HOLD_AT_LOOP   MTJ already passed
+  CONF-29AC6D7B   40201  STAND_ON_MAIN  BVH already passed
+
+loop bookings (cross-conflict contention is the unexecutable case)
+  LOOP-KSV-01        1 train(s) from 1 conflict(s)
+      CONF-B109F472  12138
+  LOOP-MTJ-01        1 train(s) from 1 conflict(s)
+      CONF-3A766850  40208
+  LOOP-PWL-02        1 train(s) from 1 conflict(s)
+      CONF-B109F472  12050
+
+directive coverage
+  CONF-B109F472  group=9 kept=5 targeted=4 dropped-and-targeted=0 uncovered=5
+  CONF-3A766850  group=4 kept=4 targeted=3 dropped-and-targeted=0 uncovered=1
+  CONF-29AC6D7B  group=4 kept=4 targeted=2 dropped-and-targeted=0 uncovered=2
+  CONF-0B11FF25  group=3 kept=3 targeted=2 dropped-and-targeted=0 uncovered=1
+  CONF-3BEEF531  group=2 kept=2 targeted=1 dropped-and-targeted=0 uncovered=1
+  CONF-D3EE6385  group=2 kept=2 targeted=1 dropped-and-targeted=0 uncovered=1
+
+summary: refused=1  contested_loops=0  uncovered_trains=11
+
+=== end of sweep ===

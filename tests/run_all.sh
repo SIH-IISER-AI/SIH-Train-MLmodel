@@ -54,6 +54,17 @@ check() {  # check <label> <expect: present|absent> <pattern> <file>
     FIXES_BROKEN=$((FIXES_BROKEN + 1))
   fi
 }
+dupe_check() {  # dupe_check <label> <constant> <file>
+  local n
+  n=$(grep -c "^$2 = " "$3" 2>/dev/null || true)
+  n=${n:-0}
+  if [ "$n" -eq 1 ]; then
+    echo "  OK    $1 defined once"
+  else
+    echo "  BROKEN $1 defined $n times in $3"
+    FIXES_BROKEN=$((FIXES_BROKEN + 1))
+  fi
+}
 FIXES_BROKEN=0
 check "F1  scikit-learn gone"          absent  "scikit-learn"                    ai-engine/requirements.txt
 check "F1b ortools pinned"             present "ortools=="                       ai-engine/requirements.txt
@@ -62,10 +73,18 @@ check "F3  occupants string gone"      absent  "occupants = "                   
 check "F4  raw speed to solver"        present 'telemetry\["speed_kmh"\]),'      ai-engine/detector.py
 check "F5  solver limit 0.25"          present "SOLVER_TIME_LIMIT_S = 0.25"      ai-engine/optimizer.py
 check "F5  single search worker"       present "SOLVER_WORKERS = 1"              ai-engine/optimizer.py
-check "F6  enumeration budget const"   present "ENUMERATION_BUDGET_S = 5.0"      ai-engine/optimizer.py
+check "F6  budget default still 5.0"   present "ENUMERATION_BUDGET_S., .5.0"     ai-engine/optimizer.py
+check "F6b cap default still 5"        present "MAX_TRAINS_ENUMERATED., .5"      ai-engine/optimizer.py
 check "F6  time imported"              present "^import time"                    ai-engine/optimizer.py
 check "F7  deadline hoisted"           present "enumeration_deadline = time"     ai-engine/optimizer.py
 check "F8  unconditional priority sort" absent "        )\[:MAX_TRAINS_ENUMERATED\]" ai-engine/optimizer.py
+
+# A duplicated constant raises no error -- the later definition silently wins.
+# This is how the env override for the cap sweep died without a traceback.
+dupe_check "MAX_TRAINS_ENUMERATED" MAX_TRAINS_ENUMERATED ai-engine/optimizer.py
+dupe_check "ENUMERATION_BUDGET_S"  ENUMERATION_BUDGET_S  ai-engine/optimizer.py
+dupe_check "SOLVER_TIME_LIMIT_S"   SOLVER_TIME_LIMIT_S   ai-engine/optimizer.py
+dupe_check "SOLVER_WORKERS"        SOLVER_WORKERS        ai-engine/optimizer.py
 echo
 
 echo "=============================================================="
