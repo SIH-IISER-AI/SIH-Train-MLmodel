@@ -30,6 +30,11 @@ hold start time, so cross-conflict contention flagged here is POTENTIAL. Two
 bookings of one loop at genuinely disjoint times would still be flagged. Treat
 a flag as "inspect this", not "proved broken".
 
+The measurement itself now lives in audit_plans(), which takes already-solved
+scenarios rather than solving them. tests/harness.py calls it once per
+approval; this script calls it once at tick 0 and prints. One implementation,
+so a day-4 CSV column and a day-2 report line cannot mean two different things.
+
 Usage:  python3 tests/count_refusals.py [data/scenario10.json]
 """
 from __future__ import annotations
@@ -44,44 +49,29 @@ sys.path.insert(0, "ai-engine")
 
 from detector import ConflictDetector
 from injector import LiveTelemetryInjector
-from main import SOLVE_WITHIN_S, conflict_id_for
+from main import solvable_conflicts
 from optimizer import optimize_precedence
 
 sys.path.insert(0, "tests")
 from verify_scenario import kept_ids
 
 
-def main() -> int:
-    path = sys.argv[1] if len(sys.argv) > 1 else "data/scenario10.json"
-    network = json.load(open("data/network.json"))
-    scenario = json.load(open(path))
-    fleet = {t["train_id"]: t for t in scenario["trains"]}
+def audit_plans(solved, scenarios_by_conflict, det, inj):
+    """Score one evaluate's worth of OPT-1 plans against the simulator's rules.
 
-    inj = LiveTelemetryInjector(network, scenario)
-    det = ConflictDetector(network, fleet)
-    for event in inj.tick():
-        det.ingest(event)
+        solved                  conflict_id -> group, from solvable_conflicts()
+        scenarios_by_conflict   conflict_id -> what optimize_precedence returned
+        det                     ConflictDetector, for priority and membership
+        inj                     LiveTelemetryInjector, for live direction/position
 
+    Returns a dict whose "summary" holds the scalars that reach a CSV or a
+    report, plus the raw structures the printer below needs. Nothing is solved
+    and nothing is printed here, so a caller running this once per tick pays
+    only for the bookkeeping.
+    """
     direction = {tid: t.position.direction for tid, t in inj.trains.items()}
     distance = {tid: t.distance_km for tid, t in inj.trains.items()}
     station_km = {tid: t.station_km for tid, t in inj.trains.items()}
-
-    # Same survivor rule as evaluate(): soonest contention wins, NOT the largest
-    # group. A different survivor means different _windows, different entry
-    # stations and different directives.
-    solved: dict = {}
-    for g in det.detect_grouped():
-        if g["predicted_time_to_conflict_seconds"] > SOLVE_WITHIN_S:
-            continue
-        if not g["actionable"]:
-            continue
-        key = conflict_id_for(g)
-        incumbent = solved.get(key)
-        if incumbent is None or (
-            g["predicted_time_to_conflict_seconds"]
-            < incumbent["predicted_time_to_conflict_seconds"]
-        ):
-            solved[key] = g
 
     tally: Counter = Counter()
     # Seed the key so it prints even when it never fires. A Counter omits keys
@@ -91,9 +81,8 @@ def main() -> int:
     detail: list = []
     plans: dict = {}
 
-    for key, g in solved.items():
-        payload_trains, payload_topology = det.optimiser_inputs(g)
-        scenarios = optimize_precedence(payload_trains, payload_topology)
+    for key in solved:
+        scenarios = scenarios_by_conflict.get(key) or []
         if not scenarios:
             tally["no_scenario"] += 1
             continue
@@ -104,7 +93,7 @@ def main() -> int:
         if scenarios[0].get("policy_exceeded"):
             tally["policy_exceeded"] += 1
 
-        plans[key] = scenarios[0]["directives"]
+        plans[key] = scenarios[0].get("directives", [])
 
         for directive in plans[key]:
             kind = directive["kind"]
@@ -140,24 +129,6 @@ def main() -> int:
                     detail.append((key, tid, kind,
                                    f"same-direction {other}; overtake needs a loop"))
 
-    emitted = sum(v for k, v in tally.items() if k.startswith("emitted:"))
-    refused = sum(v for k, v in tally.items() if k.startswith("refused:"))
-
-    print(f"scenario: {path}   conflicts solved: {len(solved)}")
-    print(f"directives emitted (OPT-1): {emitted}")
-    if emitted:
-        print(f"refused by the simulator  : {refused}   "
-              f"({100.0 * refused / emitted:.0f}%)")
-    else:
-        print("refused by the simulator  : n/a (nothing emitted)")
-    print()
-    for k in sorted(tally):
-        print(f"  {k:<32}{tally[k]}")
-    if detail:
-        print("\ndetail")
-        for key, tid, kind, why in detail:
-            print(f"  {key}  {tid:>6}  {kind:<14} {why}")
-
     # Loop capacity is NoOverlap WITHIN a conflict, but the conflicts are solved
     # independently. Two plans can book the same loop for overlapping windows
     # and the injector accepts both -- an unexecutable plan that produces no
@@ -173,33 +144,23 @@ def main() -> int:
                     (key, directive["train_id"])
                 )
 
-    contested = 0
-    print("\nloop bookings (cross-conflict contention is the unexecutable case)")
-    if not loop_bookings:
-        print("  none -- no HOLD_AT_LOOP directives in this tick")
-    for loop_id, bookings in sorted(loop_bookings.items()):
-        conflicts_using = {k for k, _ in bookings}
-        flag = ""
-        if len(conflicts_using) > 1:
-            contested += 1
-            flag = "  <-- CONTESTED ACROSS CONFLICTS"
-        print(f"  {loop_id:<18} {len(bookings)} train(s) "
-              f"from {len(conflicts_using)} conflict(s){flag}")
-        for k, tid in bookings:
-            print(f"      {k}  {tid}")
+    contested = sum(
+        1 for bookings in loop_bookings.values()
+        if len({k for k, _ in bookings}) > 1
+    )
 
-    # Cross-conflict coordination: the six conflicts are solved independently,
-    # so one train can receive directives from several solves in the same
-    # evaluate with nothing reconciling them. Loop double-booking was the
-    # obvious symptom and it did not appear; disagreeing instructions are the
-    # same defect wearing different clothes.
+    # Cross-conflict coordination: the conflicts are solved independently, so
+    # one train can receive directives from several solves in the same evaluate
+    # with nothing reconciling them. Loop double-booking was the obvious
+    # symptom and it did not appear; disagreeing instructions are the same
+    # defect wearing different clothes.
     by_train: dict = {}
     for key, directives in plans.items():
         for d in directives:
             by_train.setdefault(d["train_id"], []).append((key, d))
 
-    print("\ncross-conflict directive collisions")
     collisions = 0
+    collision_rows: list = []
     for tid, entries in sorted(by_train.items()):
         if len(entries) < 2:
             continue
@@ -212,18 +173,9 @@ def main() -> int:
                   for _, d in entries if d["kind"] == "REGULATE"}
         contradictory = len(kinds) > 1 or len(stations) > 1 or len(speeds) > 1
         collisions += 1 if contradictory else 0
-        flag = "  <-- CONTRADICTORY" if contradictory else ""
-        print(f"  {tid}  {len(entries)} directives from "
-              f"{len({k for k, _ in entries})} conflicts{flag}")
-        for key, d in entries:
-            speed = d.get("target_speed_kmh")
-            speed_txt = f" target={float(speed):.1f}km/h" if speed is not None else ""
-            print(f"      {key}  {d['kind']:<14} "
-                  f"station={d.get('station_id')} until={d.get('until_train_id')}"
-                  f"{speed_txt}")
-    print(f"  trains with contradictory instructions: {collisions}")
+        collision_rows.append((tid, entries, contradictory))
 
-    print("\ndirective coverage")
+    coverage: list = []
     uncovered_total = 0
     for key, g in solved.items():
         members = set(g["conflicting_train_ids"])
@@ -237,20 +189,125 @@ def main() -> int:
         if not leads and untargeted:
             # An all-REGULATE plan names no until_train_id, so fall back to the
             # highest-priority train that received nothing -- that is the one
-            # the solver let run unimpeded.
-            leads = {max(untargeted, key=lambda t: det.trains[t].priority)}
+            # the solver let run unimpeded. sorted() first because max() returns
+            # the first maximal element in ITERATION order and the two freights
+            # tie at w=2.0: over a raw set that makes the answer depend on
+            # PYTHONHASHSEED, i.e. on the process rather than on the scenario.
+            leads = {max(sorted(untargeted),
+                         key=lambda t: det.trains[t].priority)}
         uncovered = len(members - targeted - leads)
         uncovered_total += uncovered
-        print(f"  {key}  group={len(members)} kept={len(kept)} "
-              f"targeted={len(targeted)} "
-              f"dropped-and-targeted={len(targeted & (members - kept))} "
-              f"lead={len(leads & members)} "
-              f"uncovered={uncovered}")
+        coverage.append({
+            "conflict_id": key,
+            "group": len(members),
+            "kept": len(kept),
+            "targeted": len(targeted),
+            "dropped_and_targeted": len(targeted & (members - kept)),
+            "lead": len(leads & members),
+            "uncovered": uncovered,
+        })
 
-    print(f"\nsummary: refused={refused}  contested_loops={contested}  "
-          f"contradictory_instructions={collisions}  "
-          f"uncovered_trains={uncovered_total}  "
-          f"policy_exceeded={tally['policy_exceeded']}")
+    emitted = sum(v for k, v in tally.items() if k.startswith("emitted:"))
+    refused = sum(v for k, v in tally.items() if k.startswith("refused:"))
+
+    return {
+        "summary": {
+            "conflicts": len(solved),
+            "emitted": emitted,
+            "refused": refused,
+            "contested_loops": contested,
+            "contradictory_instructions": collisions,
+            "uncovered_trains": uncovered_total,
+            "policy_exceeded": tally["policy_exceeded"],
+            "no_scenario": tally["no_scenario"],
+        },
+        "tally": tally,
+        "detail": detail,
+        "plans": plans,
+        "loop_bookings": loop_bookings,
+        "collision_rows": collision_rows,
+        "coverage": coverage,
+    }
+
+
+def main() -> int:
+    path = sys.argv[1] if len(sys.argv) > 1 else "data/scenario10.json"
+    network = json.load(open("data/network.json"))
+    scenario = json.load(open(path))
+    fleet = {t["train_id"]: t for t in scenario["trains"]}
+
+    inj = LiveTelemetryInjector(network, scenario)
+    det = ConflictDetector(network, fleet)
+    for event in inj.tick():
+        det.ingest(event)
+
+    # Same filter chain and survivor rule as evaluate(), imported rather than
+    # restated: soonest contention wins, NOT the largest group.
+    solved, _counts = solvable_conflicts(det)
+
+    scenarios_by_conflict = {}
+    for key, group in solved.items():
+        payload_trains, payload_topology = det.optimiser_inputs(group)
+        scenarios_by_conflict[key] = optimize_precedence(
+            payload_trains, payload_topology
+        )
+
+    audit = audit_plans(solved, scenarios_by_conflict, det, inj)
+    summary = audit["summary"]
+    tally = audit["tally"]
+
+    print(f"scenario: {path}   conflicts solved: {summary['conflicts']}")
+    print(f"directives emitted (OPT-1): {summary['emitted']}")
+    if summary["emitted"]:
+        print(f"refused by the simulator  : {summary['refused']}   "
+              f"({100.0 * summary['refused'] / summary['emitted']:.0f}%)")
+    else:
+        print("refused by the simulator  : n/a (nothing emitted)")
+    print()
+    for k in sorted(tally):
+        print(f"  {k:<32}{tally[k]}")
+    if audit["detail"]:
+        print("\ndetail")
+        for key, tid, kind, why in audit["detail"]:
+            print(f"  {key}  {tid:>6}  {kind:<14} {why}")
+
+    print("\nloop bookings (cross-conflict contention is the unexecutable case)")
+    if not audit["loop_bookings"]:
+        print("  none -- no HOLD_AT_LOOP directives in this tick")
+    for loop_id, bookings in sorted(audit["loop_bookings"].items()):
+        conflicts_using = {k for k, _ in bookings}
+        flag = "  <-- CONTESTED ACROSS CONFLICTS" if len(conflicts_using) > 1 else ""
+        print(f"  {loop_id:<18} {len(bookings)} train(s) "
+              f"from {len(conflicts_using)} conflict(s){flag}")
+        for k, tid in bookings:
+            print(f"      {k}  {tid}")
+
+    print("\ncross-conflict directive collisions")
+    for tid, entries, contradictory in audit["collision_rows"]:
+        flag = "  <-- CONTRADICTORY" if contradictory else ""
+        print(f"  {tid}  {len(entries)} directives from "
+              f"{len({k for k, _ in entries})} conflicts{flag}")
+        for key, d in entries:
+            speed = d.get("target_speed_kmh")
+            speed_txt = f" target={float(speed):.1f}km/h" if speed is not None else ""
+            print(f"      {key}  {d['kind']:<14} "
+                  f"station={d.get('station_id')} until={d.get('until_train_id')}"
+                  f"{speed_txt}")
+    print(f"  trains with contradictory instructions: "
+          f"{summary['contradictory_instructions']}")
+
+    print("\ndirective coverage")
+    for row in audit["coverage"]:
+        print(f"  {row['conflict_id']}  group={row['group']} kept={row['kept']} "
+              f"targeted={row['targeted']} "
+              f"dropped-and-targeted={row['dropped_and_targeted']} "
+              f"lead={row['lead']} uncovered={row['uncovered']}")
+
+    print(f"\nsummary: refused={summary['refused']}  "
+          f"contested_loops={summary['contested_loops']}  "
+          f"contradictory_instructions={summary['contradictory_instructions']}  "
+          f"uncovered_trains={summary['uncovered_trains']}  "
+          f"policy_exceeded={summary['policy_exceeded']}")
     return 0
 
 
