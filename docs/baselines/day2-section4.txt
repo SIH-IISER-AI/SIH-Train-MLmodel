@@ -45,3 +45,20 @@ directive coverage
   CONF-D3EE6385  group=2 kept=2 targeted=1 dropped-and-targeted=0 lead=1 uncovered=0
 
 summary: refused=1  contested_loops=0  contradictory_instructions=3  uncovered_trains=5  policy_exceeded=0
+
+
+# CAPTURED day 2, tag day2-audit. Pre-parity engine.
+#
+# SUPERSEDED for current numbers by day5-section4-parity.txt. Kept unedited:
+# this is the record of what the tool printed before the approach-physics fix,
+# and a capture that has been corrected after the fact is not a capture.
+#
+# What changed: _prepare() computed earliest_arrival_s as one accelerating
+# integral over the whole approach at the DESTINATION block's line speed,
+# ignoring intermediate speed restrictions (60/110/100/130/100/130/75/130/60
+# km/h on this line). Drift against detector.project() reached 207 s and
+# inverted the 12050/12138 arrival order. Fixed by passing window.t_in through.
+#
+# Consequence for this file: uncovered_trains reads 5 here and 6 post-fix.
+# Every other summary figure (refused=1, contested_loops=0,
+# contradictory_instructions=3, policy_exceeded=0) is unchanged.
