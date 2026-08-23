@@ -34,6 +34,22 @@ from railsim.state import (
 from detector import ConflictDetector, SEVERITY_BANDS
 from optimizer import optimize_precedence
 
+#: Day-5 reversibility switch. optimizer.py is never deleted; if the day-14
+#: merge gate fails, ENGINE stays 'enumerate' and the global model becomes a
+#: roadmap slide with measured numbers rather than a rollback.
+#:
+#: The switch is read here and applied ABOVE evaluate()'s conflict loop, not at
+#: the optimize_precedence call site. The global model solves ONCE per evaluate
+#: for every contested resource in the window and then decomposes back into
+#: per-conflict cards; there is no per-conflict call to swap. See decision 3 in
+#: docs/GLOBAL_MODEL_SPEC.md.
+ENGINE = os.getenv("ENGINE", "enumerate").strip().lower()
+if ENGINE not in ("enumerate", "global"):
+    raise SystemExit(f"ENGINE={ENGINE!r}; expected 'enumerate' or 'global'")
+if ENGINE == "global":
+    from optimizer_global import optimize_global  # noqa: F401
+    print("[ai] ENGINE=global selected (not yet implemented; day-6 deliverable)")
+
 REDIS_HOST = os.getenv("REDIS_HOST", "localhost")
 REDIS_PORT = int(os.getenv("REDIS_PORT", "6379"))
 

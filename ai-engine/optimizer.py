@@ -378,7 +378,9 @@ def _prepare(
                 existing_delay_s=int(raw.get("existing_delay_seconds", 0)),
                 earliest_arrival_s=int(
                     math.ceil(
-                        kin.traverse_seconds_accelerating(
+                        float(raw["projected_entry_s"])
+                        if raw.get("projected_entry_s") is not None
+                        else kin.traverse_seconds_accelerating(
                             distance_m, speed_ms, target_ms, profile.accel_ms2
                         )
                     )

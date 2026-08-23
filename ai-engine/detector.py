@@ -787,6 +787,7 @@ class ConflictDetector:
                     "distance_to_bottleneck": max(
                         0.0, (window.start_km - train.distance_km) * 1000.0
                     ),
+                    "projected_entry_s": float(window.t_in),
                     "priority_weight": train.priority,
                     "train_length_m": length_m,
                     "existing_delay_seconds": int(train.telemetry.get("delay_seconds", 0)),
