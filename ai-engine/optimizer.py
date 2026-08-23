@@ -228,6 +228,14 @@ MAX_TRAINS_ENUMERATED = int(os.getenv("MAX_TRAINS_ENUMERATED", "5"))
 #: bug, and 120 of them at 2 s each is a hung demo.
 SOLVER_TIME_LIMIT_S = 0.25
 
+#: Deterministic-time ceiling, in CP-SAT's own work units rather than seconds.
+#: Zero (production default) leaves the wall-clock limit alone. The A/B harness
+#: sets it so a truncated search truncates at the same point on every machine,
+#: which a wall-clock limit cannot promise -- and so that lifting the wall-clock
+#: backstop for reproducibility does not also remove the bound on a pathological
+#: model. Both properties are needed; neither limit gives both alone.
+SOLVER_DETERMINISTIC_TIME = float(os.getenv("SOLVER_DETERMINISTIC_TIME", "0"))
+
 #: Search workers per solve. Module-level so the benchmark can A/B it without
 #: editing the solver body.
 SOLVER_WORKERS = 1
@@ -577,6 +585,8 @@ def _solve_order(
     # search -- multiplied by n! constructions. A short limit is a backstop for
     # pathological infeasibility, not a working budget.
     solver.parameters.max_time_in_seconds = SOLVER_TIME_LIMIT_S
+    if SOLVER_DETERMINISTIC_TIME > 0:
+        solver.parameters.max_deterministic_time = SOLVER_DETERMINISTIC_TIME
     solver.parameters.num_search_workers = SOLVER_WORKERS
     status = solver.Solve(model)
 

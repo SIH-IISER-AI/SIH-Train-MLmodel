@@ -73,8 +73,9 @@ if h.audit_plans is not c.audit_plans:
 if o.ENUMERATION_BUDGET_S < 1e6:
     print(f"  BROKEN  ENUMERATION_BUDGET_S={o.ENUMERATION_BUDGET_S} still in force")
     sys.exit(1)
-if o.SOLVER_TIME_LIMIT_S < 10.0:
-    print(f"  BROKEN  SOLVER_TIME_LIMIT_S={o.SOLVER_TIME_LIMIT_S} still short")
+if o.SOLVER_DETERMINISTIC_TIME <= 0:
+    print("  BROKEN  SOLVER_DETERMINISTIC_TIME=0; a wall-clock-only budget "
+          "cannot reproduce across machines")
     sys.exit(1)
 
 print(f"  cap={o.MAX_TRAINS_ENUMERATED} workers={o.SOLVER_WORKERS} "

@@ -75,7 +75,14 @@ optimizer.ENUMERATION_BUDGET_S = float(
     os.getenv("HARNESS_ENUMERATION_BUDGET_S", "1e9")
 )
 optimizer.SOLVER_TIME_LIMIT_S = float(
-    os.getenv("HARNESS_SOLVER_TIME_LIMIT_S", "60.0")
+    os.getenv("HARNESS_SOLVER_TIME_LIMIT_S", "5.0")
+)
+#: Binds before the wall-clock limit above, so the truncation point is a
+#: property of the model rather than of the machine. 60 s of wall clock was
+#: reproducible in principle and unbounded in practice: one hard conflict at
+#: 120 permutations is two hours.
+optimizer.SOLVER_DETERMINISTIC_TIME = float(
+    os.getenv("HARNESS_SOLVER_DETERMINISTIC_TIME", "1.0")
 )
 
 NETWORK_PATH = os.getenv("NETWORK_PATH", "data/network.json")
