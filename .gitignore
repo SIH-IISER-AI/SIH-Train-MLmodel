@@ -71,4 +71,4 @@ appendonly.aof
 repomix-output.xml
 run-report.txt
 bench-report.txt
-docker-report.txt
+docker-report.txtsmoke-log.txt

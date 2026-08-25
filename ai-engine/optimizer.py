@@ -993,6 +993,14 @@ def optimize_precedence(
                 "policy_exceeded": policy_exceeded,
                 "directives": directives,
                 "delay_breakdown": breakdown,
+                # The precedence order and the solved schedule behind it. Not
+                # for the UI -- tests/test_global_encoding.py pins the global
+                # model to this order and compares entry times against these,
+                # and day 11 attributes directives back to the decision that
+                # caused them. Derived, not recomputed: a test that re-derives
+                # the order is testing its own copy of the enumeration.
+                "order_train_ids": [trains[i].train_id for i in solution["order"]],
+                "per_train": solution["per_train"],
             }
         )
 
