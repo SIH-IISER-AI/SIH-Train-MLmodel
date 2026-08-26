@@ -1,0 +1,52 @@
+scenario: data/scenario10.json   tick 1   contested resources: 6
+
+global: OPTIMAL  tiers=6/6  truncated=0
+
+SEC-PWL-KSV  (9 trains, enumerate dropped 4)
+  enumerate OPT-1 : 12001 -> 12002 -> 20172 -> 12050 -> 12138
+  global unpinned : 12001 -> 12002 -> 20172 -> 12050 -> 12138 -> 12626 -> 12280 -> 40201 -> 40208
+  AGREE on the enumerated subset
+
+TRK-DOWN-MAIN|BLK-108D  (2 trains)
+  enumerate OPT-1 : 12050 -> 20172
+  global unpinned : 20172 -> 12050
+  DIVERGE: 20172, 12050
+      20172: slack 224s  total_hold 2670s  stopped=False
+      12050: slack 3712s  total_hold 4312s  stopped=True
+
+TRK-DOWN-MAIN|BLK-115D  (4 trains)
+  enumerate OPT-1 : 12626 -> 12050 -> 20172 -> 40201
+  global unpinned : 40201 -> 20172 -> 12050 -> 12626
+  DIVERGE: 40201, 20172, 12050, 12626
+      12050: slack 300s  total_hold 4312s  stopped=False
+      40201: slack 0s  total_hold 11749s  stopped=False
+      20172: slack 2446s  total_hold 2670s  stopped=True
+      12626: slack 7659s  total_hold 7959s  stopped=True
+
+TRK-UP-MAIN|BLK-127U  (4 trains)
+  enumerate OPT-1 : 12001 -> 12138 -> 12280 -> 40208
+  global unpinned : 40208 -> 12001 -> 12138 -> 12280
+  DIVERGE: 40208, 12001, 12138, 12280
+      12138: slack 300s  total_hold 5779s  stopped=False
+      12280: slack 0s  total_hold 8875s  stopped=False
+      12001: slack 223s  total_hold 223s  stopped=False
+      40208: slack 0s  total_hold 14722s  stopped=False
+
+TRK-UP-MAIN|BLK-130U  (3 trains)
+  enumerate OPT-1 : 12001 -> 12138 -> 12280
+  global unpinned : 12001 -> 12138 -> 12280
+  AGREE on the enumerated subset
+
+TRK-UP-MAIN|BLK-131U  (2 trains)
+  enumerate OPT-1 : 12138 -> 12280
+  global unpinned : 12138 -> 12280
+  AGREE on the enumerated subset
+
+agree 3 / diverge 3 of 6 resources
+enumerate cap: 5 trains
+
+Each divergence needs a sentence before it goes on a slide. The two
+legitimate causes are (a) a train's order here is constrained by its
+chained arrival from another resource, and (b) loop capacity couples
+two resources the per-conflict engine solves separately. Anything
+else is worth investigating, not reporting.

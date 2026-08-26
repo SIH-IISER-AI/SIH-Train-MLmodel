@@ -95,8 +95,7 @@ MIN_TRAINS_FOR_CONTENTION = 2
 #:   soft  worst-case hold enters the lexicographic descent as the lowest tier.
 #:         The model minimises the worst standing time subject to precedence.
 #:   hard  total_hold[t] <= GLOBAL_HOLD_CAP_MULTIPLIER * max_hold_s, with the
-#:         optimize_precedence relaxation applied on infeasibility.
-GLOBAL_HOLD_POLICY = os.getenv("GLOBAL_HOLD_POLICY", "soft").strip().lower()
+
 
 #: Multiplier on max_hold_seconds for the hard backstop. 0 disables the bound
 #: entirely. Set it from measurement -- tests/measure_hold.py prints the
@@ -126,11 +125,24 @@ GLOBAL_STARVATION_THRESHOLD_S = int(
 #: twice is still a plan.
 GLOBAL_MAX_STOPS = int(os.getenv("GLOBAL_MAX_STOPS", "1"))
 
-#: Wall-clock ceiling for one full lexicographic descent, split across its
-#: tiers. Note the same caveat that applies to ENUMERATION_BUDGET_S: a
-#: truncated tier is no longer provably the lexicographic optimum. Unlike
-#: enumerate, the truncation is visible -- counts["truncated"] says so.
-GLOBAL_SOLVE_BUDGET_S = float(os.getenv("GLOBAL_SOLVE_BUDGET_S", "2.0"))
+#: Minimum approach distance for a stand to be EMITTED, in metres.
+#:
+#: An EMISSION filter, deliberately NOT a model constraint. The simulator
+#: refuses a hold whose station lies behind the train, and for the resource a
+#: train is already inside there is no such station ahead -- so emitting one is
+#: pointless. But forbidding the model to CONSIDER the stand is a different and
+#: worse thing: it changes the schedule for every other train on the resource.
+#:
+#: Measured on TRK-DOWN-MAIN|BLK-108D at scenario10 tick 0, pinned order
+#: 12050 -> 20172: with the constraint in the model, 20172 enters at 344 s;
+#: without it, 245 s, which is what _solve_order gives. 12050 is not stopped in
+#: either solution and its exit is 125 s in both, so the 99 s is not the stand
+#: being priced -- forbidding a decision perturbed a schedule that did not
+#: depend on it.
+#:
+#: A stand the model prices but cannot emit is a costed decision the card
+#: simply does not show. That is the cheaper error.
+HOLD_MIN_APPROACH_M = 50.0
 
 #: Wall-clock ceiling PER TIER, not for the descent as a whole. Dividing one
 #: total across N tiers is what broke the descent: every Solve() re-runs full
@@ -418,6 +430,7 @@ def build_and_solve(
     hold_bound: Optional[int] = None,
     enforce_direction: bool = True,
     max_stops: Optional[int] = None,
+    enforce_reachable: bool = True,
     solver_log: bool = False,
 ) -> GlobalSolution:
     """Build one CP-SAT model over every (train, resource) in `payloads`.
@@ -905,8 +918,6 @@ def build_and_solve(
                 model.Add(expr == solver.Value(expr))
                 _hint_from(best)
     else:
-        solver.parameters.max_time_in_seconds = tier_budget
-        model.Minimize(sum(flat_terms))
         status = solver.Solve(model)
         solve_count += 1
         if status in (cp_model.OPTIMAL, cp_model.FEASIBLE):
@@ -1031,6 +1042,14 @@ def solve_with_policy(
     if relaxed_stops.feasible:
         relaxed_stops.policy_exceeded = True
         return _flag_starvation(relaxed_stops)
+    
+    relaxed_reach = build_and_solve(
+        payloads, objective=objective, forbid=forbid,
+        hold_bound=0, enforce_reachable=False,
+    )
+    if relaxed_reach.feasible:
+        relaxed_reach.policy_exceeded = True
+        return _flag_starvation(relaxed_reach)
 
     solution = build_and_solve(
         payloads, objective=objective, forbid=forbid,
@@ -1122,13 +1141,19 @@ def _motivating_resource(solution: GlobalSolution, train_id: str) -> Optional[st
 
 
 def emit_directives(solution: GlobalSolution) -> List[Dict[str, Any]]:
-    """At most ONE directive per train, each carrying motivating_resource_id.
+    """EXACTLY ONE directive per train, each carrying motivating_resource_id.
 
     Enumerate emitted one per conflict and the same train collected three
     disagreeing regulation targets in a single evaluate (measured day 2:
-    contradictory_instructions = 3). Here the plan is one schedule, so a train
-    has one intervention: taken at the resource where its heaviest slack sits,
-    which is also where the precedence decision that caused it lives.
+    contradictory_instructions = 3). Here the plan is one schedule and the
+    simulator holds one state per train, so a train gets one instruction: the
+    intervention that comes FIRST along its route.
+
+    A train the plan holds at resource k AND regulates approaching resource m
+    receives only the hold. The regulation is a consequence of a decision the
+    train has not reached yet; it belongs to a later evaluate. Emitting both at
+    once is not a plan the railway can execute -- it is two instructions
+    racing, and the simulator resolves the race by discarding the hold.
     """
     if not solution.feasible:
         return []
@@ -1140,60 +1165,86 @@ def emit_directives(solution: GlobalSolution) -> List[Dict[str, Any]]:
     directives: List[Dict[str, Any]] = []
     for train_id in sorted(by_train):
         keys = sorted(by_train[train_id], key=lambda k: (solution.entry_s[k], k[1]))
-        stops = [k for k in keys if solution.stopped[k]]
-        # Every second of slack the model imposed WITHOUT stopping the train is
-        # regulation, and the simulator carries ONE target speed per train --
-        # so it aggregates into one directive or it is not executable. Distance
-        # is measured to the farthest regulated resource, which is the run the
-        # train actually has to lose the time over.
-        regulated = [
-            k for k in keys if not solution.stopped[k] and solution.slack_s[k] > 0
-        ]
-        regulation_s = sum(solution.slack_s[k] for k in regulated)
 
-        for key in stops:
-            _, resource_id = key
-            train = solution.train_of(key)
-            motivating = _motivating_resource(solution, train_id) or resource_id
-            timeout = solution.delay_s[key] + DIRECTIVE_RELEASE_TIMEOUT_S
-            until = _binding_predecessor(
-                solution, train_id, resource_id,
-                opposite_only=bool(solution.on_main[key]),
-            )
-
-            if solution.in_loop[key]:
-                directives.append({
-                    "kind": "HOLD_AT_LOOP", "train_id": train_id,
-                    "station_id": train.loop_station, "loop_id": train.loop_id,
-                    "until_train_id": until,
-                    "release_timeout_seconds": timeout,
-                    "motivating_resource_id": motivating,
-                })
+        # ONE directive per train, and it must be the intervention that comes
+        # FIRST along the route. The simulator holds one state per train:
+        # _drain_directives sets hold_station_id = None on any REGULATE, so a
+        # stand and a regulation submitted together cancel each other and the
+        # later one wins. Measured on scenario10 tick 0: 4 of 5 stands silently
+        # erased by the train's own regulation, with no refusal message from
+        # the simulator at all.
+        #
+        # This is not a wiring problem. A stand at resource k and a regulation
+        # approaching resource m are SEQUENTIAL, and submit_directive applies
+        # everything at once. The downstream instruction belongs to a later
+        # evaluate, after the release, when the train's position has advanced
+        # -- which is also how a controller issues them.
+        chosen: Optional[Tuple[str, Tuple[str, str]]] = None
+        for k in keys:
+            if solution.slack_s[k] <= 0:
+                continue
+            if solution.stopped[k]:
+                # Belt and braces on top of the reachability constraint: a
+                # stand the simulator will drop or silently re-target is worse
+                # than no instruction. The slack stays in total_hold either
+                # way; what is lost is the directive, and the card must not
+                # claim an action the railway cannot take.
+                if solution.train_of(k).distance_m <= HOLD_MIN_APPROACH_M:
+                    solution.counts["unreachable_stands"] = (
+                        solution.counts.get("unreachable_stands", 0) + 1
+                    )
+                    continue
+                chosen = ("STAND", k)
             else:
-                station = train.approach_station or solution.topologies.get(
-                    resource_id, {}
-                ).get("junction_id")
-                if station:
-                    directives.append({
-                        "kind": "STAND_ON_MAIN", "train_id": train_id,
-                        "station_id": station, "until_train_id": until,
-                        "release_timeout_seconds": timeout,
-                        "motivating_resource_id": motivating,
-                    })
-        if regulation_s > 0:
-            farthest = max(regulated, key=lambda k: solution.train_of(k).distance_m)
-            train = solution.train_of(farthest)
+                chosen = ("REGULATE", k)
+            break
+        if chosen is None:
+            continue
+
+        mode, key = chosen
+        _, resource_id = key
+        train = solution.train_of(key)
+        motivating = _motivating_resource(solution, train_id) or resource_id
+
+        if mode == "REGULATE":
+            # Only the slack at THIS resource. Aggregating slack the train will
+            # not reach until after a downstream decision prices a regulation
+            # against time it has not yet had.
             directives.append({
                 "kind": "REGULATE", "train_id": train_id,
                 "target_speed_kmh": float(round(
                     kin.regulated_speed_kmh(
-                        train.distance_m, train.speed_ms, regulation_s
+                        train.distance_m, train.speed_ms, solution.slack_s[key]
                     )
                 )),
-                "motivating_resource_id": (
-                    _motivating_resource(solution, train_id) or farthest[1]
-                ),
+                "motivating_resource_id": motivating,
             })
+            continue
+
+        timeout = solution.delay_s[key] + DIRECTIVE_RELEASE_TIMEOUT_S
+        until = _binding_predecessor(
+            solution, train_id, resource_id,
+            opposite_only=bool(solution.on_main[key]),
+        )
+        if solution.in_loop[key]:
+            directives.append({
+                "kind": "HOLD_AT_LOOP", "train_id": train_id,
+                "station_id": train.loop_station, "loop_id": train.loop_id,
+                "until_train_id": until,
+                "release_timeout_seconds": timeout,
+                "motivating_resource_id": motivating,
+            })
+        else:
+            station = train.approach_station or solution.topologies.get(
+                resource_id, {}
+            ).get("junction_id")
+            if station:
+                directives.append({
+                    "kind": "STAND_ON_MAIN", "train_id": train_id,
+                    "station_id": station, "until_train_id": until,
+                    "release_timeout_seconds": timeout,
+                    "motivating_resource_id": motivating,
+                })
 
     return directives
 

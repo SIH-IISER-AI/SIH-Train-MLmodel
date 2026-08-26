@@ -85,6 +85,7 @@ check "D12 per-tier budget"            present "GLOBAL_TIER_BUDGET_S"           
 check "D12 starvation threshold"       present "GLOBAL_STARVATION_THRESHOLD_S"   ai-engine/optimizer_global.py
 check "F7  deadline hoisted"           present "enumeration_deadline = time"     ai-engine/optimizer.py
 check "F8  unconditional priority sort" absent "        )\[:MAX_TRAINS_ENUMERATED\]" ai-engine/optimizer.py
+check "D11 replay gate exists"  present "submit_directive"  tests/test_directive_replay.py
 
 # A duplicated constant raises no error -- the later definition silently wins.
 # This is how the env override for the cap sweep died without a traceback.

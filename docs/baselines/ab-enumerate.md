@@ -167,3 +167,79 @@ Recorded because the corrections are part of the evidence.
   conditions than the greedy baseline; the mean is not the whole story.
 * Arm B's *outcome* columns are engine-independent — proven across the parity
   fix — so future engine comparisons need arm A runs only.
+
+## Addendum (days 8-11)
+
+### Withdrawn: intra-class shuffling
+
+An earlier draft reported that enumerate shuffles order within a priority
+class. Withdrawn. The effect was an artefact of the pre-parity
+`earliest_arrival_s` defect, which computed the approach as one accelerating
+integral at the destination block's line speed and drifted up to 207 s on a
+line running 60/110/100/130/100/130/75/130/60 km/h. That drift inverted the
+12050/12138 arrival order, which is an input to `forced_s` and hence to the
+anti-starvation baseline. With the physics corrected the shuffling does not
+occur. Do not cite it.
+
+### Seed-redraw ceiling
+
+The n=15 result is bounded by the number of independent seeds the scenario
+generator produces before repeating structural cases. Redrawing beyond that
+adds runs, not evidence, and the p-values stop being honest. Any claim of
+n > 15 needs a generator change first.
+
+### Arm A / arm B runtime gap
+
+Arm B's outcome columns are engine-independent — proven across the parity fix,
+where the engine changed and arm B did not. Each engine revision therefore
+costs arm A only, roughly 40-80 s per seed. Budget re-runs on that basis.
+
+### Enumerate is nondeterministic above cap ~6
+
+5,040 permutations of seven trains at ~2.8 ms each is ~14 s against
+`ENUMERATION_BUDGET_S = 5.0`. Enumerate explores roughly a third of the space
+and which third depends on machine load. Two identical cap-7 runs returned
+different OPT-1 orders.
+
+This is the strongest single argument in the file and it needs no delay
+statistic: the per-conflict engine's recommendation is not a function of the
+railway alone. The global engine's lexicographic descent completes 6/6 tiers in
+~7 s and returns byte-identical holds, precedence and headline across runs
+(tests/test_descent.py).
+
+### Loop contention: what was and was not observed
+
+Loop capacity is live and binding, demonstrated on LOOP-MTJ-01. But the
+observed case was 40208 booking one loop on two adjacent blocks of its OWN
+route — a pre-chaining artefact, not cross-conflict double booking. That claim
+was made and is withdrawn. After chaining the double booking disappears
+(tests/test_global_encoding.py asserts one berth per loop per train), and no
+genuine two-train contention for a single loop_id has been observed on either
+scenario. If one appears, capture it: a named loop, two named trains and two
+independently-correct solves is better evidence than any aggregate.
+
+### Enumerate's composed plan is not executable
+
+Under the pinned per-conflict orders on scenario.json, 40201 must be brought to
+a stand at both SEC-PWL-KSV and BLK-115D. Both slacks exceed what regulation
+can absorb, so both stops are forced. The simulator carries one hold flag per
+train — `standing_on_main`, `in_loop_id` and `hold_station_id` are scalars — so
+a two-stop schedule cannot be emitted as directives at all.
+
+This is an executability argument, independent of any delay measurement, and it
+is printed as a FINDING by the joint encoding gate.
+
+### Cumulative hold composes past a per-solve cap
+
+tests/test_global_hold.py, in one file: two conflicts, `discretionary 68 s` on
+each, `policy_exceeded = False` on both, composing to 4,002 s of delay and
+2,448 s of standing on one train. The global model at a 900 s cumulative bound
+returns INFEASIBLE. Under the per-conflict rule `cap_s = forced_s +
+max_hold_s`, every approval is compliant by construction — which is how 40201
+accumulated 8,533 s across ~35 of them with `policy_exceeded` reading 0.
+
+**Closed, day 9.** `total_hold[t]` sums standing time: `slack[t,k]` = the time
+the model chose to leave the train at a stand, counted once at the resource
+that imposed it. Regulated slow-running is priced as delay but is not a hold,
+because a train making 33 km/h is still clearing the section. See
+`GLOBAL_MODEL_SPEC.md` decision 4.

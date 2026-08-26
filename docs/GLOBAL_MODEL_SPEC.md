@@ -82,21 +82,6 @@ Card decomposition is then a `groupby` on that field, and the existing
 `conflict_id_for()` keying still works. Retrofitting this on day 11 means
 re-deriving attribution from solved times, which is guesswork.
 
-## Decision 4 — `total_hold[t]`, the constraint enumerate cannot state
-
-New, and the direct consequence of the 40201 finding.
-
-    total_hold[t] = SUM over k of (delay[t,k] - forced[t,k])
-    total_hold[t] <= max_hold_s
-
-One expression per train over the whole window, constraining **cumulative
-discretionary** delay. `DEFAULT_MAX_HOLD_SECONDS = 900` unchanged; what
-changes is the scope it applies to.
-
-This is the row that makes the day-14 merge gate meaningful: enumerate cannot
-express it, so `max_cumulative_hold_s` is a column where the global engine
-should win outright rather than trade.
-
 ## Decision 4 — the anti-starvation constraint  (CLOSED, day 9)
 
 ### What it sums
@@ -237,13 +222,31 @@ the injector will drop.
 
 ## Physics source of truth
 
-Constants come from `detector.project()`, not from `optimizer._prepare()`.
-`_prepare` is single-resource by construction — it computes
-`earliest_arrival_s` as an unimpeded run from the train's current position to
-one block, at that block's line speed, ignoring every intermediate speed
-restriction. Measured drift against `project()` was up to 207 s and flipped
-the 12050/12138 arrival order. Fixed on day 5 by passing `window.t_in`
-through; `tests/count_intervals.py` asserts the two agree.
+Constants come from `optimizer._prepare()`. This reverses the day-5 statement
+that they come from `detector.project()`, and the reversal is the point.
+
+The two agree. `_prepare` originally computed `earliest_arrival_s` as one
+accelerating integral over the whole approach at the DESTINATION block's line
+speed, ignoring every intermediate restriction on a line running
+60/110/100/130/100/130/75/130/60 km/h. Drift against `project()` reached 207 s
+and inverted the 12050/12138 arrival order — an input to `forced_s` and hence
+to the anti-starvation baseline. Fixed on day 5 by passing `window.t_in`
+through. `tests/count_intervals.py` asserts parity; it currently reads 0 s.
+
+Because they agree, `_prepare().earliest_arrival_s` IS the projection's `t_in`,
+and the global model can take every constant from `_prepare` — which is what
+keeps the isolated encoding gate an EXACT comparison against `_solve_order`.
+Taking constants from `project()` instead would make the two engines
+incomparable and remove the only measurement that says the encoding is right.
+
+One constant does NOT agree, and it matters. `occupancy_running_s` is the full
+block sweep from the train's CURRENT speed. For the resource a train is already
+inside, the projection's remaining run is a partial traversal: measured at
+scenario10 tick 0, `occupancy_running_s` exceeds it by 278 s on
+40201/BLK-114D, 250 s on 40208/BLK-128U and 223 s on 54402/BLK-145U. It is safe
+for NoOverlap, where a longer occupancy is conservative, and wrong for chaining.
+Chaining therefore uses `earliest_arrival_s` DELTAS, never `exit[k]`.
+See the module docstring in `optimizer_global.py`.
 
 ## Window scope
 
@@ -274,3 +277,51 @@ The switch sits ABOVE `evaluate()`'s conflict loop, not at the
 `optimize_precedence` call site: the global model solves once per evaluate for
 all conflicts, then decomposes per decision 3. A drop-in at the call site is
 not possible.
+
+## Superseded plan items (day 8-9)
+
+Two items from the day-8 plan were not implemented, deliberately. Both would
+have been wrong. Recorded here because both look like omissions.
+
+### 8.1 — join scope_window() into the model to supply route order
+
+NOT DONE, and not needed. `_prepare().earliest_arrival_s` IS the projection's
+t_in for that resource (the day-5 parity fix passes `window.t_in` through, and
+tests/count_intervals.py asserts the two agree to 0 s). A route is traversed in
+time order, so sorting a train's intervals by `earliest_arrival_s` recovers
+route order exactly; ties break on `resource_id` for determinism. `seq` is
+information the model already has under another name.
+
+The transit between two of a train's resources is then
+`earliest_arrival_s[k+1] - earliest_arrival_s[k]`, correct whether the two are
+adjacent or ten blocks apart — which matters, because payloads contain only
+CONTESTED resources, so consecutive model intervals are usually not adjacent on
+the route. A `seq`-based chain has no answer for that case.
+
+`scope_window()` remains the sizing and contiguity instrument used by
+tests/count_intervals.py. It is not on the model's path. Do not join it.
+
+### 9.4 — the joint gate must be clean
+
+REDEFINED. Before chaining, the joint model was the UNION of independent
+models, so an entry-time mismatch against enumerate was unambiguously an
+encoding error. After chaining it is not: a train held at resource k arrives at
+k+1 later BY DESIGN, and that displacement propagates to whatever follows it at
+k+1. Comparing entry times against a per-conflict engine that cannot see the
+hold would fail the gate for exactly the behaviour the gate exists to produce.
+
+The gate is therefore split:
+
+  ISOLATED   the encoding verdict. Exact comparison against _solve_order on
+             every field, one model per conflict, order pinned. Unchanged and
+             non-negotiable: 15/15 conflicts on scenario10, 2/2 on scenario.
+  JOINT      structural assertions plus a coordination report. Chain identity
+             at every link, one berth per loop per train, total_hold as the sum
+             of slacks, one stand per train on the unpinned solve. Entry-time
+             deltas versus enumerate are PRINTED, never asserted.
+
+A consequence worth keeping: under the pinned per-conflict orders, 40201 must
+be brought to a stand at both SEC-PWL-KSV and BLK-115D. The simulator carries
+one hold flag per train, so a two-stop schedule cannot be emitted as directives
+at all. The joint gate prints this as a FINDING. Enumerate's composed plan is
+not executable, and that argument needs no delay statistic.

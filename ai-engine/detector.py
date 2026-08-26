@@ -741,6 +741,7 @@ class ConflictDetector:
                 g["predicted_time_to_conflict_seconds"],
             ),
         )
+    
 
     # -- packaging for the optimiser ---------------------------------------
 
