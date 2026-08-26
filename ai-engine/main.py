@@ -46,9 +46,11 @@ from optimizer import optimize_precedence
 ENGINE = os.getenv("ENGINE", "enumerate").strip().lower()
 if ENGINE not in ("enumerate", "global"):
     raise SystemExit(f"ENGINE={ENGINE!r}; expected 'enumerate' or 'global'")
+optimize_global = None
 if ENGINE == "global":
-    from optimizer_global import optimize_global  # noqa: F401
-    print("[ai] ENGINE=global selected (not yet implemented; day-6 deliverable)")
+    from optimizer_global import optimize_global  # noqa: F811
+    print("[ai] ENGINE=global selected: one CP-SAT model per evaluate, "
+          "lexicographic descent by IR class, decomposed per decision 3")
 
 REDIS_HOST = os.getenv("REDIS_HOST", "localhost")
 REDIS_PORT = int(os.getenv("REDIS_PORT", "6379"))
@@ -350,6 +352,19 @@ class Engine:
         # committed to the resource. See solvable_conflicts().
         candidates, _ = solvable_conflicts(self.detector)
 
+        # ENGINE=global solves every raised conflict in ONE model, then hands
+        # back the same conflict_id -> [scenario] mapping the per-conflict
+        # engine produces. The card, the OPT-1/OPT-2 selector and the
+        # controller's authority over which plan is executed are unchanged --
+        # only where precedence is decided has moved.
+        global_plans: Dict[str, Any] = {}
+        if ENGINE == "global" and candidates:
+            try:
+                global_plans = optimize_global(self.detector, candidates)
+            except Exception as exc:  # noqa: BLE001
+                print(f"[ai] global solve failed: {exc!r}")
+                global_plans = {}
+
         for conflict_id, conflict in candidates.items():
             severity = self._stable_severity(
                 conflict_id,
@@ -371,15 +386,23 @@ class Engine:
                     self.plan_in_force.pop(conflict_id, None)
                     plan = None
 
-            trains_in_conflict, track_topology = self.detector.optimiser_inputs(conflict)
-            try:
-                scenarios = optimize_precedence(trains_in_conflict, track_topology)
-            except Exception as exc:  # noqa: BLE001
-                # A solver failure must not take the engine down. A controller
-                # with a warning and no advice is still better off than one with
-                # neither, so the alert is published either way.
-                print(f"[ai] solver failed for {conflict_id}: {exc!r}")
-                scenarios = []
+            if ENGINE == "global":
+                scenarios = global_plans.get(conflict_id, [])
+            else:
+                trains_in_conflict, track_topology = self.detector.optimiser_inputs(
+                    conflict
+                )
+                try:
+                    scenarios = optimize_precedence(
+                        trains_in_conflict, track_topology
+                    )
+                except Exception as exc:  # noqa: BLE001
+                    # A solver failure must not take the engine down. A
+                    # controller with a warning and no advice is still better
+                    # off than one with neither, so the alert is published
+                    # either way.
+                    print(f"[ai] solver failed for {conflict_id}: {exc!r}")
+                    scenarios = []
 
             if plan is None:
                 plan_state = "OPEN"

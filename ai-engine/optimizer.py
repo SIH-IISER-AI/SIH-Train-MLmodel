@@ -275,6 +275,10 @@ class _ConflictTrain:
     loop_id: Optional[str]
     loop_station: Optional[str]
     approach_station: Optional[str]
+    #: Running direction at the contested resource, UP or DOWN. Optional: the
+    #: detector supplies it, hand-built payloads may not, and an unknown
+    #: direction must not silently forbid a legal plan. See decision 5.
+    direction: Optional[str] = None
 
 
 def _prepare(
@@ -408,6 +412,9 @@ def _prepare(
                 loop_station=(usable_loop or {}).get("station_id"),
                 approach_station=(
                     str(raw["hold_station_id"]) if raw.get("hold_station_id") else None
+                ),
+                direction=(
+                    str(raw["direction"]).upper() if raw.get("direction") else None
                 ),
             )
         )

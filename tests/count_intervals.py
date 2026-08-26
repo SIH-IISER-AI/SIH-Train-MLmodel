@@ -65,6 +65,38 @@ def main() -> int:
         line = "single" if group[0].single_line else "double"
         print(f"  {resource_id:<26} {len(trains):>2} trains  {line}  "
               f"{' '.join(trains)}")
+        
+            # Contiguity. Chaining assumes a train's projected occupancies are DISJOINT
+    # AND SEQUENTIAL -- resource k+1 begins exactly where k ends. project() sets
+    # distance = position.resource_end_km each step and topology.resolve()
+    # returns exactly one resource per position, so this should hold by
+    # construction; day-2 output confirms it (12626 exits BLK-115D at 611 s and
+    # enters SEC-PWL-KSV at 611 s). Assert it anyway: if project() ever develops
+    # a gap or an overlap, chaining encodes it silently and the model quietly
+    # prices a schedule no train can run.
+    #
+    # Tolerance is 1 s and the reason is nameable: earliest_in_s is ceil(t_in)
+    # and running_s is ceil(t_out) - ceil(t_in), so the identity is exact in
+    # real seconds and can only differ by the rounding step. Anything larger is
+    # a real discontinuity.
+    print("\ncontiguity: intervals[k].earliest_in == intervals[k-1].earliest_in "
+          "+ intervals[k-1].running")
+    breaks = 0
+    worst_gap = 0
+    for train_id, group in sorted(scope.by_train.items()):
+        for previous, following in zip(group, group[1:]):
+            gap = abs(
+                previous.earliest_in_s + previous.running_s - following.earliest_in_s
+            )
+            worst_gap = max(worst_gap, gap)
+            if gap > 1:
+                breaks += 1
+                print(f"  BREAK {train_id} {previous.resource_id} -> "
+                      f"{following.resource_id}: {previous.earliest_in_s}"
+                      f"+{previous.running_s} != {following.earliest_in_s} "
+                      f"({gap}s)")
+    print(f"  worst gap: {worst_gap}s across "
+          f"{sum(max(0, len(g) - 1) for g in scope.by_train.values())} hops")
 
     # Physics parity. Take the conflict evaluate() would solve and compare
     # _prepare's earliest_arrival_s against project()'s t_in for the same
@@ -90,6 +122,10 @@ def main() -> int:
     print(f"  worst drift: {worst}s")
 
     print()
+    if breaks:
+        print(f"GATE FAILED: {breaks} projection discontinuit(ies). project() "
+              f"has a gap or an overlap; chaining would encode it silently.")
+        return 1
     if counts["intervals"] >= GATE_INTERVALS:
         print(f"GATE FAILED: {counts['intervals']} intervals at "
               f"{WINDOW_HORIZON_S}s, ceiling is {GATE_INTERVALS}. Narrow the "

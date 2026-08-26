@@ -794,6 +794,13 @@ class ConflictDetector:
                     "hold_station_id": window.entry_station_id,
                     "hold_loop_id": loop.id if loop else None,
                     "hold_loop_length_m": loop.usable_length_m if loop else 0.0,
+                    # Decision 5: the global model forbids a same-direction
+                    # STAND_ON_MAIN, which the injector refuses anyway. Resolved
+                    # at the train's CURRENT position, which is where the
+                    # injector resolves it too when it applies the directive.
+                    "direction": self.topology.resolve(
+                        train.legs, train.distance_km
+                    ).direction,
                 }
             )
 

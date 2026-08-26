@@ -45,6 +45,29 @@ services:
     environment:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
+      # Every value below was measured, not chosen. See docs/GLOBAL_MODEL_SPEC.md.
+      - ENGINE=global
+      # Per TIER, not per descent: CP-SAT re-runs full presolve on every
+      # Solve() call, so dividing one total across six tiers puts each below
+      # the fixed setup cost. At 0.15s/tier the descent completed 1 of 6.
+      # Observed per-tier cost 500-1300ms; 2.0 is ~1.5x the slowest.
+      - GLOBAL_TIER_BUDGET_S=2.0
+      # Deterministic time is reproducible across machines; the wall clock is
+      # only a safety net. Same reason enumerate's wall-clock budget makes its
+      # OPT-1 a function of machine load.
+      - GLOBAL_DET_BUDGET=8.0
+      # Two hours: where a detention stops being regulation and becomes a
+      # reportable event. From operating practice, NOT from a solve -- a
+      # threshold derived from the model's own optimum cannot bind, which is
+      # precisely the enumerate defect this constraint exists to catch.
+      - GLOBAL_STARVATION_THRESHOLD_S=7200
+      # Hard cumulative bound OFF in production: it can return nothing, and
+      # when it binds it forces a second full descent. Used only by
+      # tests/test_global_hold.py, which needs a model that refuses.
+      - GLOBAL_HOLD_CAP_MULTIPLIER=0
+      # The simulator carries one hold flag per train, so a two-stop schedule
+      # is not expressible as directives at all.
+      - GLOBAL_MAX_STOPS=1
     depends_on:
       redis:
         condition: service_healthy

@@ -76,6 +76,13 @@ check "F5  single search worker"       present "SOLVER_WORKERS = 1"             
 check "F6  budget default still 5.0"   present "ENUMERATION_BUDGET_S., .5.0"     ai-engine/optimizer.py
 check "F6b cap default still 5"        present "MAX_TRAINS_ENUMERATED., .5"      ai-engine/optimizer.py
 check "F6  time imported"              present "^import time"                    ai-engine/optimizer.py
+check "D8  chaining present"           present "def chain_links"                 ai-engine/optimizer_global.py
+check "D8  slack against ready"        present "slack\[key\] == entry\[key\] - ready" ai-engine/optimizer_global.py
+check "D9  exemption removed"          absent  "EXPECTED (pre-chaining)"          tests/test_global_encoding.py
+check "D10 lexicographic descent"      present "lexicographic"                   ai-engine/optimizer_global.py
+check "D11 motivating_resource_id"     present "motivating_resource_id"          ai-engine/optimizer_global.py
+check "D12 per-tier budget"            present "GLOBAL_TIER_BUDGET_S"            ai-engine/optimizer_global.py
+check "D12 starvation threshold"       present "GLOBAL_STARVATION_THRESHOLD_S"   ai-engine/optimizer_global.py
 check "F7  deadline hoisted"           present "enumeration_deadline = time"     ai-engine/optimizer.py
 check "F8  unconditional priority sort" absent "        )\[:MAX_TRAINS_ENUMERATED\]" ai-engine/optimizer.py
 
@@ -141,7 +148,8 @@ run_test() {
 }
 
 for t in test_speed_parity.py test_stand.py test_hold_release.py \
-         test_policy_cap.py test_hysteresis.py; do
+         test_policy_cap.py test_hysteresis.py \
+         test_chaining.py test_global_hold.py test_global_encoding.py; do
   run_test "$t"
 done
 

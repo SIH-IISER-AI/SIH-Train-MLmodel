@@ -97,11 +97,117 @@ This is the row that makes the day-14 merge gate meaningful: enumerate cannot
 express it, so `max_cumulative_hold_s` is a column where the global engine
 should win outright rather than trade.
 
-OPEN — must be resolved before this is encoded: 40201's 8,533 s has not been
-decomposed into stands versus regulated crawling. If most of it is REGULATE
-slow-running rather than holds, then `total_hold[t]` constrains the wrong
-quantity and the expression must sum total discretionary delay, not hold
-time. Run the arm A / arm B per-train comparison and settle it first.
+## Decision 4 — the anti-starvation constraint  (CLOSED, day 9)
+
+### What it sums
+
+    slack[t,k]      = entry[t,k] - ready[t,k]
+    ready[t,k]      = entry[t,k-1] + travel_s[t,k-1] + stop_extra_s[t,k-1]·stopped[t,k-1]
+    ready[t,0]      = earliest_arrival_s[t,0]
+    total_hold[t]   = SUM over k of slack[t,k]
+
+In words: the time the model chose to leave train t standing, counted once at
+the resource where the stand was imposed.
+
+`wait[t,k] = entry[t,k] - earliest_arrival_s[t,k]` is retained separately as
+CUMULATIVE lateness. It is what the controller-facing delay figures report. It
+is deliberately not what `total_hold` sums: summing lateness would charge one
+upstream hold again at every resource downstream of it, and `total_hold` would
+grow with route length rather than with standing time.
+
+Asserted in tests/test_global_encoding.py ("total_hold[t] is the sum of its
+slacks", every train, both scenarios) and in tests/test_chaining.py case (d).
+
+### Why there is no `forced` term
+
+The day-5 spec had `sum(delay[t,k] - forced[t,k])`. That cannot be encoded.
+`forced_s` is only a constant once the order is fixed; `_solve_order` computes
+it per permutation, and `optimize_precedence` sets `cap = horizon` in the
+unpinned case for exactly this reason. With precedence as a decision variable
+there is no per-solve baseline to subtract.
+
+The consequence is that `slack` includes standing because the section ahead is
+genuinely occupied. That is intended. Under the per-conflict engine that time
+was `forced` and therefore free, which is how 40201 accumulated 8,533 s across
+~35 individually-compliant approvals.
+
+### Why the constraint is soft
+
+A hard ceiling on this quantity is infeasible on the production scenario:
+12280 carries 8,813 s of queueing on one conflict at tick 0. An infeasible
+model gives the controller nothing at all, which is a worse answer to a
+CRITICAL alert than a plan that breaks a guideline and says so.
+
+`worst_hold = max over t of total_hold[t]` therefore enters the lexicographic
+descent as its lowest tier. The model minimises the worst standing time on any
+train, subject to every priority-class cost already fixed.
+
+This tier is load-bearing and was measured: with the descent starved to one
+tier of six, `worst_hold` never executed and 12280 carried 22,707 s. With all
+six tiers completing, the optimum is 14,722 s — a 35% reduction produced by
+the tier alone. See "Solve budget" below.
+
+### The reporting threshold
+
+    GLOBAL_STARVATION_THRESHOLD_S = 7200
+
+A plan holding any train longer than this sets `policy_exceeded` on every card
+it produced, and names the train in `counts["starved"]`.
+
+The number comes from operating practice — two hours is where a detention
+stops being regulation and becomes a reportable event — and NOT from any
+solve. This is the point of the decision. Calibrating the ceiling from the
+model's own optimum reproduces the defect this constraint exists to catch:
+`cap_s[i] = forced_s[i] + max_hold_s` derived its ceiling from the quantity it
+constrained, so no approval could ever violate it. A threshold that cannot
+bind is not a threshold.
+
+On scenario10 tick 0 the flag fires: 12280 is held 14,722 s against a 7,200 s
+guideline. The card says so.
+
+### The hard bound, and where it is still used
+
+`GLOBAL_HOLD_CAP_MULTIPLIER` (default 0, disabled) applies
+`total_hold[t] <= multiplier · max_hold_seconds` as a real constraint, with the
+optimize_precedence relaxation on infeasibility.
+
+It is off in production for two reasons: it can return nothing, and when it
+binds it forces a second full descent — ~7 s becomes ~14 s, doubled again by
+the counterfactual.
+
+It remains available because tests/test_global_hold.py needs a model that
+refuses. That test is the day-14 argument in one file: two holds that
+`optimize_precedence` approves with `policy_exceeded=False` on both, composing
+to 2,448 s on one train, which the global model at `hold_bound=900` declares
+INFEASIBLE. Never applied under `pin_order` — the pin exists to reproduce
+`_solve_order`, which has no cumulative constraint to reproduce.
+
+### Solve budget (day 11)
+
+    GLOBAL_TIER_BUDGET_S = 2.0     wall clock, PER TIER
+    GLOBAL_DET_BUDGET    = 8.0     deterministic time per solve
+
+Per tier, not per descent. Every `Solve()` call re-runs full presolve on the
+whole model — CP-SAT carries no state between invocations, and solution
+hinting does not change that — so dividing one total across six tiers puts
+each below the fixed setup cost. Measured: at 0.15 s per tier the descent
+completed 1 of 6 at every total from 0.5 s to 2.0 s.
+
+Observed per-tier cost is 500–1300 ms and roughly flat across tiers. 2.0 s is
+~1.5x the slowest observed tier. At 1.5 s the descent completes 6/6 with every
+tier OPTIMAL and an identical plan across three runs; below 1.2 s it degrades
+non-deterministically — same budget, different tier counts, different orders.
+
+`counts["tier_log"]` records each tier's status and elapsed time.
+`counts["truncated"]` is 1 if any tier returned FEASIBLE rather than OPTIMAL,
+or if the descent stopped early. A truncated descent is not the lexicographic
+optimum and the unpinned order comparison against enumerate's OPT-1 is not
+valid against one.
+
+End-to-end: ~7 s for OPT-1 plus the counterfactual, carrying all nine trains
+contending SEC-PWL-KSV. Against `ENUMERATION_BUDGET_S = 5.0`, inside which
+enumerate explores roughly a third of 5,040 permutations of seven trains and
+returns a different OPT-1 depending on machine load.
 
 Relaxation mirrors `optimize_precedence`: if infeasible under the cap, re-solve
 at 3x and set `policy_exceeded`. A plan that breaks a guideline beats no plan,
