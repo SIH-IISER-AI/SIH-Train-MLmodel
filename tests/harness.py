@@ -49,6 +49,13 @@ from injector import LiveTelemetryInjector  # noqa: E402
 from main import plan_fingerprint, solvable_conflicts  # noqa: E402
 from optimizer import CLASS_PREMIER, optimize_precedence, priority_class  # noqa: E402
 
+ENGINE = os.getenv("ENGINE", "enumerate").strip().lower()
+if ENGINE not in ("enumerate", "global"):
+    raise SystemExit(f"ENGINE={ENGINE!r}; expected 'enumerate' or 'global'")
+optimize_global = None
+if ENGINE == "global":
+    from optimizer_global import optimize_global  # noqa: E402,F811
+
 sys.path.insert(0, "tests")
 from count_refusals import audit_plans  # noqa: E402
 
@@ -242,6 +249,8 @@ def run(seed: int, arm: str, ticks: int, progress_every: int = 0) -> dict:
     all_conflict_ids: set = set()
 
     max_solve_s = 0.0
+    solve_calls = 0
+    solve_total_s = 0.0
     largest_group = 0
     approval_events = 0
     directives_submitted = 0
@@ -274,17 +283,36 @@ def run(seed: int, arm: str, ticks: int, progress_every: int = 0) -> dict:
         candidates, _counts = solvable_conflicts(det)
         all_conflict_ids.update(candidates)
 
+        global_plans: dict = {}
+        if ENGINE == "global" and candidates:
+            solve_started = time.perf_counter()
+            try:
+                global_plans = optimize_global(det, candidates, max_scenarios=1)
+            except Exception as exc:  # noqa: BLE001
+                print(f"  tick {tick}: global solve failed: {exc!r}", flush=True)
+                global_plans = {}
+            elapsed = time.perf_counter() - solve_started
+            max_solve_s = max(max_solve_s, elapsed)
+            solve_calls += 1
+            solve_total_s += elapsed
+
         fired: dict = {}
         scenarios_by_conflict: dict = {}
         for conflict_id, conflict in candidates.items():
             largest_group = max(
                 largest_group, len(conflict["conflicting_train_ids"])
             )
-            payload_trains, payload_topology = det.optimiser_inputs(conflict)
 
-            solve_started = time.perf_counter()
-            scenarios = optimize_precedence(payload_trains, payload_topology)
-            max_solve_s = max(max_solve_s, time.perf_counter() - solve_started)
+            if ENGINE == "global":
+                scenarios = global_plans.get(conflict_id, [])
+            else:
+                payload_trains, payload_topology = det.optimiser_inputs(conflict)
+                solve_started = time.perf_counter()
+                scenarios = optimize_precedence(payload_trains, payload_topology)
+                elapsed = time.perf_counter() - solve_started
+                max_solve_s = max(max_solve_s, elapsed)
+                solve_calls += 1
+                solve_total_s += elapsed
 
             scenarios_by_conflict[conflict_id] = scenarios
             if not scenarios:
@@ -320,10 +348,12 @@ def run(seed: int, arm: str, ticks: int, progress_every: int = 0) -> dict:
             totals["policy_exceeded"] += summary["policy_exceeded"]
 
         if progress_every and tick % progress_every == 0:
+            wall = time.perf_counter() - started
             print(
                 f"  tick {tick:>5}/{ticks}  conflicts={len(candidates)} "
                 f"approvals={approval_events} cleared={cleared} "
-                f"{time.perf_counter() - started:.0f}s",
+                f"solves={solve_calls} solve_s={solve_total_s:.0f} "
+                f"wall={wall:.0f}s  proj={wall * ticks / tick:.0f}s",
                 flush=True,
             )
 
@@ -407,7 +437,7 @@ def main() -> int:
 
     print(
         f"harness seed={args.seed} arm={args.arm.upper()} ticks={args.ticks} "
-        f"rule={APPROVAL_RULE} cap={optimizer.MAX_TRAINS_ENUMERATED} "
+        f"engine={ENGINE} rule={APPROVAL_RULE} cap={optimizer.MAX_TRAINS_ENUMERATED} "
         f"budget={optimizer.ENUMERATION_BUDGET_S} "
         f"limit={optimizer.SOLVER_TIME_LIMIT_S}",
         flush=True,
