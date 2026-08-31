@@ -277,8 +277,13 @@ delay identically.
 **The speed bar reads against booked speed.** Against the permitted ceiling a
 train running perfectly to book reads 75% and looks like it is dawdling.
 
-**`contracts.ts` mirrors the Pydantic models one-for-one.** The file asserts this
-in its header; it drifted twice.
+**`contracts.ts` mirrors `shared/railsim/contracts.py`.** It drifted three times;
+the third was found by running the frontend on day 12 after eleven days apart,
+with six fields missing including `STAND_ON_MAIN` — which the engine emits and
+which the deck's hold counter was silently not counting. The header no longer
+claims one-for-one parity; fields the engine emits but the UI does not read are
+declared optional, so a missing field is a compile error rather than an
+undefined.
 
 ---
 
@@ -311,9 +316,10 @@ dominance test, so a second option can be worse for one train and better for non
 and each label renders at a fixed offset — concentrated exactly where a controller
 is looking.
 
-**`policy_exceeded` has never been exercised.** `max_hold_seconds` is hardcoded in
-`optimiser_inputs`, so config changes to the cap never reached the solver and the
-falsification test measured nothing.
+**`policy_exceeded` was never exercised under the per-conflict engine** —
+`max_hold_seconds` was hardcoded in `optimiser_inputs`, so config changes never
+reached the solver. Under ENGINE=global it now fires on every card in every run,
+for the reason given in the day-12 section: it is overloaded and unscoped.
 
 **Projected contention times jitter by 30–40 s** against a 10 s tick. Modelling
 exit speed honestly (`v² = u² + 2as`, rather than assuming every train reaches
@@ -321,3 +327,111 @@ target by the end of every resource) is physically correct but did not remove it
 so the cause is elsewhere. Invisible at the displayed resolution — the countdown
 reads in minutes.
 
+---
+
+## Day 12 — the integration fork
+
+The engine ran for eleven days without the frontend. This is what running them
+together produced. Everything here was found by looking at the screen or the
+container log, not by reading code.
+
+**Production evaluate cost is not the day-11 bench.** Two figures were in
+circulation: `~7 s` per descent from `test_descent.py`, and `500-1300 ms` per tier
+from a `scope_window()` sizing sweep. Neither describes what ships. `scope_window`
+is an instrument; `optimize_global` builds payloads from `candidates`, and that
+model is roughly a third the size — 6 resources, 24 intervals, 106 booleans,
+tiers at 190-310 ms. Measured in-container on scenario10 across 157 solves:
+median 0.77 s, p95 2.61 s, max 5.09 s. One evaluate is TWO lexicographic
+descents, the plan and the counterfactual under `forbid=headline`; the
+counterfactual is about 40% of the cost and serves only OPT-2.
+
+**Cost tracks conflict count, so a tick-0 measurement is a floor.** Both the
+5.09 s and 3.50 s solves land at seven conflicts; the host probe measured six at
+2.60-2.68 s. Any gate stated as a single-call ceiling measures the wrong
+quantity. The gate is lag stability: backlog no larger at the end of a run than
+at the start, with p95 under two tick periods reported alongside.
+
+**`policy_exceeded` is two different findings wearing one name.** It is set by
+the relaxation ladder in `solve_with_policy` AND, separately, by
+`_flag_starvation` whenever any train's `total_hold_s` exceeds
+`GLOBAL_STARVATION_THRESHOLD_S`. Because the flag lives on `GlobalSolution` and
+`_scenario_from` copies it to every scenario, one starved train flags every card
+on the screen. Observed on a MEDIUM card with two trains, a two-minute clearance
+time and both trains delayed by zero minutes, rendered under copy reading "every
+option below detains a train beyond standing instructions." The copy is also
+describing a mechanism that cannot fire in production: `GLOBAL_HOLD_CAP_MULTIPLIER=0`
+skips the hold-cap rung entirely. Splitting the flag and scoping the badge to a
+card's own members is presentation work and is not behind the day-15 freeze.
+
+**A card can describe holds the plan does not contain.** `_scenario_from` builds
+its clause text by iterating members with `in_loop` / `on_main` / `slack > 0` at
+this resource, while `directives` is filtered on
+`motivating_resource_id == resource_id`. Two predicates over one solution. When
+attribution sends a train's directive to a different resource, the card names the
+train, the loop and the duration with nothing behind it — and approving it
+returns `no-op scenario, nothing to apply` while the engine then reports
+IN_FORCE for a plan that touched the railway zero times. Roughly a third of
+approvals in the day-12 run did this. The two predicates must be the same one.
+
+**Refused directives are no longer silent, and the verdict is wrong anyway.**
+The simulator now logs `has passed BVH; cannot stand short of it` and `has passed
+MTJ; re-targeting hold to the next loop ahead`. But `_apply_action` publishes its
+CONTROLLER_ACTION_RESULT off `submit_directive` returning True, and the refusal
+happens later in `_drain_directives` — so the controller is told `applied` for
+directives the railway then declined. Observed on 12002 and 20172 in one
+approval, both refused, both reported applied.
+
+**Item 11.4 is larger than "one train."** It reproduced in production on 12001,
+12002 and 20172, at BVH and MTJ, in a single run. Combined with the false
+`applied` verdict and a frozen countdown, a controller who approves a refused
+stand sees DIVERGED, re-approves, is refused again, and has no action available
+that exits the loop. The `stand_station_id` separation stays the fix; the scope
+is three trains and a verdict path, not one directive.
+
+**`predicted_time_to_conflict_seconds` is not a liveness signal.** Across two
+independent container runs with completely different fleet states, conflicts
+republished four times each with byte-identical T- values while the plan beneath
+them moved by up to 106 minutes of standing time — severity, T- and plan_state
+all unchanged. `MIN_PROJECTION_SPEED_KMH = 5.0` is the leading hypothesis, since
+a stationary train projected at the floor yields a fixed arrival from a fixed
+distance. Not yet classified. When reading the diagnostic, note that
+`contested_at = max(window_a.t_in, window_b.t_in)` and a group takes the MIN
+across pairs, so the train governing a reported T- is the one arriving LATEST in
+the binding pair, not the one nearest the resource.
+
+**OPT-2 appears on more than one card.** The counterfactual attaches wherever
+`solution.headline[2] == resource_id`, so every conflict id contending for the
+headline resource carries it. `7 scenario(s) over 6 conflict(s)` was one tick,
+not a structural ceiling. The single-option card remains real but is a smaller
+problem than the empty-directive card above.
+
+---
+
+## The day-15 freeze, stated as a rule
+
+A file list does not work — `_headline` looks like presentation and feeds
+`forbid` into the counterfactual solve, so its tie-break changes OPT-2's plan.
+
+**Day 15 freezes anything that can change a solved number.** A change is behind
+the freeze if re-running the day-14 comparison would produce a different figure
+in any column.
+
+Inside `optimizer_global.py` that is `build_and_solve`, `solve_with_policy`,
+`_flag_starvation`, `_headline`, `_motivating_resource`, `_binding_predecessor`,
+`emit_directives`, `chain_links`, and every budget and threshold constant. It
+also includes `detector.optimiser_inputs()` and everything it calls, which is
+where the day-13 `stand_station_id` work lands — that fix is tier 0 and must
+land before day 15 or not at all.
+
+`_scenario_from` and `_class_rationale` are NOT frozen. They consume a solved
+solution and change nothing in it, and may take additive fields after day 15.
+
+Outside that: `ai-engine/main.py` above the solver call, `simulator/main.py`'s
+action path, additive fields on `contracts.py`, ws-server and the frontend stay
+open through day 17. The enforceable constraint on all of them is that the
+CONTENTS of a directive may not change — adding a field is fine, changing a
+value is tier 0.
+
+The rule has teeth because reopening tier 0 after day 15 costs an arm A re-run at
+n=15 (40-80 s per seed, plus the three-identical-runs rule — roughly half a day)
+and moves every number in the deck.
