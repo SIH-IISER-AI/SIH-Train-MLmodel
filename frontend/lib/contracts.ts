@@ -1,12 +1,19 @@
 /**
- * Wire contracts. These mirror simulator/contracts.py and ai-engine/contracts.py
- * one-for-one. If a field changes in Pydantic, it changes here in the same PR --
- * that is the whole point of having a single stream with an `event_type` tag.
+ * Wire contracts. These mirror shared/railsim/contracts.py. Fields the engine
+ * emits but the UI does not yet read are declared optional rather than omitted,
+ * so a missing field is a compile error rather than a silent undefined.
  */
 
 export type SignalAspect = "RED" | "YELLOW" | "DOUBLE_YELLOW" | "GREEN";
 export type ScheduleStatus = "ON_TIME" | "DELAYED" | "EARLY" | "HELD";
-export type TrainType = "EXPRESS" | "SUPERFAST" | "PASSENGER" | "FREIGHT" | "SPECIAL";
+export type TrainType =
+  | "EXPRESS"
+  | "SUPERFAST"
+  | "PASSENGER"
+  | "FREIGHT"
+  | "SHATABDI"
+  | "GATIMAAN"
+  | "VANDE_BHARAT";
 export type Severity = "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
 
 export interface Coordinates {
@@ -95,7 +102,7 @@ export interface ConflictAlert {
   plan_in_force?: string | null;
 }
 
-export type DirectiveKind = "HOLD_AT_LOOP" | "REGULATE" | "RELEASE";
+export type DirectiveKind = "HOLD_AT_LOOP" | "STAND_ON_MAIN" | "REGULATE" | "RELEASE";
 
 export interface Directive {
   kind: DirectiveKind;
@@ -105,6 +112,10 @@ export interface Directive {
   until_train_id?: string | null;
   max_hold_seconds?: number;
   target_speed_kmh?: number;
+  /** Resource whose precedence decision caused this directive. Decision 3. */
+  motivating_resource_id?: string;
+  /** Backstop expiry the injector reads if the awaited train never clears. */
+  release_timeout_seconds?: number;
 }
 
 export interface DelayBreakdown {
@@ -115,6 +126,8 @@ export interface DelayBreakdown {
   queued_seconds: number;
   /** Delay above the queued floor -- the part the optimiser chose. */
   dispatch_choice_seconds: number;
+  /** Decision 4. Sum of this train's slack across every resource in the window. */
+  cumulative_hold_seconds?: number;
 }
 
 export interface Scenario {
@@ -128,6 +141,8 @@ export interface Scenario {
   directives: Directive[];
   delay_breakdown: DelayBreakdown[];
   policy_exceeded: boolean;
+  /** Solved entry order through this card's resource. */
+  order_train_ids?: string[];
 }
 
 export interface DispatchRecommendation {

@@ -63,6 +63,7 @@ class Scenario(BaseModel):
     directives: List[Dict[str, Any]] = []
     delay_breakdown: List[Dict[str, Any]] = []
     policy_exceeded: bool = False
+    order_train_ids: List[str] = []
 
 class DispatchRecommendation(BaseModel):
     event_type: str = "DISPATCH_RECOMMENDATION"

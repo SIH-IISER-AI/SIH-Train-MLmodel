@@ -33,7 +33,7 @@ services:
       - TICK_SECONDS=2.0
       - TIME_MULTIPLIER=5
       - NETWORK_PATH=/app/data/network.json
-      - SCENARIO_PATH=/app/data/scenario.json
+      - SCENARIO_PATH=/app/data/scenario10.json
     depends_on:
       redis:
         condition: service_healthy
@@ -50,7 +50,10 @@ services:
       # Per TIER, not per descent: CP-SAT re-runs full presolve on every
       # Solve() call, so dividing one total across six tiers puts each below
       # the fixed setup cost. At 0.15s/tier the descent completed 1 of 6.
-      # Observed per-tier cost 500-1300ms; 2.0 is ~1.5x the slowest.
+      # Observed per-tier cost 190-310ms in production config (scenario10,
+      # 6 resources / 24 intervals / 106 booleans). The 500-1300ms figure came
+      # from scope_window sizing, which is not the model that ships. 2.0 is
+      # generous headroom, not a tuned bound.
       - GLOBAL_TIER_BUDGET_S=2.0
       # Deterministic time is reproducible across machines; the wall clock is
       # only a safety net. Same reason enumerate's wall-clock budget makes its

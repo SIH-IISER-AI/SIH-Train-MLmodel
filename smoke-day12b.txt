@@ -1,0 +1,1815 @@
+ Container sih-digital-copilot-redis-1 Running 
+ Container sih-digital-copilot-ws-server-1 Running 
+ Container sih-digital-copilot-ai-engine-1 Recreate 
+ Container sih-digital-copilot-simulator-1 Running 
+ Container sih-digital-copilot-ai-engine-1 Recreated 
+Attaching to ai-engine-1, simulator-1, ws-server-1
+ Container sih-digital-copilot-redis-1 Waiting 
+ Container sih-digital-copilot-redis-1 Waiting 
+ Container sih-digital-copilot-redis-1 Waiting 
+ Container sih-digital-copilot-redis-1 Healthy 
+ Container sih-digital-copilot-ai-engine-1 Starting 
+ Container sih-digital-copilot-redis-1 Healthy 
+ Container sih-digital-copilot-redis-1 Healthy 
+ Container sih-digital-copilot-ai-engine-1 Started 
+ai-engine-1  | [ai] ENGINE=global selected: one CP-SAT model per evaluate, lexicographic descent by IR class, decomposed per decision 3
+ai-engine-1  | [ai] hydrated epoch=1788160526-c7927619b3 section=NDLS-AGC-04 fleet=10
+ai-engine-1  | [ai] engine up, redis redis
+ai-engine-1  | [ai] global solve 0.24s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-F3C13997 HIGH OPEN T-412s -> Hold Bhopal Shatabdi Up 12001 at LOOP-KSV-01 at KSV for 38 min; hold Bhopal Shatabdi 12002 at LOOP-PWL-02 at PWL for 11 min
+ai-engine-1  | [ai] CONF-A56C0D91 CRITICAL OPEN T-130s -> Stand BOXN Rake 402 40201 on the running line short of TRK-DOWN-MAIN|BLK-148D for 19 min; stand Kerala Express 12626 on the running line short of TRK-DOWN-MAIN|BLK-148D for 12 min
+ai-engine-1  | [ai] CONF-B82D7A69 HIGH OPEN T-228s -> Clear 12001 through TRK-UP-MAIN|BLK-126U without regulation
+ai-engine-1  | [ai] CONF-8C17E5F1 HIGH OPEN T-243s -> Stand Punjab Mail 12138 on the running line short of TRK-UP-MAIN|BLK-127U for 76 min
+ai-engine-1  | [ai] CONF-2A5751EF HIGH OPEN T-246s -> Hold Palwal Passenger 54402 at LOOP-MTJ-01 at MTJ for 123 min; stand Taj Express 12280 on the running line short of TRK-UP-MAIN|BLK-128U for 102 min
+ai-engine-1  | [ai] global solve 0.26s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.27s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.25s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.23s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.24s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.24s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.23s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.23s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.23s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.23s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.25s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.23s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.22s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.26s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.24s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.26s over 6 conflict(s), 7 scenario(s)
+ai-engine-1  | [ai] CONF-DF46983E HIGH OPEN T-368s -> Stand Kerala Express 12626 on the running line short of TRK-DOWN-MAIN|BLK-148D for 12 min
+ai-engine-1  | [ai] global solve 0.27s over 6 conflict(s), 7 scenario(s)
+ai-engine-1  | [ai] global solve 0.26s over 6 conflict(s), 7 scenario(s)
+ai-engine-1  | [ai] CONF-0B11FF25 HIGH OPEN T-228s -> Clear 12001 through TRK-UP-MAIN|BLK-126U without regulation
+ai-engine-1  | [ai] global solve 0.24s over 6 conflict(s), 7 scenario(s)
+ai-engine-1  | [ai] global solve 0.23s over 6 conflict(s), 7 scenario(s)
+ai-engine-1  | [ai] global solve 0.26s over 6 conflict(s), 7 scenario(s)
+ai-engine-1  | [ai] global solve 0.25s over 6 conflict(s), 7 scenario(s)
+ai-engine-1  | [ai] global solve 0.14s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.21s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.22s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.28s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.23s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.23s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.22s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.13s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] CONF-F3C13997 HIGH OPEN T-412s -> Hold Bhopal Shatabdi Up 12001 at LOOP-KSV-01 at KSV for 43 min; hold Bhopal Shatabdi 12002 at LOOP-PWL-02 at PWL for 16 min
+ai-engine-1  | [ai] CONF-8C17E5F1 HIGH OPEN T-243s -> Stand Punjab Mail 12138 on the running line short of TRK-UP-MAIN|BLK-127U for 76 min
+ai-engine-1  | [ai] CONF-2A5751EF HIGH OPEN T-246s -> Hold Palwal Passenger 54402 at LOOP-MTJ-01 at MTJ for 123 min; stand Taj Express 12280 on the running line short of TRK-UP-MAIN|BLK-128U for 102 min
+ai-engine-1  | [ai] global solve 0.36s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-A56C0D91 CRITICAL OPEN T-130s -> Stand BOXN Rake 402 40201 on the running line short of TRK-DOWN-MAIN|BLK-149D for 23 min; hold Kerala Express 12626 at LOOP-RKM-01 at RKM for 12 min
+ai-engine-1  | [ai] global solve 0.25s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.14s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.16s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.19s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.15s over 4 conflict(s), 5 scenario(s)
+ws-server-1  | INFO:     192.168.65.1:49510 - "WebSocket /ws/telemetry" [accepted]
+ws-server-1  | INFO:     connection open
+ws-server-1  | INFO:     192.168.65.1:31238 - "WebSocket /ws/telemetry" [accepted]
+ws-server-1  | INFO:     connection open
+ws-server-1  | Dashboard client disconnected.
+ai-engine-1  | [ai] global solve 0.14s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.14s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.15s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.16s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.14s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.15s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.23s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-0B471EE1 MEDIUM OPEN T-458s -> Hold Bhopal Shatabdi Up 12001 at LOOP-KSV-01 at KSV for 27 min
+ai-engine-1  | [ai] global solve 0.18s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.16s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.17s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.14s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-0B471EE1 HIGH OPEN T-418s -> Hold Bhopal Shatabdi Up 12001 at LOOP-KSV-01 at KSV for 27 min
+ai-engine-1  | [ai] CONF-DF46983E HIGH OPEN T-368s -> Hold Kerala Express 12626 at LOOP-RKM-01 at RKM for 8 min
+ai-engine-1  | [ai] global solve 0.13s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-0B11FF25 HIGH OPEN T-228s -> Clear 12001 through TRK-UP-MAIN|BLK-126U without regulation
+ai-engine-1  | [ai] global solve 0.14s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.14s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.14s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.14s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.21s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.15s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.13s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.18s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.13s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.16s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.07s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.07s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] CONF-8C17E5F1 HIGH OPEN T-243s -> Stand Punjab Mail 12138 on the running line short of TRK-UP-MAIN|BLK-127U for 55 min
+ai-engine-1  | [ai] CONF-2A5751EF HIGH OPEN T-246s -> Hold Palwal Passenger 54402 at LOOP-MTJ-01 at MTJ for 102 min; stand Taj Express 12280 on the running line short of TRK-UP-MAIN|BLK-128U for 80 min
+ai-engine-1  | [ai] global solve 0.09s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.07s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.08s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.08s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.07s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.08s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.08s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.08s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.08s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.09s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.08s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.07s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] CONF-B82D7A69 HIGH OPEN T-228s -> Clear 12001 through TRK-UP-MAIN|BLK-126U without regulation
+ai-engine-1  | [ai] global solve 0.09s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] CONF-0B471EE1 CRITICAL OPEN T-45s -> Hold Punjab Mail 12138 at LOOP-KSV-01 at KSV for 47 min; hold Bhopal Shatabdi 12002 at LOOP-PWL-02 at PWL for 26 min
+ai-engine-1  | [ai] CONF-3BEEF531 MEDIUM OPEN T-445s -> Clear 12138 through TRK-UP-MAIN|BLK-126U without regulation
+ai-engine-1  | [ai] global solve 0.08s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.08s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.09s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.05s over 2 conflict(s), 3 scenario(s)
+ai-engine-1  | [ai] global solve 0.05s over 2 conflict(s), 3 scenario(s)
+ai-engine-1  | [ai] global solve 0.05s over 2 conflict(s), 3 scenario(s)
+ai-engine-1  | [ai] global solve 0.05s over 2 conflict(s), 3 scenario(s)
+ai-engine-1  | [ai] global solve 0.06s over 2 conflict(s), 3 scenario(s)
+ai-engine-1  | [ai] global solve 0.06s over 2 conflict(s), 3 scenario(s)
+ai-engine-1  | [ai] CONF-3BEEF531 HIGH OPEN T-257s -> Hold Taj Express 12280 at LOOP-MTJ-01 at MTJ for 75 min; stand Punjab Mail 12138 on the running line short of TRK-UP-MAIN|BLK-126U for 54 min
+ai-engine-1  | [ai] global solve 0.06s over 2 conflict(s), 3 scenario(s)
+ai-engine-1  | [ai] global solve 0.06s over 2 conflict(s), 3 scenario(s)
+ai-engine-1  | [ai] global solve 0.06s over 2 conflict(s), 3 scenario(s)
+ai-engine-1  | [ai] global solve 0.06s over 2 conflict(s), 3 scenario(s)
+ai-engine-1  | [ai] global solve 0.06s over 2 conflict(s), 3 scenario(s)
+ai-engine-1  | [ai] CONF-3BEEF531 CRITICAL OPEN T-176s -> Hold Taj Express 12280 at LOOP-MTJ-01 at MTJ for 76 min; stand Punjab Mail 12138 on the running line short of TRK-UP-MAIN|BLK-126U for 55 min
+ai-engine-1  | [ai] global solve 0.07s over 2 conflict(s), 3 scenario(s)
+ai-engine-1  | [ai] global solve 0.07s over 2 conflict(s), 3 scenario(s)
+ai-engine-1  | [ai] global solve 0.08s over 2 conflict(s), 3 scenario(s)
+ai-engine-1  | [ai] global solve 0.07s over 2 conflict(s), 3 scenario(s)
+ai-engine-1  | [ai] global solve 0.06s over 2 conflict(s), 3 scenario(s)
+ai-engine-1  | [ai] global solve 0.07s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.07s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.07s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.09s over 2 conflict(s), 3 scenario(s)
+ai-engine-1  | [ai] CONF-8C17E5F1 CRITICAL OPEN T-86s -> Hold Taj Express 12280 at LOOP-MTJ-01 at MTJ for 73 min; stand Punjab Mail 12138 on the running line short of TRK-UP-MAIN|BLK-126U for 5 min
+ai-engine-1  | [ai] global solve 0.08s over 2 conflict(s), 3 scenario(s)
+ai-engine-1  | [ai] global solve 0.09s over 2 conflict(s), 3 scenario(s)
+ai-engine-1  | [ai] global solve 0.10s over 2 conflict(s), 3 scenario(s)
+ai-engine-1  | [ai] global solve 0.10s over 2 conflict(s), 3 scenario(s)
+ai-engine-1  | [ai] global solve 0.10s over 2 conflict(s), 3 scenario(s)
+ai-engine-1  | [ai] global solve 0.12s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] CONF-7E4C4D3C MEDIUM OPEN T-565s -> Hold BOXN Rake 402 40201 at LOOP-NZM-01 at NZM for 11 min
+ai-engine-1  | [ai] CONF-2A5751EF CRITICAL OPEN T-172s -> Hold Palwal Passenger 54402 at LOOP-MTJ-01 at MTJ for 98 min; stand Taj Express 12280 on the running line short of TRK-UP-MAIN|BLK-127U for 78 min
+ai-engine-1  | [ai] global solve 0.11s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] CONF-0B471EE1 CRITICAL OPEN T-445s -> Hold Punjab Mail 12138 at LOOP-KSV-01 at KSV for 31 min; hold Bhopal Shatabdi 12002 at LOOP-PWL-02 at PWL for 4 min
+ai-engine-1  | [ai] global solve 0.12s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.11s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.11s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.11s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.11s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.11s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.11s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.11s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.11s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.18s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.19s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.17s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.10s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.11s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] CONF-0B471EE1 MEDIUM OPEN T-445s -> Hold Punjab Mail 12138 at LOOP-KSV-01 at KSV for 33 min; hold Bhopal Shatabdi 12002 at LOOP-PWL-02 at PWL for 6 min
+ai-engine-1  | [ai] CONF-8C17E5F1 HIGH OPEN T-243s -> Clear 12138 through TRK-UP-MAIN|BLK-126U without regulation
+ai-engine-1  | [ai] CONF-7E4C4D3C HIGH OPEN T-411s -> Hold BOXN Rake 402 40201 at LOOP-NZM-01 at NZM for 10 min
+ai-engine-1  | [ai] global solve 0.11s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.11s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.11s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.11s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.10s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.10s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.10s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.11s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.10s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.10s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.10s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.10s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.10s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.10s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] CONF-2A5751EF HIGH OPEN T-246s -> Hold Palwal Passenger 54402 at LOOP-MTJ-01 at MTJ for 101 min; stand Taj Express 12280 on the running line short of TRK-UP-MAIN|BLK-127U for 78 min
+ai-engine-1  | [ai] global solve 0.10s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.07s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.09s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] CONF-7E4C4D3C MEDIUM OPEN T-501s -> Hold BOXN Rake 402 40201 at LOOP-NZM-01 at NZM for 10 min
+ai-engine-1  | [ai] global solve 0.10s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.10s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.11s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.10s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.10s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] CONF-7E4C4D3C HIGH OPEN T-411s -> Hold BOXN Rake 402 40201 at LOOP-NZM-01 at NZM for 9 min
+ai-engine-1  | [ai] global solve 0.10s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.25s over 6 conflict(s), 7 scenario(s)
+ai-engine-1  | [ai] CONF-A56C0D91 CRITICAL OPEN T-556s -> Regulate Kerala Express 12626 to 43 km/h on approach (4 min)
+ai-engine-1  | [ai] CONF-DF46983E HIGH OPEN T-1222s -> Clear 12050 through TRK-DOWN-MAIN|BLK-107D without regulation
+ai-engine-1  | [ai] global solve 0.24s over 6 conflict(s), 7 scenario(s)
+ai-engine-1  | [ai] global solve 0.25s over 6 conflict(s), 7 scenario(s)
+ai-engine-1  | [ai] global solve 0.24s over 6 conflict(s), 7 scenario(s)
+ai-engine-1  | [ai] global solve 0.24s over 6 conflict(s), 7 scenario(s)
+ai-engine-1  | [ai] global solve 0.25s over 6 conflict(s), 7 scenario(s)
+ai-engine-1  | [ai] global solve 0.24s over 6 conflict(s), 7 scenario(s)
+ai-engine-1  | [ai] CONF-0B471EE1 MEDIUM OPEN T-445s -> Hold Punjab Mail 12138 at LOOP-KSV-01 at KSV for 38 min; hold Bhopal Shatabdi 12002 at LOOP-PWL-02 at PWL for 11 min
+ai-engine-1  | [ai] CONF-8C17E5F1 HIGH OPEN T-243s -> Clear 12138 through TRK-UP-MAIN|BLK-126U without regulation
+ai-engine-1  | [ai] global solve 0.17s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.16s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.15s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.17s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.17s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.16s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.16s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.15s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.16s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-DF46983E LOW OPEN T-1068s -> Regulate Gatimaan Express 12050 to 57 km/h on approach (1 min)
+ai-engine-1  | [ai] global solve 0.14s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.14s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.13s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.18s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-DF46983E HIGH OPEN T-348s -> Hold Kerala Express 12626 at LOOP-NZM-01 at NZM for 7 min
+ai-engine-1  | [ai] global solve 0.18s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-2A5751EF HIGH OPEN T-246s -> Hold Palwal Passenger 54402 at LOOP-MTJ-01 at MTJ for 101 min; stand Taj Express 12280 on the running line short of TRK-UP-MAIN|BLK-127U for 78 min
+ai-engine-1  | [ai] global solve 0.11s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] CONF-AEBE5CB6 MEDIUM OPEN T-604s -> Hold BOXN Rake 402 40201 at LOOP-NZM-01 at NZM for 11 min
+ai-engine-1  | [ai] global solve 0.18s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.17s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.17s over 6 conflict(s), 7 scenario(s)
+ai-engine-1  | [ai] global solve 0.17s over 6 conflict(s), 7 scenario(s)
+ai-engine-1  | [ai] global solve 0.16s over 6 conflict(s), 7 scenario(s)
+ai-engine-1  | [ai] global solve 0.25s over 7 conflict(s), 8 scenario(s)
+ai-engine-1  | [ai] global solve 0.13s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] CONF-7E4C4D3C HIGH OPEN T-292s -> Hold BOXN Rake 402 40201 at LOOP-NZM-01 at NZM for 7 min
+ai-engine-1  | [ai] global solve 0.15s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.14s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-A56C0D91 CRITICAL OPEN T-272s -> Hold BOXN Rake 402 40201 at LOOP-NZM-01 at NZM for 12 min
+ai-engine-1  | [ai] global solve 0.13s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.13s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.13s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.13s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.13s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.13s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-0B471EE1 MEDIUM OPEN T-445s -> Hold Punjab Mail 12138 at LOOP-KSV-01 at KSV for 43 min; hold Bhopal Shatabdi 12002 at LOOP-PWL-02 at PWL for 16 min
+ai-engine-1  | [ai] CONF-8C17E5F1 HIGH OPEN T-243s -> Clear 12138 through TRK-UP-MAIN|BLK-126U without regulation
+ai-engine-1  | [ai] global solve 0.13s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.13s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.13s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.17s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.17s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.17s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.17s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.17s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.18s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.18s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.17s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.12s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-D568AFC3 MEDIUM OPEN T-491s -> Hold Punjab Mail 12138 at LOOP-KSV-01 at KSV for 27 min
+ai-engine-1  | [ai] global solve 0.12s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-DF46983E HIGH OPEN T-222s -> Hold Kerala Express 12626 at LOOP-NZM-01 at NZM for 6 min
+ai-engine-1  | [ai] global solve 0.07s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] CONF-2A5751EF HIGH OPEN T-246s -> Hold Palwal Passenger 54402 at LOOP-MTJ-01 at MTJ for 83 min; stand Taj Express 12280 on the running line short of TRK-UP-MAIN|BLK-127U for 60 min
+ai-engine-1  | [ai] global solve 0.11s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.11s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.15s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.14s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.14s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.10s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-D568AFC3 HIGH OPEN T-418s -> Hold Punjab Mail 12138 at LOOP-KSV-01 at KSV for 27 min
+ai-engine-1  | [ai] global solve 0.08s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.13s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.12s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.16s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-286FEDC0 HIGH OPEN T-378s -> Hold Punjab Mail 12138 at LOOP-KSV-01 at KSV for 53 min; regulate Gatimaan Express 12050 to 48 km/h on approach (1 min)
+ai-engine-1  | [ai] CONF-A56C0D91 CRITICAL OPEN T-262s -> Hold BOXN Rake 402 40201 at LOOP-NZM-01 at NZM for 11 min; regulate Gatimaan Express 12050 to 42 km/h on approach (2 min)
+ai-engine-1  | [ai] global solve 0.15s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.15s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.15s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.16s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.15s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.15s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-8C17E5F1 HIGH OPEN T-243s -> Clear 12138 through TRK-UP-MAIN|BLK-126U without regulation
+ai-engine-1  | [ai] global solve 0.16s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.15s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.19s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.18s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.25s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.18s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.12s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.12s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.12s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.10s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.10s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.10s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.10s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-DF46983E HIGH OPEN T-370s -> Hold Kerala Express 12626 at LOOP-NZM-01 at NZM for 8 min
+ai-engine-1  | [ai] global solve 0.05s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] CONF-AEBE5CB6 MEDIUM OPEN T-639s -> Hold BOXN Rake 402 40201 at LOOP-NZM-01 at NZM for 12 min
+ai-engine-1  | [ai] CONF-2A5751EF HIGH OPEN T-246s -> Hold Taj Express 12280 at LOOP-MTJ-01 at MTJ for 23 min
+ai-engine-1  | [ai] global solve 0.08s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] CONF-D568AFC3 CRITICAL OPEN T-43s -> Hold Punjab Mail 12138 at LOOP-KSV-01 at KSV for 27 min
+ai-engine-1  | [ai] global solve 0.09s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.13s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.14s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.15s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.16s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.08s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] CONF-7E4C4D3C HIGH OPEN T-292s -> Hold BOXN Rake 402 40201 at LOOP-NZM-01 at NZM for 7 min
+ai-engine-1  | [ai] global solve 0.15s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.15s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.15s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-286FEDC0 HIGH OPEN T-440s -> Hold Punjab Mail 12138 at LOOP-KSV-01 at KSV for 30 min
+ai-engine-1  | [ai] CONF-A56C0D91 CRITICAL OPEN T-262s -> Hold BOXN Rake 402 40201 at LOOP-NZM-01 at NZM for 12 min; regulate Gatimaan Express 12050 to 42 km/h on approach (2 min)
+ai-engine-1  | [ai] global solve 0.15s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.14s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.14s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-36BA6AAD MEDIUM OPEN T-440s -> Hold Punjab Mail 12138 at LOOP-KSV-01 at KSV for 30 min
+ai-engine-1  | [ai] global solve 0.14s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.19s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.15s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-8C17E5F1 HIGH OPEN T-238s -> Clear 12138 through TRK-UP-MAIN|BLK-126U without regulation
+ai-engine-1  | [ai] global solve 0.16s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.15s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.19s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.18s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.22s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.18s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.24s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.15s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.15s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.13s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.13s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.13s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.10s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.13s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-2A5751EF HIGH OPEN T-246s -> Hold Palwal Passenger 54402 at LOOP-MTJ-01 at MTJ for 132 min; stand Taj Express 12280 on the running line short of TRK-UP-MAIN|BLK-127U for 109 min
+ai-engine-1  | [ai] CONF-DF46983E HIGH OPEN T-1129s -> Clear 12050 through TRK-DOWN-MAIN|BLK-111D without regulation
+ai-engine-1  | [ai] global solve 0.14s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.23s over 5 conflict(s), 6 scenario(s)
+ws-server-1  | Controller committed OPT-1 for CONF-D568AFC3 @ 1788160526-c7927619b3
+simulator-1  | [actions] CONF-D568AFC3:OPT-1 -> no-op scenario, nothing to apply
+ai-engine-1  | [ai] global solve 0.23s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.23s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.23s over 5 conflict(s), 6 scenario(s)
+ws-server-1  | Controller committed OPT-1 for CONF-0B471EE1 @ 1788160526-c7927619b3
+simulator-1  | [actions] CONF-0B471EE1:OPT-1 -> HOLD_AT_LOOP 12002 applied
+simulator-1  | [actions] CONF-0B471EE1:OPT-1 -> HOLD_AT_LOOP 12138 applied
+ws-server-1  | Controller committed OPT-1 for CONF-AEBE5CB6 @ 1788160526-c7927619b3
+simulator-1  | [actions] CONF-AEBE5CB6:OPT-1 -> HOLD_AT_LOOP 40201 applied
+simulator-1  | [sim] 12002 has passed PWL; re-targeting hold to the next loop ahead
+simulator-1  | [sim] 40201 has passed NZM; re-targeting hold to the next loop ahead
+ai-engine-1  | [ai] global solve 0.11s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] CONF-37C2B015 MEDIUM OPEN T-440s -> Hold Punjab Mail 12138 at LOOP-KSV-01 at KSV for 5 min
+ws-server-1  | Controller committed OPT-1 for CONF-37C2B015 @ 1788160526-c7927619b3
+simulator-1  | [actions] CONF-37C2B015:OPT-1 -> no-op scenario, nothing to apply
+ai-engine-1  | [ai] global solve 0.16s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] CONF-36BA6AAD HIGH OPEN T-257s -> Stand Palwal Passenger 54402 on the running line short of SEC-PWL-KSV for 132 min; stand Taj Express 12280 on the running line short of SEC-PWL-KSV for 109 min; hold Punjab Mail 12138 at LOOP-KSV-01 at KSV for 32 min
+ai-engine-1  | [ai] global solve 0.15s over 3 conflict(s), 4 scenario(s)
+ws-server-1  | Controller committed OPT-1 for CONF-286FEDC0 @ 1788160526-c7927619b3
+simulator-1  | [actions] CONF-286FEDC0:OPT-1 -> no-op scenario, nothing to apply
+ai-engine-1  | [ai] global solve 0.15s over 3 conflict(s), 4 scenario(s)
+simulator-1  | [actions] CONF-A56C0D91:OPT-1 -> REGULATE 12050 applied
+simulator-1  | [actions] CONF-A56C0D91:OPT-1 -> HOLD_AT_LOOP 40201 applied
+ws-server-1  | Controller committed OPT-1 for CONF-A56C0D91 @ 1788160526-c7927619b3
+ws-server-1  | Controller committed OPT-1 for CONF-7E4C4D3C @ 1788160526-c7927619b3
+simulator-1  | [actions] CONF-7E4C4D3C:OPT-1 -> HOLD_AT_LOOP 40201 applied
+simulator-1  | [sim] 40201 has passed NZM; re-targeting hold to the next loop ahead
+simulator-1  | [sim] 40201 has passed NZM; re-targeting hold to the next loop ahead
+ai-engine-1  | [ai] global solve 0.16s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] CONF-A56C0D91 CRITICAL DIVERGED T-252s -> Hold Kerala Express 12626 at LOOP-NZM-01 at NZM for 55 min; stand BOXN Rake 402 40201 on the running line short of TRK-DOWN-MAIN|BLK-107D for 12 min
+ai-engine-1  | [ai] global solve 0.16s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.15s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] CONF-36BA6AAD CRITICAL OPEN T-176s -> Stand Palwal Passenger 54402 on the running line short of SEC-PWL-KSV for 132 min; stand Taj Express 12280 on the running line short of SEC-PWL-KSV for 111 min; hold Punjab Mail 12138 at LOOP-KSV-01 at KSV for 33 min
+ai-engine-1  | [ai] global solve 0.16s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.15s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.15s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.24s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] CONF-F6A65FF1 LOW OPEN T-1478s -> Stand BOXN Rake 408 40208 on the running line short of TRK-UP-MAIN|BLK-100U for 17 min
+ai-engine-1  | [ai] global solve 0.22s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.18s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] CONF-286FEDC0 CRITICAL DIVERGED T-116s -> Stand Palwal Passenger 54402 on the running line short of SEC-PWL-KSV for 109 min; stand Taj Express 12280 on the running line short of SEC-PWL-KSV for 84 min; hold Punjab Mail 12138 at LOOP-KSV-01 at KSV for 34 min; regulate Gatimaan Express 12050 to 41 km/h on approach (1 min)
+ai-engine-1  | [ai] global solve 0.18s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.18s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.16s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.16s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.17s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.18s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.18s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.18s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.14s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-2A5751EF CRITICAL OPEN T-172s -> Hold Palwal Passenger 54402 at LOOP-MTJ-01 at MTJ for 136 min; stand Taj Express 12280 on the running line short of TRK-UP-MAIN|BLK-126U for 95 min
+ai-engine-1  | [ai] global solve 0.13s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] CONF-AEBE5CB6 MEDIUM DIVERGED T-473s -> Stand BOXN Rake 402 40201 on the running line short of TRK-DOWN-MAIN|BLK-108D for 11 min
+ai-engine-1  | [ai] global solve 0.17s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.17s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-DF46983E HIGH OPEN T-827s -> Clear 12050 through TRK-DOWN-MAIN|BLK-111D without regulation
+ai-engine-1  | [ai] global solve 0.23s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.22s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.23s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.23s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.22s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.22s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.21s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.16s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.17s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.19s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] CONF-A56C0D91 CRITICAL DIVERGED T-242s -> Hold Kerala Express 12626 at LOOP-FDB-01 at FDB for 58 min; regulate Gatimaan Express 12050 to 35 km/h on approach (3 min)
+ai-engine-1  | [ai] global solve 0.16s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.16s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] CONF-36BA6AAD CRITICAL OPEN T-538s -> Hold Punjab Mail 12138 at LOOP-KSV-01 at KSV for 38 min
+ai-engine-1  | [ai] global solve 0.16s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.16s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] CONF-DF46983E MEDIUM OPEN T-759s -> Regulate Gatimaan Express 12050 to 41 km/h on approach (1 min)
+ai-engine-1  | [ai] global solve 0.16s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.16s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.15s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] CONF-DF46983E HIGH OPEN T-289s -> Hold Kerala Express 12626 at LOOP-NZM-01 at NZM for 54 min; regulate Gatimaan Express 12050 to 34 km/h on approach (2 min)
+ai-engine-1  | [ai] global solve 0.14s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.15s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.14s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.15s over 4 conflict(s), 5 scenario(s)
+ws-server-1  | Controller committed OPT-1 for CONF-AEBE5CB6 @ 1788160526-c7927619b3
+simulator-1  | [actions] CONF-AEBE5CB6:OPT-1 -> STAND_ON_MAIN 40201 applied
+ai-engine-1  | [ai] global solve 0.14s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.15s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.15s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.16s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.16s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] CONF-36BA6AAD MEDIUM OPEN T-538s -> Stand Palwal Passenger 54402 on the running line short of SEC-PWL-KSV for 137 min; hold Punjab Mail 12138 at LOOP-KSV-01 at KSV for 40 min; regulate Gatimaan Express 12050 to 39 km/h on approach (4 min)
+ai-engine-1  | [ai] CONF-2A5751EF HIGH OPEN T-246s -> Hold Taj Express 12280 at LOOP-MTJ-01 at MTJ for 97 min
+ai-engine-1  | [ai] global solve 0.16s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.17s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.16s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.16s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.16s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.28s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-F6A65FF1 LOW OPEN T-962s -> Stand BOXN Rake 408 40208 on the running line short of TRK-UP-MAIN|BLK-100U for 17 min
+ai-engine-1  | [ai] global solve 0.21s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.21s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.20s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.20s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.15s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.16s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.17s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.17s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] CONF-A56C0D91 CRITICAL DIVERGED T-287s -> Hold Kerala Express 12626 at LOOP-NZM-01 at NZM for 54 min; stand BOXN Rake 402 40201 on the running line short of TRK-DOWN-MAIN|BLK-107D for 14 min
+ai-engine-1  | [ai] global solve 0.17s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.16s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.16s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.16s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.17s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.16s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.16s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] CONF-DF46983E HIGH OPEN T-505s -> Hold Gatimaan Express 12050 at LOOP-FDB-01 at FDB for 2 min
+ai-engine-1  | [ai] global solve 0.15s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] CONF-F83DDCAE MEDIUM OPEN T-538s -> Stand Palwal Passenger 54402 on the running line short of SEC-PWL-KSV for 136 min; hold Punjab Mail 12138 at LOOP-KSV-01 at KSV for 43 min
+ai-engine-1  | [ai] global solve 0.14s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.14s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.15s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.14s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.15s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.15s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] CONF-A56C0D91 HIGH DIVERGED T-287s -> Hold Kerala Express 12626 at LOOP-NZM-01 at NZM for 53 min; stand BOXN Rake 402 40201 on the running line short of TRK-DOWN-MAIN|BLK-107D for 14 min
+ai-engine-1  | [ai] CONF-DF46983E MEDIUM OPEN T-505s -> Clear 12050 through TRK-DOWN-MAIN|BLK-108D without regulation
+ai-engine-1  | [ai] global solve 0.15s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.14s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] CONF-2A5751EF HIGH OPEN T-246s -> Hold Taj Express 12280 at LOOP-MTJ-01 at MTJ for 101 min
+ai-engine-1  | [ai] global solve 0.14s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.14s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.14s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.14s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.14s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.14s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.14s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.14s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.14s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.14s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] CONF-F83DDCAE HIGH OPEN T-416s -> Stand Palwal Passenger 54402 on the running line short of SEC-PWL-KSV for 136 min; hold Punjab Mail 12138 at LOOP-KSV-01 at KSV for 46 min
+ai-engine-1  | [ai] global solve 0.14s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.14s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.14s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.14s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.14s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.15s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.26s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.16s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.16s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.15s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.24s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.16s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.15s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.14s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.14s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.15s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.15s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.15s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] CONF-A56C0D91 HIGH DIVERGED T-287s -> Hold Kerala Express 12626 at LOOP-NZM-01 at NZM for 53 min; stand BOXN Rake 402 40201 on the running line short of TRK-DOWN-MAIN|BLK-107D for 14 min
+ai-engine-1  | [ai] CONF-DF46983E MEDIUM OPEN T-505s -> Clear 12050 through TRK-DOWN-MAIN|BLK-108D without regulation
+ai-engine-1  | [ai] global solve 0.15s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.33s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] CONF-2A5751EF HIGH OPEN T-246s -> Hold Taj Express 12280 at LOOP-MTJ-01 at MTJ for 106 min
+ai-engine-1  | [ai] global solve 0.08s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] CONF-C9779387 MEDIUM OPEN T-531s -> Stand Palwal Passenger 54402 on the running line short of SEC-PWL-KSV for 106 min; hold Taj Express 12280 at LOOP-KSV-01 at KSV for 79 min
+ai-engine-1  | [ai] global solve 0.15s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.15s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.14s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.14s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.14s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.12s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] CONF-F83DDCAE CRITICAL OPEN T-53s -> Stand Palwal Passenger 54402 on the running line short of SEC-PWL-KSV for 136 min; stand Taj Express 12280 on the running line short of SEC-PWL-KSV for 112 min; hold Punjab Mail 12138 at LOOP-KSV-01 at KSV for 52 min
+ai-engine-1  | [ai] global solve 0.12s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.13s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.11s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.11s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.11s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.11s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.12s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.12s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.12s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.12s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.12s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.15s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.29s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.12s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.12s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.11s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.12s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.13s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.13s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.11s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.12s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] CONF-A56C0D91 HIGH DIVERGED T-287s -> Hold Kerala Express 12626 at LOOP-NZM-01 at NZM for 53 min; stand BOXN Rake 402 40201 on the running line short of TRK-DOWN-MAIN|BLK-107D for 14 min
+ai-engine-1  | [ai] CONF-DF46983E MEDIUM OPEN T-505s -> Clear 12050 through TRK-DOWN-MAIN|BLK-108D without regulation
+ai-engine-1  | [ai] global solve 0.23s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.14s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.12s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.13s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] CONF-29AC6D7B HIGH OPEN T-287s -> Hold Kerala Express 12626 at LOOP-NZM-01 at NZM for 53 min; stand BOXN Rake 402 40201 on the running line short of TRK-DOWN-MAIN|BLK-107D for 14 min
+ai-engine-1  | [ai] global solve 0.15s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.17s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.14s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.14s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.14s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] CONF-F83DDCAE CRITICAL OPEN T-0s -> Stand Palwal Passenger 54402 on the running line short of SEC-PWL-KSV for 144 min; stand Taj Express 12280 on the running line short of SEC-PWL-KSV for 113 min; hold Punjab Mail 12138 at LOOP-KSV-01 at KSV for 52 min
+ai-engine-1  | [ai] global solve 0.21s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.13s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.13s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.14s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.12s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.13s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.13s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.13s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.13s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.14s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.19s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.15s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.14s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.13s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.17s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.16s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.13s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.13s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.13s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.11s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.11s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] CONF-DF46983E MEDIUM OPEN T-505s -> Clear 12050 through TRK-DOWN-MAIN|BLK-108D without regulation
+ai-engine-1  | [ai] global solve 0.11s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.11s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.11s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.11s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] CONF-29AC6D7B HIGH OPEN T-287s -> Hold Kerala Express 12626 at LOOP-NZM-01 at NZM for 53 min; stand BOXN Rake 402 40201 on the running line short of TRK-DOWN-MAIN|BLK-107D for 22 min
+ai-engine-1  | [ai] global solve 0.13s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.10s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.11s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.10s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.10s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] CONF-F83DDCAE CRITICAL OPEN T-0s -> Stand Palwal Passenger 54402 on the running line short of SEC-PWL-KSV for 122 min; stand Taj Express 12280 on the running line short of SEC-PWL-KSV for 113 min; hold Punjab Mail 12138 at LOOP-KSV-01 at KSV for 52 min
+ai-engine-1  | [ai] global solve 0.18s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] CONF-F6A65FF1 MEDIUM OPEN T-491s -> Stand BOXN Rake 408 40208 on the running line short of TRK-UP-MAIN|BLK-147U for 12 min
+ai-engine-1  | [ai] global solve 0.18s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.17s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.17s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.17s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.19s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-4B4B45E4 LOW OPEN T-1369s -> Clear 12050 through TRK-DOWN-MAIN|BLK-114D without regulation
+ai-engine-1  | [ai] global solve 0.19s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.19s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-F6A65FF1 HIGH OPEN T-417s -> Stand BOXN Rake 408 40208 on the running line short of TRK-UP-MAIN|BLK-147U for 12 min
+ai-engine-1  | [ai] global solve 0.19s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.18s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.19s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.21s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.18s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.25s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-001AA5C5 CRITICAL OPEN T-0s -> Stand Palwal Passenger 54402 on the running line short of SEC-PWL-KSV for 150 min; stand Taj Express 12280 on the running line short of SEC-PWL-KSV for 140 min; hold Punjab Mail 12138 at LOOP-KSV-01 at KSV for 78 min
+ai-engine-1  | [ai] CONF-4B4B45E4 MEDIUM OPEN T-883s -> Regulate RKMP Vande Bharat 20172 to 52 km/h on approach (5 min)
+ai-engine-1  | [ai] global solve 0.24s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.25s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.23s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.23s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.31s over 6 conflict(s), 7 scenario(s)
+ai-engine-1  | [ai] CONF-4B4B45E4 HIGH OPEN T-233s -> Stand Kerala Express 12626 on the running line short of TRK-DOWN-MAIN|BLK-106D for 80 min
+ai-engine-1  | [ai] CONF-D3EE6385 HIGH OPEN T-348s -> Regulate RKMP Vande Bharat 20172 to 96 km/h on approach (1 min)
+ai-engine-1  | [ai] global solve 0.28s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.28s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.34s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.26s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.27s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.28s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-29AC6D7B HIGH OPEN T-287s -> Hold BOXN Rake 402 40201 at LOOP-NZM-01 at NZM for 11 min
+ai-engine-1  | [ai] global solve 0.28s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.31s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.28s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.29s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.28s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.19s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.30s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.31s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.31s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.29s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-D3EE6385 CRITICAL OPEN T-175s -> Regulate RKMP Vande Bharat 20172 to 62 km/h on approach (2 min)
+ai-engine-1  | [ai] global solve 0.28s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.29s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.43s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-F6A65FF1 HIGH OPEN T-256s -> Regulate BOXN Rake 408 40208 to 18 km/h on approach (5 min)
+ai-engine-1  | [ai] global solve 0.38s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.39s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.29s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.29s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.21s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.20s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] CONF-001AA5C5 CRITICAL OPEN T-0s -> Stand Palwal Passenger 54402 on the running line short of SEC-PWL-KSV for 153 min; stand Taj Express 12280 on the running line short of SEC-PWL-KSV for 137 min; hold Punjab Mail 12138 at LOOP-KSV-01 at KSV for 75 min
+ai-engine-1  | [ai] global solve 0.20s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.21s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] CONF-F6A65FF1 CRITICAL OPEN T-178s -> Stand BOXN Rake 408 40208 on the running line short of TRK-UP-MAIN|BLK-146U for 9 min
+ai-engine-1  | [ai] global solve 0.21s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] CONF-4B4B45E4 CRITICAL OPEN T-175s -> Stand Kerala Express 12626 on the running line short of TRK-DOWN-MAIN|BLK-106D for 79 min; hold Gatimaan Express 12050 at LOOP-NZM-01 at NZM for 23 min
+ai-engine-1  | [ai] global solve 0.23s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.22s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.22s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.21s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.21s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.22s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.22s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.22s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-29AC6D7B HIGH OPEN T-287s -> Stand BOXN Rake 402 40201 on the running line short of TRK-DOWN-MAIN|BLK-107D for 14 min
+ai-engine-1  | [ai] global solve 0.21s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.22s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.22s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.22s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.22s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.22s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.15s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.21s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.21s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.22s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-D3EE6385 CRITICAL OPEN T-213s -> Hold RKMP Vande Bharat 20172 at LOOP-NZM-01 at NZM for 25 min
+ai-engine-1  | [ai] global solve 0.21s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.22s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.22s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.22s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.22s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.21s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.21s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.22s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.22s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-001AA5C5 CRITICAL OPEN T-0s -> Stand Palwal Passenger 54402 on the running line short of SEC-PWL-KSV for 160 min; stand Taj Express 12280 on the running line short of SEC-PWL-KSV for 140 min; hold Punjab Mail 12138 at LOOP-KSV-01 at KSV for 78 min
+ai-engine-1  | [ai] global solve 0.22s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.22s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-F6A65FF1 CRITICAL OPEN T-185s -> Stand BOXN Rake 408 40208 on the running line short of TRK-UP-MAIN|BLK-145U for 9 min
+ai-engine-1  | [ai] global solve 0.21s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-4B4B45E4 CRITICAL OPEN T-233s -> Stand Kerala Express 12626 on the running line short of TRK-DOWN-MAIN|BLK-106D for 83 min
+ai-engine-1  | [ai] global solve 0.22s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.22s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.22s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.22s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.21s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.21s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.22s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.22s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-29AC6D7B HIGH OPEN T-287s -> Stand BOXN Rake 402 40201 on the running line short of TRK-DOWN-MAIN|BLK-107D for 14 min
+ai-engine-1  | [ai] global solve 0.23s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.22s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.22s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.22s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.22s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.22s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.21s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.22s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.16s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.21s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-D3EE6385 CRITICAL OPEN T-213s -> Hold RKMP Vande Bharat 20172 at LOOP-NZM-01 at NZM for 25 min
+ai-engine-1  | [ai] global solve 0.21s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.21s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.22s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.22s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.21s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.22s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.22s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.22s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.21s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-001AA5C5 CRITICAL OPEN T-0s -> Stand Palwal Passenger 54402 on the running line short of SEC-PWL-KSV for 166 min; stand Taj Express 12280 on the running line short of SEC-PWL-KSV for 140 min; hold Punjab Mail 12138 at LOOP-KSV-01 at KSV for 78 min
+ai-engine-1  | [ai] global solve 0.22s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.22s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-F6A65FF1 CRITICAL OPEN T-206s -> Stand BOXN Rake 408 40208 on the running line short of TRK-UP-MAIN|BLK-144U for 9 min
+ai-engine-1  | [ai] global solve 0.21s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-4B4B45E4 CRITICAL OPEN T-233s -> Stand Kerala Express 12626 on the running line short of TRK-DOWN-MAIN|BLK-106D for 83 min
+ai-engine-1  | [ai] global solve 0.22s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.23s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.22s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.22s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.22s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.22s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.23s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.22s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-29AC6D7B HIGH OPEN T-287s -> Stand BOXN Rake 402 40201 on the running line short of TRK-DOWN-MAIN|BLK-107D for 14 min
+ai-engine-1  | [ai] global solve 0.22s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.22s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.17s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-C388412D HIGH OPEN T-210s -> Hold Palwal Passenger 54402 at LOOP-KSV-01 at KSV for 110 min
+ai-engine-1  | [ai] global solve 0.14s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.14s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.17s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-C388412D CRITICAL OPEN T-54s -> Hold Palwal Passenger 54402 at LOOP-KSV-01 at KSV for 137 min; stand Punjab Mail 12138 on the running line short of SEC-PWL-KSV for 83 min
+ai-engine-1  | [ai] global solve 0.16s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.15s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.15s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.11s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] CONF-D3EE6385 CRITICAL OPEN T-213s -> Hold RKMP Vande Bharat 20172 at LOOP-NZM-01 at NZM for 26 min; hold Gatimaan Express 12050 at LOOP-NZM-01 at NZM for 1 min
+ai-engine-1  | [ai] global solve 0.15s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.15s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.14s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.12s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-8C65D4A9 CRITICAL OPEN T-0s -> Hold Palwal Passenger 54402 at LOOP-KSV-01 at KSV for 110 min; stand Punjab Mail 12138 on the running line short of SEC-PWL-KSV for 83 min
+ai-engine-1  | [ai] CONF-09019804 MEDIUM OPEN T-618s -> Clear 40201 through TRK-DOWN-MAIN|BLK-109D without regulation
+ai-engine-1  | [ai] global solve 0.18s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.18s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.17s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-29AC6D7B CRITICAL OPEN T-173s -> Hold Kerala Express 12626 at LOOP-FDB-01 at FDB for 84 min
+ai-engine-1  | [ai] global solve 0.17s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.17s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.17s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.20s over 7 conflict(s), 8 scenario(s)
+ai-engine-1  | [ai] CONF-2F62B570 CRITICAL OPEN T-0s -> Hold Palwal Passenger 54402 at LOOP-KSV-01 at KSV for 113 min; stand Punjab Mail 12138 on the running line short of SEC-PWL-KSV for 58 min; regulate Kerala Express 12626 to 71 km/h on approach (5 min)
+ai-engine-1  | [ai] CONF-366A05EE MEDIUM OPEN T-463s -> Clear 20172 through TRK-DOWN-MAIN|BLK-110D without regulation
+ai-engine-1  | [ai] CONF-F6A65FF1 CRITICAL OPEN T-216s -> Stand BOXN Rake 408 40208 on the running line short of TRK-UP-MAIN|BLK-143U for 9 min
+ai-engine-1  | [ai] CONF-23BF77DC LOW OPEN T-1162s -> Clear 20172 through TRK-DOWN-MAIN|BLK-112D without regulation
+ai-engine-1  | [ai] CONF-7E4C4D3C HIGH OPEN T-267s -> Hold Kerala Express 12626 at LOOP-FDB-01 at FDB for 52 min; stand BOXN Rake 402 40201 on the running line short of TRK-DOWN-MAIN|BLK-109D for 16 min
+ai-engine-1  | [ai] CONF-7E58129E LOW OPEN T-1484s -> Regulate Kerala Express 12626 to 69 km/h on approach (5 min)
+ai-engine-1  | [ai] global solve 0.29s over 6 conflict(s), 7 scenario(s)
+ai-engine-1  | [ai] CONF-A56C0D91 CRITICAL OPEN T-120s -> Hold Kerala Express 12626 at LOOP-FDB-01 at FDB for 82 min; stand BOXN Rake 402 40201 on the running line short of TRK-DOWN-MAIN|BLK-108D for 14 min
+ai-engine-1  | [ai] CONF-4B4B45E4 CRITICAL OPEN T-1201s -> Clear 12050 through TRK-DOWN-MAIN|BLK-115D without regulation
+ai-engine-1  | [ai] CONF-DF46983E MEDIUM OPEN T-921s -> Clear 12050 through TRK-DOWN-MAIN|BLK-113D without regulation
+ai-engine-1  | [ai] global solve 0.27s over 6 conflict(s), 7 scenario(s)
+ai-engine-1  | [ai] global solve 0.30s over 6 conflict(s), 7 scenario(s)
+ai-engine-1  | [ai] global solve 0.30s over 6 conflict(s), 7 scenario(s)
+ai-engine-1  | [ai] global solve 0.23s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.24s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.27s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.28s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.26s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.26s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.21s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.19s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.18s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.18s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.19s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] CONF-C388412D CRITICAL OPEN T-0s -> Hold Palwal Passenger 54402 at LOOP-KSV-01 at KSV for 129 min; stand Punjab Mail 12138 on the running line short of SEC-PWL-KSV for 74 min
+ai-engine-1  | [ai] global solve 0.19s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.18s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-09019804 HIGH OPEN T-339s -> Stand BOXN Rake 402 40201 on the running line short of TRK-DOWN-MAIN|BLK-109D for 14 min
+ai-engine-1  | [ai] global solve 0.21s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.21s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.19s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] CONF-D3EE6385 CRITICAL OPEN T-157s -> Hold RKMP Vande Bharat 20172 at LOOP-NZM-01 at NZM for 25 min
+ai-engine-1  | [ai] global solve 0.23s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.22s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.25s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.22s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.23s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.23s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-29AC6D7B CRITICAL OPEN T-497s -> Clear 12050 through TRK-DOWN-MAIN|BLK-111D without regulation
+ai-engine-1  | [ai] global solve 0.23s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.23s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.22s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.24s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-F6A65FF1 CRITICAL OPEN T-226s -> Regulate BOXN Rake 408 40208 to 16 km/h on approach (5 min)
+ai-engine-1  | [ai] global solve 0.25s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-A56C0D91 CRITICAL OPEN T-175s -> Stand Kerala Express 12626 on the running line short of TRK-DOWN-MAIN|BLK-110D for 86 min; stand BOXN Rake 402 40201 on the running line short of TRK-DOWN-MAIN|BLK-110D for 14 min
+ai-engine-1  | [ai] CONF-DF46983E MEDIUM OPEN T-904s -> Clear 12050 through TRK-DOWN-MAIN|BLK-114D without regulation
+ai-engine-1  | [ai] global solve 0.25s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.24s over 6 conflict(s), 7 scenario(s)
+ai-engine-1  | [ai] CONF-4B4B45E4 CRITICAL OPEN T-1046s -> Clear 12050 through TRK-DOWN-MAIN|BLK-114D without regulation
+ai-engine-1  | [ai] CONF-DF46983E HIGH OPEN T-277s -> Hold Kerala Express 12626 at LOOP-FDB-01 at FDB for 79 min
+ai-engine-1  | [ai] global solve 0.22s over 6 conflict(s), 7 scenario(s)
+ai-engine-1  | [ai] global solve 0.24s over 6 conflict(s), 7 scenario(s)
+ai-engine-1  | [ai] global solve 0.24s over 6 conflict(s), 7 scenario(s)
+ai-engine-1  | [ai] CONF-29AC6D7B MEDIUM OPEN T-500s -> Clear 12050 through TRK-DOWN-MAIN|BLK-111D without regulation
+ai-engine-1  | [ai] global solve 0.22s over 6 conflict(s), 7 scenario(s)
+ai-engine-1  | [ai] global solve 0.21s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-29AC6D7B HIGH OPEN T-350s -> Stand BOXN Rake 402 40201 on the running line short of TRK-DOWN-MAIN|BLK-110D for 15 min
+ai-engine-1  | [ai] global solve 0.22s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.23s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.18s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-8C65D4A9 CRITICAL OPEN T-0s -> Hold Palwal Passenger 54402 at LOOP-KSV-01 at KSV for 101 min; stand Punjab Mail 12138 on the running line short of SEC-PWL-KSV for 74 min; regulate RKMP Vande Bharat 20172 to 67 km/h on approach (5 min)
+ai-engine-1  | [ai] global solve 0.23s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.21s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.23s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-29AC6D7B CRITICAL OPEN T-148s -> Stand BOXN Rake 402 40201 on the running line short of TRK-DOWN-MAIN|BLK-110D for 14 min; regulate RKMP Vande Bharat 20172 to 94 km/h on approach (1 min)
+ai-engine-1  | [ai] global solve 0.23s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-C388412D CRITICAL OPEN T-0s -> Hold Palwal Passenger 54402 at LOOP-KSV-01 at KSV for 127 min; stand Punjab Mail 12138 on the running line short of SEC-PWL-KSV for 72 min; hold RKMP Vande Bharat 20172 at LOOP-PWL-02 at PWL for 14 min
+ai-engine-1  | [ai] global solve 0.24s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.25s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.23s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.23s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.22s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-D3EE6385 CRITICAL OPEN T-165s -> Regulate RKMP Vande Bharat 20172 to 37 km/h on approach (4 min)
+ai-engine-1  | [ai] global solve 0.23s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.19s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.25s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.25s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.24s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.24s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.17s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.16s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.21s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.19s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-F6A65FF1 CRITICAL OPEN T-246s -> Regulate BOXN Rake 408 40208 to 17 km/h on approach (5 min)
+ai-engine-1  | [ai] global solve 0.20s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.20s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.22s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-4B4B45E4 CRITICAL OPEN T-1065s -> Clear 12050 through TRK-DOWN-MAIN|BLK-115D without regulation
+ai-engine-1  | [ai] CONF-DF46983E HIGH OPEN T-283s -> Stand Kerala Express 12626 on the running line short of TRK-DOWN-MAIN|BLK-110D for 82 min
+ai-engine-1  | [ai] global solve 0.27s over 6 conflict(s), 7 scenario(s)
+ai-engine-1  | [ai] CONF-A56C0D91 CRITICAL OPEN T-404s -> Stand BOXN Rake 402 40201 on the running line short of TRK-DOWN-MAIN|BLK-111D for 15 min
+ai-engine-1  | [ai] global solve 0.27s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-E95F6B94 CRITICAL OPEN T-0s -> Hold Palwal Passenger 54402 at LOOP-KSV-01 at KSV for 128 min; stand Punjab Mail 12138 on the running line short of SEC-PWL-KSV for 73 min; hold RKMP Vande Bharat 20172 at LOOP-PWL-02 at PWL for 21 min
+ai-engine-1  | [ai] global solve 0.27s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.26s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.26s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.28s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.27s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.23s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-3697A5ED CRITICAL OPEN T-0s -> Hold Palwal Passenger 54402 at LOOP-KSV-01 at KSV for 99 min; stand Punjab Mail 12138 on the running line short of SEC-PWL-KSV for 72 min
+ai-engine-1  | [ai] CONF-09019804 HIGH OPEN T-358s -> Stand BOXN Rake 402 40201 on the running line short of TRK-DOWN-MAIN|BLK-111D for 120 min
+ai-engine-1  | [ai] global solve 0.28s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.30s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.26s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-29AC6D7B CRITICAL OPEN T-173s -> Stand BOXN Rake 402 40201 on the running line short of TRK-DOWN-MAIN|BLK-111D for 146 min
+ai-engine-1  | [ai] global solve 0.28s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.30s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.31s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.28s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.36s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.30s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-D3EE6385 CRITICAL OPEN T-152s -> Hold RKMP Vande Bharat 20172 at LOOP-FDB-01 at FDB for 25 min
+ai-engine-1  | [ai] global solve 0.26s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.25s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.23s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.22s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.22s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.23s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.35s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.34s over 4 conflict(s), 5 scenario(s)
+ws-server-1  | Controller committed OPT-1 for CONF-3697A5ED @ 1788160526-c7927619b3
+simulator-1  | [actions] CONF-3697A5ED:OPT-1 -> no-op scenario, nothing to apply
+ai-engine-1  | [ai] global solve 0.26s over 4 conflict(s), 5 scenario(s)
+ws-server-1  | Controller committed OPT-1 for CONF-23BF77DC @ 1788160526-c7927619b3
+simulator-1  | [actions] CONF-23BF77DC:OPT-1 -> no-op scenario, nothing to apply
+ai-engine-1  | [ai] global solve 0.22s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] CONF-F6A65FF1 CRITICAL OPEN T-256s -> Regulate BOXN Rake 408 40208 to 18 km/h on approach (5 min)
+ws-server-1  | Controller committed OPT-1 for CONF-4B4B45E4 @ 1788160526-c7927619b3
+simulator-1  | [actions] CONF-4B4B45E4:OPT-1 -> no-op scenario, nothing to apply
+simulator-1  | [actions] CONF-09019804:OPT-1 -> no-op scenario, nothing to apply
+ws-server-1  | Controller committed OPT-1 for CONF-09019804 @ 1788160526-c7927619b3
+ai-engine-1  | [ai] global solve 0.23s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.22s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.20s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] CONF-DF46983E HIGH OPEN T-249s -> Stand Kerala Express 12626 on the running line short of TRK-DOWN-MAIN|BLK-111D for 83 min
+ai-engine-1  | [ai] global solve 0.19s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.25s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-E95F6B94 CRITICAL OPEN T-0s -> Hold Palwal Passenger 54402 at LOOP-KSV-01 at KSV for 126 min; stand Punjab Mail 12138 on the running line short of SEC-PWL-KSV for 70 min
+ai-engine-1  | [ai] CONF-4B4B45E4 CRITICAL IN_FORCE T-117s -> Stand Kerala Express 12626 on the running line short of TRK-DOWN-MAIN|BLK-110D for 83 min
+ai-engine-1  | [ai] global solve 0.24s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.24s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.27s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.25s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.24s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-3697A5ED CRITICAL DIVERGED T-0s -> Hold Palwal Passenger 54402 at LOOP-KSV-01 at KSV for 97 min; stand Punjab Mail 12138 on the running line short of SEC-PWL-KSV for 70 min; hold RKMP Vande Bharat 20172 at LOOP-PWL-02 at PWL for 23 min
+ai-engine-1  | [ai] CONF-09019804 HIGH IN_FORCE T-344s -> Stand BOXN Rake 402 40201 on the running line short of TRK-DOWN-MAIN|BLK-112D for 124 min
+ai-engine-1  | [ai] global solve 0.26s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.25s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.31s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.29s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-29AC6D7B CRITICAL OPEN T-162s -> Stand BOXN Rake 402 40201 on the running line short of TRK-DOWN-MAIN|BLK-112D for 152 min; regulate RKMP Vande Bharat 20172 to 57 km/h on approach (5 min)
+ai-engine-1  | [ai] global solve 0.29s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.33s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.29s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.26s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] CONF-A56C0D91 CRITICAL OPEN T-120s -> Stand BOXN Rake 402 40201 on the running line short of TRK-DOWN-MAIN|BLK-112D for 153 min; stand Kerala Express 12626 on the running line short of TRK-DOWN-MAIN|BLK-112D for 87 min
+ai-engine-1  | [ai] global solve 0.23s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.24s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.24s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.23s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.23s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.18s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.22s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.24s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.23s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.24s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.24s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] CONF-4B4B45E4 CRITICAL DIVERGED T-283s -> Stand Kerala Express 12626 on the running line short of TRK-DOWN-MAIN|BLK-112D for 83 min
+ai-engine-1  | [ai] global solve 0.21s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] CONF-F6A65FF1 CRITICAL OPEN T-266s -> Regulate BOXN Rake 408 40208 to 19 km/h on approach (5 min)
+ai-engine-1  | [ai] global solve 0.36s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-4B4B45E4 CRITICAL IN_FORCE T-123s -> Stand Kerala Express 12626 on the running line short of TRK-DOWN-MAIN|BLK-111D for 83 min; regulate RKMP Vande Bharat 20172 to 16 km/h on approach (5 min)
+ai-engine-1  | [ai] CONF-D3EE6385 CRITICAL OPEN T-156s -> Regulate RKMP Vande Bharat 20172 to 13 km/h on approach (5 min)
+ai-engine-1  | [ai] global solve 0.33s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.27s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.23s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.21s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] CONF-E95F6B94 CRITICAL OPEN T-0s -> Hold Palwal Passenger 54402 at LOOP-KSV-01 at KSV for 124 min; stand Punjab Mail 12138 on the running line short of SEC-PWL-KSV for 68 min; hold RKMP Vande Bharat 20172 at LOOP-PWL-02 at PWL for 23 min
+ai-engine-1  | [ai] global solve 0.22s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.22s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.22s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.22s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.23s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.24s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.31s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.30s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.23s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] CONF-29AC6D7B CRITICAL OPEN T-572s -> Clear 12050 through TRK-DOWN-MAIN|BLK-115D without regulation
+ai-engine-1  | [ai] global solve 0.24s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.23s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.24s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.23s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] CONF-A56C0D91 CRITICAL OPEN T-272s -> Stand BOXN Rake 402 40201 on the running line short of TRK-DOWN-MAIN|BLK-114D for 157 min; stand Kerala Express 12626 on the running line short of TRK-DOWN-MAIN|BLK-114D for 88 min
+ai-engine-1  | [ai] global solve 0.23s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.24s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.22s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.22s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.24s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.24s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.24s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.20s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.22s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.21s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] CONF-DF46983E HIGH OPEN T-286s -> Stand Kerala Express 12626 on the running line short of TRK-DOWN-MAIN|BLK-113D for 83 min
+ai-engine-1  | [ai] global solve 0.20s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.22s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] CONF-F6A65FF1 CRITICAL OPEN T-288s -> Regulate BOXN Rake 408 40208 to 19 km/h on approach (5 min)
+ai-engine-1  | [ai] global solve 0.22s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.31s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-4B4B45E4 CRITICAL IN_FORCE T-125s -> Stand Kerala Express 12626 on the running line short of TRK-DOWN-MAIN|BLK-112D for 84 min
+ai-engine-1  | [ai] CONF-D3EE6385 CRITICAL OPEN T-163s -> Regulate RKMP Vande Bharat 20172 to 14 km/h on approach (5 min)
+ai-engine-1  | [ai] global solve 0.32s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.24s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.26s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-E95F6B94 CRITICAL OPEN T-0s -> Hold Palwal Passenger 54402 at LOOP-KSV-01 at KSV for 122 min; stand Punjab Mail 12138 on the running line short of SEC-PWL-KSV for 66 min; hold RKMP Vande Bharat 20172 at LOOP-PWL-02 at PWL for 10 min
+ai-engine-1  | [ai] global solve 0.25s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.21s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.24s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.21s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-3697A5ED CRITICAL DIVERGED T-0s -> Hold Palwal Passenger 54402 at LOOP-KSV-01 at KSV for 90 min; stand Punjab Mail 12138 on the running line short of SEC-PWL-KSV for 63 min; hold RKMP Vande Bharat 20172 at LOOP-PWL-02 at PWL for 13 min
+ai-engine-1  | [ai] CONF-DD1E35AB CRITICAL OPEN T-100s -> Stand Kerala Express 12626 on the running line short of TRK-DOWN-MAIN|BLK-112D for 13 min; regulate RKMP Vande Bharat 20172 to 61 km/h on approach (3 min)
+ai-engine-1  | [ai] CONF-09019804 HIGH IN_FORCE T-347s -> Stand BOXN Rake 402 40201 on the running line short of TRK-DOWN-MAIN|BLK-114D for 129 min; regulate RKMP Vande Bharat 20172 to 66 km/h on approach (5 min)
+ai-engine-1  | [ai] global solve 0.24s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.24s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.26s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.28s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.28s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-29AC6D7B CRITICAL OPEN T-152s -> Stand BOXN Rake 402 40201 on the running line short of TRK-DOWN-MAIN|BLK-114D for 160 min
+ai-engine-1  | [ai] global solve 0.28s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.15s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.16s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.15s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] CONF-A56C0D91 CRITICAL OPEN T-272s -> Stand BOXN Rake 402 40201 on the running line short of TRK-DOWN-MAIN|BLK-115D for 161 min; stand Kerala Express 12626 on the running line short of TRK-DOWN-MAIN|BLK-115D for 88 min
+ai-engine-1  | [ai] global solve 0.16s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.16s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.16s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.16s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.15s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.15s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.16s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.15s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.10s over 2 conflict(s), 3 scenario(s)
+ai-engine-1  | [ai] global solve 0.21s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] CONF-DF46983E HIGH OPEN T-281s -> Stand Kerala Express 12626 on the running line short of TRK-DOWN-MAIN|BLK-114D for 84 min
+ai-engine-1  | [ai] global solve 0.21s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.21s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] CONF-F6A65FF1 CRITICAL OPEN T-298s -> Regulate BOXN Rake 408 40208 to 19 km/h on approach (5 min)
+ai-engine-1  | [ai] global solve 0.20s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.19s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.20s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.31s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-4B4B45E4 CRITICAL IN_FORCE T-123s -> Stand Kerala Express 12626 on the running line short of TRK-DOWN-MAIN|BLK-113D for 85 min; regulate RKMP Vande Bharat 20172 to 16 km/h on approach (5 min)
+ai-engine-1  | [ai] CONF-D3EE6385 CRITICAL OPEN T-163s -> Regulate RKMP Vande Bharat 20172 to 14 km/h on approach (5 min)
+ai-engine-1  | [ai] global solve 0.36s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-E95F6B94 CRITICAL OPEN T-0s -> Hold Palwal Passenger 54402 at LOOP-KSV-01 at KSV for 120 min; stand Punjab Mail 12138 on the running line short of SEC-PWL-KSV for 64 min; hold RKMP Vande Bharat 20172 at LOOP-PWL-02 at PWL for 14 min
+ai-engine-1  | [ai] global solve 0.27s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.25s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.24s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.24s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.21s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.27s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.25s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.29s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.29s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-29AC6D7B CRITICAL OPEN T-141s -> Stand BOXN Rake 402 40201 on the running line short of TRK-DOWN-MAIN|BLK-115D for 161 min; regulate RKMP Vande Bharat 20172 to 64 km/h on approach (5 min)
+ai-engine-1  | [ai] global solve 0.28s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.29s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.25s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.11s over 2 conflict(s), 3 scenario(s)
+ai-engine-1  | [ai] global solve 0.10s over 2 conflict(s), 3 scenario(s)
+ai-engine-1  | [ai] global solve 0.12s over 2 conflict(s), 3 scenario(s)
+ai-engine-1  | [ai] global solve 0.16s over 2 conflict(s), 3 scenario(s)
+ai-engine-1  | [ai] CONF-BD4562D7 CRITICAL OPEN T-0s -> Hold BOXN Rake 402 40201 at LOOP-PWL-01 at PWL for 187 min; stand Palwal Passenger 54402 on the running line short of SEC-PWL-KSV for 146 min; stand Kerala Express 12626 on the running line short of SEC-PWL-KSV for 114 min; hold Punjab Mail 12138 at LOOP-KSV-01 at KSV for 84 min; hold RKMP Vande Bharat 20172 at LOOP-PWL-02 at PWL for 45 min; regulate Bhopal Shatabdi 12002 to 96 km/h on approach (4 min)
+ai-engine-1  | [ai] global solve 0.14s over 2 conflict(s), 3 scenario(s)
+ai-engine-1  | [ai] global solve 0.15s over 2 conflict(s), 3 scenario(s)
+ai-engine-1  | [ai] global solve 0.15s over 2 conflict(s), 3 scenario(s)
+ai-engine-1  | [ai] global solve 0.16s over 2 conflict(s), 3 scenario(s)
+ai-engine-1  | [ai] global solve 0.15s over 2 conflict(s), 3 scenario(s)
+ai-engine-1  | [ai] global solve 0.14s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.10s over 2 conflict(s), 3 scenario(s)
+ai-engine-1  | [ai] CONF-DF46983E HIGH OPEN T-286s -> Stand Kerala Express 12626 on the running line short of TRK-DOWN-MAIN|BLK-115D for 109 min
+ai-engine-1  | [ai] global solve 0.13s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.15s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] CONF-F6A65FF1 CRITICAL OPEN T-325s -> Stand BOXN Rake 408 40208 on the running line short of SEC-MTJ-BTSR for 11 min
+ai-engine-1  | [ai] global solve 0.18s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.20s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.27s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.19s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.35s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-4B4B45E4 CRITICAL IN_FORCE T-124s -> Stand Kerala Express 12626 on the running line short of TRK-DOWN-MAIN|BLK-114D for 109 min; stand RKMP Vande Bharat 20172 on the running line short of TRK-DOWN-MAIN|BLK-114D for 15 min
+ai-engine-1  | [ai] CONF-D3EE6385 CRITICAL OPEN T-163s -> Regulate RKMP Vande Bharat 20172 to 17 km/h on approach (2 min)
+ai-engine-1  | [ai] global solve 0.33s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.36s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.34s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.35s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.30s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] CONF-4B4B45E4 CRITICAL DIVERGED T-107s -> Stand Kerala Express 12626 on the running line short of TRK-DOWN-MAIN|BLK-114D for 105 min; stand RKMP Vande Bharat 20172 on the running line short of TRK-DOWN-MAIN|BLK-114D for 28 min
+ai-engine-1  | [ai] global solve 0.30s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.30s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.28s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.26s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] CONF-29AC6D7B CRITICAL OPEN T-216s -> Stand BOXN Rake 402 40201 on the running line short of TRK-DOWN-MAIN|BLK-115D for 179 min
+ai-engine-1  | [ai] global solve 0.26s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.29s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.28s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.28s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.19s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.19s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.19s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] CONF-BD4562D7 CRITICAL OPEN T-0s -> Hold Palwal Passenger 54402 at LOOP-KSV-01 at KSV for 142 min; stand Punjab Mail 12138 on the running line short of SEC-PWL-KSV for 86 min; hold Bhopal Shatabdi 12002 at LOOP-PWL-02 at PWL for 35 min
+ai-engine-1  | [ai] global solve 0.20s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.20s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.19s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.19s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.22s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.19s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.18s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.19s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.15s over 2 conflict(s), 3 scenario(s)
+ai-engine-1  | [ai] global solve 0.26s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-4B4B45E4 CRITICAL IN_FORCE T-233s -> Stand Kerala Express 12626 on the running line short of TRK-DOWN-MAIN|BLK-114D for 111 min
+ai-engine-1  | [ai] CONF-F6A65FF1 CRITICAL OPEN T-383s -> Regulate BOXN Rake 408 40208 to 24 km/h on approach (5 min)
+ai-engine-1  | [ai] global solve 0.28s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.27s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.56s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-93631434 CRITICAL OPEN T-0s -> Hold Palwal Passenger 54402 at LOOP-KSV-01 at KSV for 171 min; stand Punjab Mail 12138 on the running line short of SEC-PWL-KSV for 89 min; hold Bhopal Shatabdi 12002 at LOOP-PWL-02 at PWL for 14 min
+ai-engine-1  | [ai] global solve 0.53s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-D3EE6385 CRITICAL OPEN T-213s -> Stand RKMP Vande Bharat 20172 on the running line short of TRK-DOWN-MAIN|BLK-113D for 53 min
+ai-engine-1  | [ai] global solve 0.55s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.61s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.61s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.51s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-19F737CE HIGH OPEN T-268s -> Hold Punjab Mail 12138 at LOOP-KSV-01 at KSV for 110 min; hold Bhopal Shatabdi 12002 at LOOP-PWL-02 at PWL for 15 min
+ai-engine-1  | [ai] global solve 0.47s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.46s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.38s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] CONF-19F737CE CRITICAL OPEN T-108s -> Hold BOXN Rake 402 40201 at LOOP-PWL-01 at PWL for 167 min; hold Punjab Mail 12138 at LOOP-KSV-01 at KSV for 110 min; hold Bhopal Shatabdi 12002 at LOOP-PWL-02 at PWL for 16 min
+ai-engine-1  | [ai] global solve 0.61s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-A19F71DF MEDIUM OPEN T-456s -> Hold Punjab Mail 12138 at LOOP-KSV-01 at KSV for 110 min; hold Bhopal Shatabdi 12002 at LOOP-PWL-02 at PWL for 14 min; regulate Bhopal Shatabdi Up 12001 to 92 km/h on approach (5 min)
+ai-engine-1  | [ai] CONF-3BD65149 HIGH OPEN T-294s -> Stand BOXN Rake 402 40201 on the running line short of TRK-DOWN-MAIN|BLK-115D for 14 min; regulate Bhopal Shatabdi 12002 to 101 km/h on approach (1 min)
+ai-engine-1  | [ai] global solve 0.59s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.54s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.62s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.25s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-A2EDFC83 MEDIUM OPEN T-456s -> Hold Punjab Mail 12138 at LOOP-KSV-01 at KSV for 87 min; hold Bhopal Shatabdi 12002 at LOOP-PWL-02 at PWL for 12 min
+ai-engine-1  | [ai] global solve 0.26s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.27s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.24s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.33s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-A4D519B7 MEDIUM OPEN T-456s -> Hold Punjab Mail 12138 at LOOP-KSV-01 at KSV for 87 min; hold Bhopal Shatabdi 12002 at LOOP-PWL-02 at PWL for 17 min
+ai-engine-1  | [ai] global solve 0.30s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.28s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.31s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.28s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.29s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.28s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.35s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.28s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.28s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.29s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-4B4B45E4 CRITICAL IN_FORCE T-233s -> Stand Kerala Express 12626 on the running line short of TRK-DOWN-MAIN|BLK-114D for 113 min
+ai-engine-1  | [ai] CONF-F6A65FF1 CRITICAL OPEN T-645s -> Hold BOXN Rake 408 40208 at LOOP-MTJ-01 at MTJ for 9 min
+ai-engine-1  | [ai] global solve 0.29s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-F6A65FF1 MEDIUM OPEN T-635s -> Hold BOXN Rake 408 40208 at LOOP-MTJ-01 at MTJ for 9 min
+ai-engine-1  | [ai] global solve 0.30s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.27s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.27s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-D3EE6385 CRITICAL OPEN T-213s -> Stand RKMP Vande Bharat 20172 on the running line short of TRK-DOWN-MAIN|BLK-113D for 55 min
+ai-engine-1  | [ai] global solve 0.28s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.28s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.30s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.28s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.25s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.66s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.64s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-19F737CE CRITICAL OPEN T-456s -> Hold Punjab Mail 12138 at LOOP-KSV-01 at KSV for 116 min; hold Bhopal Shatabdi 12002 at LOOP-PWL-02 at PWL for 21 min
+ai-engine-1  | [ai] global solve 0.62s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-3BD65149 HIGH OPEN T-294s -> Stand BOXN Rake 402 40201 on the running line short of TRK-DOWN-MAIN|BLK-115D for 150 min
+ai-engine-1  | [ai] CONF-F6A65FF1 HIGH OPEN T-414s -> Hold Bhopal Shatabdi Up 12001 at LOOP-MTJ-01 at MTJ for 28 min
+ai-engine-1  | [ai] global solve 0.88s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-B6A450BE HIGH OPEN T-213s -> Stand RKMP Vande Bharat 20172 on the running line short of TRK-DOWN-MAIN|BLK-113D for 81 min; regulate Bhopal Shatabdi 12002 to 59 km/h on approach (5 min)
+ai-engine-1  | [ai] global solve 1.05s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-DD1E35AB CRITICAL OPEN T-233s -> Stand Kerala Express 12626 on the running line short of TRK-DOWN-MAIN|BLK-114D for 140 min
+ai-engine-1  | [ai] global solve 0.99s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 1.01s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 1.09s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.85s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.85s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.88s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.86s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.96s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.92s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.87s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 1.01s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-19F737CE MEDIUM OPEN T-456s -> Hold Punjab Mail 12138 at LOOP-KSV-01 at KSV for 113 min; hold Bhopal Shatabdi 12002 at LOOP-PWL-02 at PWL for 23 min
+ai-engine-1  | [ai] global solve 1.24s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.88s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.85s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.94s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 1.05s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 1.02s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 1.20s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 1.05s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.90s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.90s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.93s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.79s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 1.01s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-B6A450BE CRITICAL OPEN T-173s -> Stand RKMP Vande Bharat 20172 on the running line short of TRK-DOWN-MAIN|BLK-113D for 81 min; regulate Bhopal Shatabdi 12002 to 37 km/h on approach (5 min)
+ai-engine-1  | [ai] global solve 0.94s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.79s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.25s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] CONF-A4D519B7 MEDIUM OPEN T-456s -> Hold Punjab Mail 12138 at LOOP-KSV-01 at KSV for 89 min
+ai-engine-1  | [ai] global solve 0.73s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-3BD65149 HIGH OPEN T-294s -> Stand BOXN Rake 402 40201 on the running line short of TRK-DOWN-MAIN|BLK-115D for 155 min
+ai-engine-1  | [ai] CONF-F6A65FF1 HIGH OPEN T-343s -> Hold Bhopal Shatabdi Up 12001 at LOOP-MTJ-01 at MTJ for 36 min
+ai-engine-1  | [ai] global solve 0.78s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.84s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-DD1E35AB CRITICAL OPEN T-233s -> Stand Kerala Express 12626 on the running line short of TRK-DOWN-MAIN|BLK-114D for 140 min; stand Bhopal Shatabdi 12002 on the running line short of TRK-DOWN-MAIN|BLK-114D for 25 min
+ai-engine-1  | [ai] global solve 0.66s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.72s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.69s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.84s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.89s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.72s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.69s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.72s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.69s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.89s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.79s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-19F737CE MEDIUM OPEN T-456s -> Hold Punjab Mail 12138 at LOOP-KSV-01 at KSV for 113 min
+ai-engine-1  | [ai] global solve 0.80s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.72s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-F6A65FF1 CRITICAL OPEN T-178s -> Hold Bhopal Shatabdi Up 12001 at LOOP-MTJ-01 at MTJ for 39 min
+ai-engine-1  | [ai] global solve 0.69s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.61s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.70s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.69s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.68s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.64s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.70s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.61s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.62s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.68s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.58s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-B6A450BE CRITICAL OPEN T-213s -> Stand RKMP Vande Bharat 20172 on the running line short of TRK-DOWN-MAIN|BLK-113D for 82 min
+ai-engine-1  | [ai] global solve 0.60s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.59s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.65s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.66s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-3BD65149 HIGH OPEN T-294s -> Stand BOXN Rake 402 40201 on the running line short of TRK-DOWN-MAIN|BLK-115D for 160 min
+ai-engine-1  | [ai] global solve 0.25s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] CONF-A4D519B7 MEDIUM OPEN T-456s -> Hold Punjab Mail 12138 at LOOP-KSV-01 at KSV for 89 min
+ws-server-1  | Controller committed OPT-1 for CONF-A2EDFC83 @ 1788160526-c7927619b3
+simulator-1  | [actions] CONF-A2EDFC83:OPT-1 -> REGULATE 12002 applied
+ai-engine-1  | [ai] global solve 0.61s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-DD1E35AB CRITICAL OPEN T-233s -> Stand Kerala Express 12626 on the running line short of TRK-DOWN-MAIN|BLK-114D for 140 min; stand Bhopal Shatabdi 12002 on the running line short of TRK-DOWN-MAIN|BLK-114D for 25 min
+ai-engine-1  | [ai] global solve 0.74s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.66s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.67s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.74s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.78s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.71s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.82s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.74s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.84s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.74s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.69s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-19F737CE MEDIUM OPEN T-456s -> Hold Punjab Mail 12138 at LOOP-KSV-01 at KSV for 113 min
+ai-engine-1  | [ai] global solve 0.76s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.75s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-F6A65FF1 CRITICAL OPEN T-191s -> Hold Bhopal Shatabdi Up 12001 at LOOP-MTJ-01 at MTJ for 15 min
+ai-engine-1  | [ai] global solve 0.85s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.73s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.76s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.60s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.69s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.78s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.65s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.63s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.62s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.60s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.59s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-B6A450BE CRITICAL OPEN T-213s -> Stand RKMP Vande Bharat 20172 on the running line short of TRK-DOWN-MAIN|BLK-113D for 82 min
+ai-engine-1  | [ai] global solve 0.64s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.65s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.63s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.65s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-3BD65149 HIGH OPEN T-294s -> Stand BOXN Rake 402 40201 on the running line short of TRK-DOWN-MAIN|BLK-115D for 165 min
+ai-engine-1  | [ai] global solve 0.57s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.61s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-DD1E35AB CRITICAL OPEN T-233s -> Stand Kerala Express 12626 on the running line short of TRK-DOWN-MAIN|BLK-114D for 140 min; stand Bhopal Shatabdi 12002 on the running line short of TRK-DOWN-MAIN|BLK-114D for 25 min
+ai-engine-1  | [ai] global solve 0.24s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] CONF-A4D519B7 MEDIUM OPEN T-456s -> Hold Punjab Mail 12138 at LOOP-KSV-01 at KSV for 89 min
+ai-engine-1  | [ai] global solve 0.63s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.80s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.80s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.71s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.69s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.80s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.72s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.66s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-6AD72C8A MEDIUM OPEN T-484s -> Regulate Bhopal Shatabdi Up 12001 to 85 km/h on approach (5 min)
+ai-engine-1  | [ai] global solve 0.58s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.57s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.60s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.64s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-F6A65FF1 CRITICAL OPEN T-211s -> Hold Bhopal Shatabdi Up 12001 at LOOP-MTJ-01 at MTJ for 12 min
+ai-engine-1  | [ai] global solve 0.62s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.54s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.60s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.67s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.76s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.65s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.69s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.63s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.52s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.56s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.57s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-B6A450BE CRITICAL OPEN T-213s -> Stand RKMP Vande Bharat 20172 on the running line short of TRK-DOWN-MAIN|BLK-113D for 82 min; stand Bhopal Shatabdi 12002 on the running line short of TRK-DOWN-MAIN|BLK-113D for 25 min
+ai-engine-1  | [ai] global solve 0.64s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.53s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.59s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.58s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-3BD65149 HIGH OPEN T-294s -> Stand BOXN Rake 402 40201 on the running line short of TRK-DOWN-MAIN|BLK-115D for 140 min
+ai-engine-1  | [ai] global solve 0.54s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.55s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-DD1E35AB CRITICAL OPEN T-233s -> Stand Kerala Express 12626 on the running line short of TRK-DOWN-MAIN|BLK-114D for 111 min
+ai-engine-1  | [ai] global solve 0.51s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.58s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.18s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.68s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.60s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.62s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.65s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.63s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.73s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] CONF-6AD72C8A MEDIUM OPEN T-456s -> Clear 12050 through SEC-PWL-KSV without regulation
+ai-engine-1  | [ai] global solve 0.59s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.63s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.60s over 5 conflict(s), 6 scenario(s)
+ai-engine-1  | [ai] global solve 0.50s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] CONF-F6A65FF1 CRITICAL OPEN T-231s -> Hold Bhopal Shatabdi Up 12001 at LOOP-MTJ-01 at MTJ for 19 min
+ai-engine-1  | [ai] global solve 0.51s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.45s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.52s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.44s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] CONF-6AD72C8A HIGH OPEN T-415s -> Hold BOXN Rake 402 40201 at LOOP-PWL-01 at PWL for 141 min
+ai-engine-1  | [ai] global solve 0.51s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.55s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.56s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.39s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.41s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.44s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.38s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] CONF-FD5790B8 MEDIUM OPEN T-484s -> Hold BOXN Rake 402 40201 at LOOP-PWL-01 at PWL for 116 min
+ai-engine-1  | [ai] CONF-B6A450BE CRITICAL OPEN T-213s -> Stand RKMP Vande Bharat 20172 on the running line short of TRK-DOWN-MAIN|BLK-113D for 82 min; stand Bhopal Shatabdi 12002 on the running line short of TRK-DOWN-MAIN|BLK-113D for 25 min
+ai-engine-1  | [ai] global solve 0.25s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.24s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.24s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] CONF-6AD72C8A CRITICAL OPEN T-173s -> Hold BOXN Rake 402 40201 at LOOP-PWL-01 at PWL for 144 min; hold Kerala Express 12626 at LOOP-PWL-02 at PWL for 112 min
+ai-engine-1  | [ai] global solve 0.24s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.22s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.24s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.18s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] CONF-FAD00BF9 CRITICAL OPEN T-130s -> Hold BOXN Rake 402 40201 at LOOP-PWL-01 at PWL for 121 min; hold Kerala Express 12626 at LOOP-PWL-02 at PWL for 90 min
+ai-engine-1  | [ai] CONF-DE951342 MEDIUM OPEN T-493s -> Clear 20172 through TRK-DOWN-MAIN|BLK-114D without regulation
+ai-engine-1  | [ai] global solve 0.47s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] CONF-DD1E35AB CRITICAL OPEN T-168s -> Stand Kerala Express 12626 on the running line short of TRK-DOWN-MAIN|BLK-115D for 110 min
+ai-engine-1  | [ai] CONF-DE951342 HIGH OPEN T-356s -> Stand RKMP Vande Bharat 20172 on the running line short of TRK-DOWN-MAIN|BLK-113D for 78 min
+ai-engine-1  | [ai] global solve 0.44s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.40s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.25s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] CONF-3BD65149 CRITICAL OPEN T-90s -> Hold BOXN Rake 402 40201 at LOOP-PWL-01 at PWL for 113 min; hold Bhopal Shatabdi 12002 at LOOP-PWL-02 at PWL for 18 min
+ai-engine-1  | [ai] CONF-1886E8AC LOW OPEN T-1415s -> Clear 12001 through TRK-UP-MAIN|BLK-132U without regulation
+ai-engine-1  | [ai] global solve 0.53s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.61s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] CONF-1062DEA2 CRITICAL OPEN T-70s -> Hold BOXN Rake 408 40208 at LOOP-KSV-01 at KSV for 162 min; hold BOXN Rake 402 40201 at LOOP-PWL-01 at PWL for 139 min; hold Bhopal Shatabdi 12002 at LOOP-PWL-02 at PWL for 18 min
+ai-engine-1  | [ai] CONF-4B4B45E4 CRITICAL IN_FORCE T-126s -> Stand Kerala Express 12626 on the running line short of TRK-DOWN-MAIN|BLK-115D for 113 min
+ai-engine-1  | [ai] CONF-D3EE6385 CRITICAL OPEN T-163s -> Stand RKMP Vande Bharat 20172 on the running line short of TRK-DOWN-MAIN|BLK-114D for 80 min
+ai-engine-1  | [ai] global solve 0.67s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.63s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.32s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] CONF-B605A29A CRITICAL OPEN T-41s -> Hold BOXN Rake 408 40208 at LOOP-KSV-01 at KSV for 140 min; hold BOXN Rake 402 40201 at LOOP-PWL-01 at PWL for 112 min; hold RKMP Vande Bharat 20172 at LOOP-PWL-02 at PWL for 49 min; regulate Bhopal Shatabdi Up 12001 to 60 km/h on approach (5 min)
+ai-engine-1  | [ai] global solve 0.84s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.61s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.65s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] CONF-27E8C5FA HIGH OPEN T-228s -> Hold BOXN Rake 408 40208 at LOOP-KSV-01 at KSV for 129 min; hold BOXN Rake 402 40201 at LOOP-PWL-01 at PWL for 105 min; hold Bhopal Shatabdi 12002 at LOOP-PWL-02 at PWL for 64 min
+ai-engine-1  | [ai] CONF-F6A65FF1 CRITICAL OPEN T-251s -> Hold Bhopal Shatabdi Up 12001 at LOOP-MTJ-01 at MTJ for 40 min; regulate BOXN Rake 408 40208 to 17 km/h on approach (5 min)
+ai-engine-1  | [ai] global solve 0.61s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.69s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.68s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.68s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.71s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.78s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.85s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.77s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.70s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.77s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.72s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.69s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.83s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] CONF-B6A450BE CRITICAL OPEN T-177s -> Stand RKMP Vande Bharat 20172 on the running line short of TRK-DOWN-MAIN|BLK-114D for 78 min; regulate Bhopal Shatabdi 12002 to 57 km/h on approach (1 min)
+ai-engine-1  | [ai] global solve 0.80s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] CONF-27E8C5FA CRITICAL OPEN T-179s -> Hold BOXN Rake 402 40201 at LOOP-PWL-01 at PWL for 167 min; hold Bhopal Shatabdi Up 12001 at LOOP-KSV-01 at KSV for 40 min; hold Bhopal Shatabdi 12002 at LOOP-PWL-02 at PWL for 13 min
+ai-engine-1  | [ai] global solve 0.84s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.58s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.63s over 4 conflict(s), 5 scenario(s)
+ws-server-1  | Controller committed OPT-1 for CONF-FAD00BF9 @ 1788160526-c7927619b3
+simulator-1  | [actions] CONF-FAD00BF9:OPT-1 -> HOLD_AT_LOOP 12626 applied
+ai-engine-1  | [ai] global solve 0.58s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.24s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] CONF-DE951342 HIGH OPEN T-356s -> Stand RKMP Vande Bharat 20172 on the running line short of TRK-DOWN-MAIN|BLK-114D for 78 min
+ai-engine-1  | [ai] global solve 0.25s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.33s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.21s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.25s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.10s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] CONF-82207EE6 CRITICAL OPEN T-131s -> Hold BOXN Rake 408 40208 at LOOP-KSV-01 at KSV for 116 min; hold BOXN Rake 402 40201 at LOOP-PWL-01 at PWL for 83 min; hold Bhopal Shatabdi 12002 at LOOP-PWL-02 at PWL for 18 min
+ai-engine-1  | [ai] CONF-1886E8AC LOW OPEN T-1244s -> Clear 12001 through TRK-UP-MAIN|BLK-131U without regulation
+ai-engine-1  | [ai] global solve 0.30s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.40s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] CONF-D3EE6385 CRITICAL OPEN T-163s -> Stand RKMP Vande Bharat 20172 on the running line short of TRK-DOWN-MAIN|BLK-115D for 80 min
+ai-engine-1  | [ai] global solve 0.29s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.31s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.15s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] CONF-E97F02B5 CRITICAL OPEN T-113s -> Hold BOXN Rake 408 40208 at LOOP-KSV-01 at KSV for 116 min; hold BOXN Rake 402 40201 at LOOP-PWL-01 at PWL for 82 min; hold RKMP Vande Bharat 20172 at LOOP-PWL-02 at PWL for 49 min
+ai-engine-1  | [ai] global solve 0.15s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] CONF-F6A65FF1 CRITICAL OPEN T-272s -> Hold Bhopal Shatabdi Up 12001 at LOOP-MTJ-01 at MTJ for 17 min
+ai-engine-1  | [ai] global solve 0.47s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.43s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.40s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.39s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.44s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.44s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.43s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.45s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.52s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.32s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.44s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.28s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.35s over 3 conflict(s), 4 scenario(s)
+ws-server-1  | Controller committed OPT-1 for CONF-82207EE6 @ 1788160526-c7927619b3
+simulator-1  | [actions] CONF-82207EE6:OPT-1 -> HOLD_AT_LOOP 12002 applied
+simulator-1  | [actions] CONF-82207EE6:OPT-1 -> HOLD_AT_LOOP 40208 applied
+ai-engine-1  | [ai] global solve 0.31s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] CONF-27E8C5FA CRITICAL OPEN T-61s -> Hold BOXN Rake 402 40201 at LOOP-PWL-01 at PWL for 165 min; hold RKMP Vande Bharat 20172 at LOOP-PWL-02 at PWL for 75 min; hold Bhopal Shatabdi Up 12001 at LOOP-KSV-01 at KSV for 39 min
+ai-engine-1  | [ai] global solve 0.13s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] CONF-FD5790B8 CRITICAL OPEN T-57s -> Hold BOXN Rake 402 40201 at LOOP-PWL-01 at PWL for 108 min; hold RKMP Vande Bharat 20172 at LOOP-PWL-02 at PWL for 22 min
+ai-engine-1  | [ai] global solve 0.32s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] CONF-B6A450BE CRITICAL OPEN T-172s -> Stand RKMP Vande Bharat 20172 on the running line short of TRK-DOWN-MAIN|BLK-115D for 25 min; regulate Bhopal Shatabdi 12002 to 35 km/h on approach (5 min)
+ai-engine-1  | [ai] global solve 0.26s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.24s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.07s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] CONF-A2F8B7EC CRITICAL OPEN T-43s -> Hold BOXN Rake 402 40201 at LOOP-PWL-01 at PWL for 82 min; hold RKMP Vande Bharat 20172 at LOOP-PWL-02 at PWL for 22 min
+ai-engine-1  | [ai] CONF-DE951342 HIGH OPEN T-356s -> Stand Bhopal Shatabdi 12002 on the running line short of TRK-DOWN-MAIN|BLK-115D for 5 min
+ai-engine-1  | [ai] global solve 0.07s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.08s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.07s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] CONF-B7091825 HIGH OPEN T-342s -> Hold BOXN Rake 402 40201 at LOOP-PWL-01 at PWL for 62 min
+ai-engine-1  | [ai] global solve 0.07s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.08s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] global solve 0.11s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] CONF-F66DBFDC LOW OPEN T-1492s -> Hold Palwal Passenger 54402 at LOOP-NZM-01 at NZM for 12 min
+ai-engine-1  | [ai] global solve 0.09s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] CONF-1886E8AC LOW OPEN T-1123s -> Clear 12001 through TRK-UP-MAIN|BLK-130U without regulation
+simulator-1  | [actions] CONF-3BD65149:OPT-1 -> already in force, nothing re-applied
+ws-server-1  | Controller committed OPT-1 for CONF-3BD65149 @ 1788160526-c7927619b3
+ws-server-1  | Controller committed OPT-1 for CONF-E97F02B5 @ 1788160526-c7927619b3
+simulator-1  | [actions] CONF-E97F02B5:OPT-1 -> REGULATE 20172 applied
+simulator-1  | [actions] CONF-E97F02B5:OPT-1 -> HOLD_AT_LOOP 40208 applied
+ai-engine-1  | [ai] global solve 0.14s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.14s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.14s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.14s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] CONF-F6A65FF1 CRITICAL OPEN T-293s -> Hold Bhopal Shatabdi Up 12001 at LOOP-MTJ-01 at MTJ for 24 min
+ai-engine-1  | [ai] global solve 0.13s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.13s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.14s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.15s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.14s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.14s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.14s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.13s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.13s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.14s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.14s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.13s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.14s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.11s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.11s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.11s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] CONF-B6A450BE CRITICAL OPEN T-213s -> Stand Bhopal Shatabdi 12002 on the running line short of TRK-DOWN-MAIN|BLK-115D for 6 min; stand RKMP Vande Bharat 20172 on the running line short of TRK-DOWN-MAIN|BLK-115D for 4 min
+ai-engine-1  | [ai] global solve 0.11s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.11s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.11s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.10s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.12s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.12s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] CONF-B7091825 HIGH OPEN T-342s -> Hold BOXN Rake 402 40201 at LOOP-PWL-01 at PWL for 62 min
+ai-engine-1  | [ai] global solve 0.11s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.15s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] CONF-44BBE8F5 HIGH OPEN T-342s -> Hold BOXN Rake 402 40201 at LOOP-PWL-01 at PWL for 94 min; hold Taj Express 12280 at LOOP-KSV-01 at KSV for 31 min
+ai-engine-1  | [ai] global solve 0.15s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] CONF-F66DBFDC LOW OPEN T-1144s -> Hold Palwal Passenger 54402 at LOOP-NZM-01 at NZM for 12 min
+ai-engine-1  | [ai] global solve 0.18s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.15s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.09s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] CONF-1886E8AC LOW OPEN T-950s -> Clear 12001 through TRK-UP-MAIN|BLK-129U without regulation
+ai-engine-1  | [ai] global solve 0.15s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.16s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] CONF-F6A65FF1 CRITICAL OPEN T-331s -> Hold Bhopal Shatabdi Up 12001 at LOOP-MTJ-01 at MTJ for 26 min
+ai-engine-1  | [ai] global solve 0.21s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.16s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.16s over 4 conflict(s), 5 scenario(s)
+ai-engine-1  | [ai] global solve 0.17s over 4 conflict(s), 5 scenario(s)
+ws-server-1  | Controller committed OPT-1 for CONF-DE951342 @ 1788160526-c7927619b3
+simulator-1  | [actions] CONF-DE951342:OPT-1 -> STAND_ON_MAIN 12002 applied
+simulator-1  | [actions] CONF-1886E8AC:OPT-1 -> no-op scenario, nothing to apply
+ws-server-1  | Controller committed OPT-1 for CONF-1886E8AC @ 1788160526-c7927619b3
+simulator-1  | [actions] CONF-F66DBFDC:OPT-1 -> HOLD_AT_LOOP 54402 applied
+ws-server-1  | Controller committed OPT-1 for CONF-F66DBFDC @ 1788160526-c7927619b3
+simulator-1  | [sim] 12002 has passed BVH; cannot stand short of it
+ai-engine-1  | [ai] global solve 0.18s over 4 conflict(s), 5 scenario(s)
+simulator-1  | [actions] CONF-44BBE8F5:OPT-1 -> HOLD_AT_LOOP 12280 applied
+ws-server-1  | Controller committed OPT-1 for CONF-44BBE8F5 @ 1788160526-c7927619b3
+ws-server-1  | Controller committed OPT-1 for CONF-B7091825 @ 1788160526-c7927619b3
+simulator-1  | [actions] CONF-B7091825:OPT-1 -> no-op scenario, nothing to apply
+ai-engine-1  | [ai] global solve 0.15s over 3 conflict(s), 4 scenario(s)
+ws-server-1  | Controller committed OPT-1 for CONF-F6A65FF1 @ 1788160526-c7927619b3
+simulator-1  | [actions] CONF-F6A65FF1:OPT-1 -> HOLD_AT_LOOP 12001 applied
+ws-server-1  | Controller committed OPT-1 for CONF-B6A450BE @ 1788160526-c7927619b3
+simulator-1  | [actions] CONF-B6A450BE:OPT-1 -> STAND_ON_MAIN 12002 applied
+simulator-1  | [actions] CONF-B6A450BE:OPT-1 -> STAND_ON_MAIN 20172 applied
+simulator-1  | [sim] 12001 has passed MTJ; re-targeting hold to the next loop ahead
+simulator-1  | [sim] 12002 has passed BVH; cannot stand short of it
+simulator-1  | [sim] 20172 has passed BVH; cannot stand short of it
+ai-engine-1  | [ai] global solve 0.10s over 3 conflict(s), 4 scenario(s)
+ai-engine-1  | [ai] CONF-B7091825 HIGH IN_FORCE T-342s -> Hold BOXN Rake 402 40201 at LOOP-PWL-01 at PWL for 58 min
+ai-engine-1  | [ai] CONF-B6A450BE CRITICAL DIVERGED T-213s -> Stand RKMP Vande Bharat 20172 on the running line short of TRK-DOWN-MAIN|BLK-115D for 28 min
+ai-engine-1  | [ai] global solve 0.12s over 2 conflict(s), 3 scenario(s)
+ai-engine-1  | [ai] CONF-B6A450BE CRITICAL IN_FORCE T-213s -> Stand Bhopal Shatabdi 12002 on the running line short of TRK-DOWN-MAIN|BLK-115D for 6 min; stand RKMP Vande Bharat 20172 on the running line short of TRK-DOWN-MAIN|BLK-115D for 4 min
+ws-server-1  | Controller committed OPT-1 for CONF-B6A450BE @ 1788160526-c7927619b3
+simulator-1  | [actions] CONF-B6A450BE:OPT-1 -> STAND_ON_MAIN 12002 applied
+simulator-1  | [actions] CONF-B6A450BE:OPT-1 -> STAND_ON_MAIN 20172 applied
+simulator-1  | [sim] 12002 has passed BVH; cannot stand short of it
+simulator-1  | [sim] 20172 has passed BVH; cannot stand short of it
+ai-engine-1  | [ai] global solve 0.12s over 2 conflict(s), 3 scenario(s)
+ai-engine-1  | [ai] global solve 0.12s over 2 conflict(s), 3 scenario(s)
+ai-engine-1  | [ai] global solve 0.13s over 2 conflict(s), 3 scenario(s)
+ai-engine-1  | [ai] global solve 0.12s over 2 conflict(s), 3 scenario(s)
+ai-engine-1  | [ai] global solve 0.12s over 2 conflict(s), 3 scenario(s)
+ai-engine-1  | [ai] global solve 0.12s over 2 conflict(s), 3 scenario(s)
+ai-engine-1  | [ai] global solve 0.07s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.08s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.07s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.07s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.06s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.06s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.08s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.07s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.06s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.07s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.06s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.07s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.08s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.07s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.07s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.05s over 2 conflict(s), 3 scenario(s)
+ai-engine-1  | [ai] CONF-1886E8AC MEDIUM IN_FORCE T-779s -> Clear 12001 through TRK-UP-MAIN|BLK-128U without regulation
+ai-engine-1  | [ai] global solve 0.08s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.07s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.07s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.07s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.07s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.06s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.07s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.07s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] CONF-B6A450BE CRITICAL IN_FORCE T-213s -> Stand Bhopal Shatabdi 12002 on the running line short of TRK-DOWN-MAIN|BLK-115D for 6 min; stand RKMP Vande Bharat 20172 on the running line short of TRK-DOWN-MAIN|BLK-115D for 4 min
+ai-engine-1  | [ai] global solve 0.06s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.06s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.08s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.07s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.08s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.07s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.07s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.06s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.07s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.07s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.07s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.07s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.06s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.07s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.05s over 2 conflict(s), 3 scenario(s)
+ai-engine-1  | [ai] global solve 0.07s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.12s over 2 conflict(s), 3 scenario(s)
+ai-engine-1  | [ai] CONF-9315E24A HIGH OPEN T-342s -> Hold BOXN Rake 408 40208 at LOOP-KSV-01 at KSV for 90 min; hold BOXN Rake 402 40201 at LOOP-PWL-01 at PWL for 61 min; hold Gatimaan Express 12050 at LOOP-PWL-02 at PWL for 5 min
+ws-server-1  | Controller committed OPT-1 for CONF-9315E24A @ 1788160526-c7927619b3
+simulator-1  | [actions] CONF-9315E24A:OPT-1 -> HOLD_AT_LOOP 12050 applied
+ai-engine-1  | [ai] global solve 0.11s over 2 conflict(s), 3 scenario(s)
+ai-engine-1  | [ai] global solve 0.03s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] CONF-F66DBFDC MEDIUM OPEN T-803s -> Clear 12138 through TRK-UP-MAIN|BLK-100U without regulation
+ai-engine-1  | [ai] global solve 0.02s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.03s over 2 conflict(s), 3 scenario(s)
+ai-engine-1  | [ai] CONF-23BF77DC LOW DIVERGED T-1494s -> Regulate BOXN Rake 402 40201 to 40 km/h on approach (3 min)
+ai-engine-1  | [ai] global solve 0.04s over 2 conflict(s), 3 scenario(s)
+ai-engine-1  | [ai] global solve 0.03s over 2 conflict(s), 3 scenario(s)
+ai-engine-1  | [ai] global solve 0.03s over 2 conflict(s), 3 scenario(s)
+ws-server-1  | Controller committed OPT-1 for CONF-23BF77DC @ 1788160526-c7927619b3
+simulator-1  | [actions] CONF-23BF77DC:OPT-1 -> REGULATE 40201 applied
+ai-engine-1  | [ai] global solve 0.04s over 2 conflict(s), 3 scenario(s)
+ai-engine-1  | [ai] CONF-23BF77DC LOW IN_FORCE T-1454s -> Regulate BOXN Rake 402 40201 to 39 km/h on approach (3 min)
+ai-engine-1  | [ai] global solve 0.02s over 2 conflict(s), 3 scenario(s)
+ai-engine-1  | [ai] global solve 0.03s over 2 conflict(s), 3 scenario(s)
+ai-engine-1  | [ai] global solve 0.03s over 2 conflict(s), 3 scenario(s)
+ai-engine-1  | [ai] global solve 0.03s over 2 conflict(s), 3 scenario(s)
+ai-engine-1  | [ai] global solve 0.03s over 2 conflict(s), 3 scenario(s)
+ai-engine-1  | [ai] global solve 0.03s over 2 conflict(s), 3 scenario(s)
+ai-engine-1  | [ai] global solve 0.02s over 2 conflict(s), 3 scenario(s)
+ai-engine-1  | [ai] global solve 0.03s over 2 conflict(s), 3 scenario(s)
+ai-engine-1  | [ai] global solve 0.03s over 2 conflict(s), 3 scenario(s)
+ai-engine-1  | [ai] global solve 0.02s over 2 conflict(s), 3 scenario(s)
+ai-engine-1  | [ai] global solve 0.02s over 2 conflict(s), 3 scenario(s)
+ai-engine-1  | [ai] global solve 0.04s over 2 conflict(s), 3 scenario(s)
+ai-engine-1  | [ai] global solve 0.04s over 2 conflict(s), 3 scenario(s)
+ai-engine-1  | [ai] global solve 0.03s over 2 conflict(s), 3 scenario(s)
+ai-engine-1  | [ai] global solve 0.03s over 2 conflict(s), 3 scenario(s)
+ai-engine-1  | [ai] global solve 0.02s over 2 conflict(s), 3 scenario(s)
+ai-engine-1  | [ai] global solve 0.03s over 2 conflict(s), 3 scenario(s)
+ai-engine-1  | [ai] global solve 0.03s over 2 conflict(s), 3 scenario(s)
+ai-engine-1  | [ai] global solve 0.03s over 2 conflict(s), 3 scenario(s)
+ai-engine-1  | [ai] global solve 0.03s over 2 conflict(s), 3 scenario(s)
+ai-engine-1  | [ai] CONF-23BF77DC LOW DIVERGED T-1310s -> Hold BOXN Rake 402 40201 at LOOP-KSV-01 at KSV for 6 min
+ai-engine-1  | [ai] global solve 0.02s over 2 conflict(s), 3 scenario(s)
+ai-engine-1  | [ai] global solve 0.03s over 2 conflict(s), 3 scenario(s)
+ws-server-1  | Controller committed OPT-1 for CONF-23BF77DC @ 1788160526-c7927619b3
+simulator-1  | [actions] CONF-23BF77DC:OPT-1 -> HOLD_AT_LOOP 40201 applied
+ai-engine-1  | [ai] global solve 0.03s over 2 conflict(s), 3 scenario(s)
+ai-engine-1  | [ai] CONF-23BF77DC LOW OPEN T-1372s -> Hold BOXN Rake 402 40201 at LOOP-KSV-01 at KSV for 8 min
+ai-engine-1  | [ai] global solve 0.02s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] CONF-F66DBFDC MEDIUM OPEN T-516s -> Hold Palwal Passenger 54402 at LOOP-NZM-01 at NZM for 1 min
+ai-engine-1  | [ai] global solve 0.04s over 2 conflict(s), 3 scenario(s)
+ai-engine-1  | [ai] CONF-68BF2C33 LOW OPEN T-1395s -> Hold BOXN Rake 408 40208 at LOOP-KSV-01 at KSV for 54 min; hold Gatimaan Express 12050 at LOOP-PWL-02 at PWL for 21 min
+ai-engine-1  | [ai] global solve 0.03s over 2 conflict(s), 3 scenario(s)
+ws-server-1  | Controller committed OPT-1 for CONF-68BF2C33 @ 1788160526-c7927619b3
+simulator-1  | [actions] CONF-68BF2C33:OPT-1 -> no-op scenario, nothing to apply
+ai-engine-1  | [ai] global solve 0.03s over 2 conflict(s), 3 scenario(s)
+ai-engine-1  | [ai] CONF-68BF2C33 LOW IN_FORCE T-1375s -> Hold BOXN Rake 408 40208 at LOOP-KSV-01 at KSV for 54 min; hold Gatimaan Express 12050 at LOOP-PWL-02 at PWL for 21 min
+ai-engine-1  | [ai] global solve 0.04s over 2 conflict(s), 3 scenario(s)
+ai-engine-1  | [ai] global solve 0.04s over 2 conflict(s), 3 scenario(s)
+ai-engine-1  | [ai] global solve 0.04s over 2 conflict(s), 3 scenario(s)
+ai-engine-1  | [ai] global solve 0.03s over 2 conflict(s), 3 scenario(s)
+ai-engine-1  | [ai] global solve 0.03s over 2 conflict(s), 3 scenario(s)
+ai-engine-1  | [ai] global solve 0.04s over 2 conflict(s), 3 scenario(s)
+ai-engine-1  | [ai] global solve 0.09s over 2 conflict(s), 3 scenario(s)
+ai-engine-1  | [ai] CONF-FF49B247 LOW OPEN T-1305s -> Hold BOXN Rake 408 40208 at LOOP-KSV-01 at KSV for 81 min; stand Bhopal Shatabdi 12002 on the running line short of SEC-PWL-KSV for 48 min; hold Gatimaan Express 12050 at LOOP-PWL-02 at PWL for 21 min
+ai-engine-1  | [ai] CONF-F66DBFDC HIGH OPEN T-416s -> Hold Palwal Passenger 54402 at LOOP-NZM-01 at NZM for 1 min
+ai-engine-1  | [ai] global solve 0.09s over 2 conflict(s), 3 scenario(s)
+ai-engine-1  | [ai] global solve 0.05s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.05s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.06s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.06s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.09s over 2 conflict(s), 3 scenario(s)
+ai-engine-1  | [ai] global solve 0.09s over 2 conflict(s), 3 scenario(s)
+ai-engine-1  | [ai] global solve 0.08s over 2 conflict(s), 3 scenario(s)
+ai-engine-1  | [ai] global solve 0.10s over 2 conflict(s), 3 scenario(s)
+ai-engine-1  | [ai] global solve 0.08s over 2 conflict(s), 3 scenario(s)
+ai-engine-1  | [ai] global solve 0.08s over 2 conflict(s), 3 scenario(s)
+ai-engine-1  | [ai] global solve 0.09s over 2 conflict(s), 3 scenario(s)
+ai-engine-1  | [ai] CONF-F66DBFDC CRITICAL OPEN T-175s -> Regulate Palwal Passenger 54402 to 22 km/h on approach (4 min)
+ai-engine-1  | [ai] global solve 0.09s over 2 conflict(s), 3 scenario(s)
+ai-engine-1  | [ai] global solve 0.09s over 2 conflict(s), 3 scenario(s)
+ai-engine-1  | [ai] global solve 0.09s over 2 conflict(s), 3 scenario(s)
+ai-engine-1  | [ai] global solve 0.09s over 2 conflict(s), 3 scenario(s)
+ai-engine-1  | [ai] global solve 0.09s over 2 conflict(s), 3 scenario(s)
+ai-engine-1  | [ai] global solve 0.05s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.06s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.06s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.06s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.06s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.04s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.06s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.06s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.06s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.08s over 2 conflict(s), 3 scenario(s)
+ai-engine-1  | [ai] global solve 0.06s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.06s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.06s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] CONF-FF49B247 LOW OPEN T-1005s -> Hold BOXN Rake 408 40208 at LOOP-KSV-01 at KSV for 81 min; stand Bhopal Shatabdi 12002 on the running line short of SEC-PWL-KSV for 48 min; hold Gatimaan Express 12050 at LOOP-PWL-02 at PWL for 21 min
+ai-engine-1  | [ai] global solve 0.06s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.06s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.05s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.05s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.06s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.06s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.06s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.06s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.06s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.06s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.05s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] CONF-FF49B247 MEDIUM OPEN T-895s -> Hold BOXN Rake 408 40208 at LOOP-KSV-01 at KSV for 81 min; stand Bhopal Shatabdi 12002 on the running line short of SEC-PWL-KSV for 48 min; hold Gatimaan Express 12050 at LOOP-PWL-02 at PWL for 21 min
+ai-engine-1  | [ai] global solve 0.05s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.06s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.06s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.05s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.05s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.06s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.06s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.08s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.06s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.05s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.06s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.05s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.06s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.06s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.06s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.06s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.06s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.06s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.05s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.06s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.11s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] CONF-01348961 MEDIUM OPEN T-685s -> Stand BOXN Rake 408 40208 on the running line short of SEC-PWL-KSV for 111 min; hold Bhopal Shatabdi Up 12001 at LOOP-KSV-01 at KSV for 62 min; stand Bhopal Shatabdi 12002 on the running line short of SEC-PWL-KSV for 48 min; hold Gatimaan Express 12050 at LOOP-PWL-02 at PWL for 21 min
+ai-engine-1  | [ai] global solve 0.12s over 1 conflict(s), 2 scenario(s)
+ws-server-1  | Controller committed OPT-1 for CONF-FF49B247 @ 1788160526-c7927619b3
+simulator-1  | [actions] CONF-FF49B247:OPT-1 -> STAND_ON_MAIN 12002 applied
+ai-engine-1  | [ai] global solve 0.11s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.04s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] CONF-A5EE55D5 MEDIUM OPEN T-655s -> Hold BOXN Rake 408 40208 at LOOP-KSV-01 at KSV for 81 min; stand Bhopal Shatabdi Up 12001 on the running line short of SEC-PWL-KSV for 38 min; hold Gatimaan Express 12050 at LOOP-PWL-02 at PWL for 21 min
+ai-engine-1  | [ai] global solve 0.04s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.04s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.04s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.04s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.04s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.04s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.04s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.04s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.04s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.04s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.04s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.04s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.04s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.04s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.04s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.03s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.03s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.04s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.04s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.04s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.04s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.04s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.04s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.04s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] CONF-A5EE55D5 HIGH OPEN T-415s -> Hold BOXN Rake 408 40208 at LOOP-KSV-01 at KSV for 81 min; stand Bhopal Shatabdi Up 12001 on the running line short of SEC-PWL-KSV for 38 min; hold Gatimaan Express 12050 at LOOP-PWL-02 at PWL for 21 min
+ai-engine-1  | [ai] global solve 0.04s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.04s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.04s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.04s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.04s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.04s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.09s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] CONF-7A2A9502 HIGH OPEN T-345s -> Stand BOXN Rake 408 40208 on the running line short of SEC-PWL-KSV for 116 min; stand Taj Express 12280 on the running line short of SEC-PWL-KSV for 59 min; hold Bhopal Shatabdi Up 12001 at LOOP-KSV-01 at KSV for 35 min; hold Gatimaan Express 12050 at LOOP-PWL-02 at PWL for 21 min
+ai-engine-1  | [ai] global solve 0.08s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.09s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.08s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.08s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.08s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.08s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.09s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.08s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.08s over 1 conflict(s), 2 scenario(s)
+ws-server-1  | Controller committed OPT-1 for CONF-A5EE55D5 @ 1788160526-c7927619b3
+simulator-1  | [actions] CONF-A5EE55D5:OPT-1 -> no-op scenario, nothing to apply
+ai-engine-1  | [ai] global solve 0.03s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] CONF-23BF77DC LOW OPEN T-1497s -> Hold BOXN Rake 402 40201 at LOOP-KSV-01 at KSV for 11 min
+ai-engine-1  | [ai] global solve 0.02s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.02s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.02s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.02s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.02s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.02s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.02s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.02s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.02s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.01s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.02s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.02s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.01s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.02s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.02s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.02s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.03s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] CONF-D3EE6385 LOW OPEN T-1490s -> Hold Gatimaan Express 12050 at LOOP-KSV-01 at KSV for 0 min
+ai-engine-1  | [ai] global solve 0.01s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.03s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] CONF-09019804 HIGH DIVERGED T-1499s -> Hold Gatimaan Express 12050 at LOOP-KSV-01 at KSV for 3 min; regulate RKMP Vande Bharat 20172 to 38 km/h on approach (3 min)
+ai-engine-1  | [ai] global solve 0.02s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] CONF-23BF77DC LOW OPEN T-1495s -> Hold BOXN Rake 402 40201 at LOOP-KSV-01 at KSV for 11 min
+ai-engine-1  | [ai] global solve 0.01s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.02s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.02s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.02s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.02s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.02s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.01s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.02s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.02s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.02s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.02s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.02s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.02s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.02s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.02s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.02s over 1 conflict(s), 2 scenario(s)
+ws-server-1  | Controller committed OPT-1 for CONF-D3EE6385 @ 1788160526-c7927619b3
+simulator-1  | [actions] CONF-D3EE6385:OPT-1 -> HOLD_AT_LOOP 12050 applied
+simulator-1  | [actions] CONF-09019804:OPT-1 -> HOLD_AT_LOOP 12050 applied
+simulator-1  | [actions] CONF-09019804:OPT-1 -> REGULATE 20172 applied
+ws-server-1  | Controller committed OPT-1 for CONF-09019804 @ 1788160526-c7927619b3
+ai-engine-1  | [ai] global solve 0.03s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] CONF-23BF77DC LOW OPEN T-1497s -> Hold BOXN Rake 402 40201 at LOOP-KSV-01 at KSV for 11 min
+ai-engine-1  | [ai] global solve 0.02s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.02s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.02s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.02s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.02s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.02s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.02s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.02s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.02s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.02s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.02s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.02s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.02s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.02s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.02s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.01s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.02s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.02s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.03s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] CONF-23BF77DC LOW OPEN T-1498s -> Hold BOXN Rake 402 40201 at LOOP-KSV-01 at KSV for 13 min
+ai-engine-1  | [ai] global solve 0.02s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.02s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.01s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.02s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.02s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.02s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.02s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.02s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.02s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.02s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.02s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.03s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] CONF-23BF77DC LOW OPEN T-1499s -> Hold BOXN Rake 402 40201 at LOOP-KSV-01 at KSV for 13 min
+ai-engine-1  | [ai] global solve 0.02s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.02s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.02s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.02s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.10s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] CONF-3BA64B0E CRITICAL OPEN T-0s -> Stand BOXN Rake 408 40208 on the running line short of SEC-PWL-KSV for 146 min; stand Taj Express 12280 on the running line short of SEC-PWL-KSV for 114 min; hold Kerala Express 12626 at LOOP-PWL-02 at PWL for 56 min; hold Punjab Mail 12138 at LOOP-KSV-01 at KSV for 27 min; hold Bhopal Shatabdi Up 12001 at LOOP-KSV-01 at KSV for 26 min
+ai-engine-1  | [ai] global solve 0.08s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.06s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.08s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.07s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.07s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.08s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.21s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.08s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.07s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.07s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.07s over 1 conflict(s), 2 scenario(s)
+ai-engine-1  | [ai] global solve 0.09s over 1 conflict(s), 2 scenario(s)

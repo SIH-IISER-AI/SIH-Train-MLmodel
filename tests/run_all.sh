@@ -102,6 +102,7 @@ python3 - <<'PY'
 import ast, sys
 bad = 0
 for f in ("ai-engine/detector.py", "ai-engine/optimizer.py", "ai-engine/main.py",
+          "ai-engine/optimizer_global.py",
           "simulator/injector.py", "shared/railsim/kinematics.py",
           "shared/railsim/topology.py"):
     try:
@@ -150,7 +151,8 @@ run_test() {
 
 for t in test_speed_parity.py test_stand.py test_hold_release.py \
          test_policy_cap.py test_hysteresis.py \
-         test_chaining.py test_global_hold.py test_global_encoding.py; do
+         test_chaining.py test_global_hold.py test_global_encoding.py \
+         test_descent.py test_directive_replay.py; do
   run_test "$t"
 done
 

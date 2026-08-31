@@ -359,11 +359,15 @@ class Engine:
         # only where precedence is decided has moved.
         global_plans: Dict[str, Any] = {}
         if ENGINE == "global" and candidates:
+            solve_started = time.monotonic()
             try:
                 global_plans = optimize_global(self.detector, candidates)
             except Exception as exc:  # noqa: BLE001
                 print(f"[ai] global solve failed: {exc!r}")
                 global_plans = {}
+            print(f"[ai] global solve {time.monotonic() - solve_started:.2f}s "
+                  f"over {len(candidates)} conflict(s), "
+                  f"{sum(len(v) for v in global_plans.values())} scenario(s)")
 
         for conflict_id, conflict in candidates.items():
             severity = self._stable_severity(

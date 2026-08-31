@@ -182,3 +182,73 @@ Corollary for the delta table: a large NEGATIVE delta — the simulator standing
 a train LESS than the model priced — means the plan was not executed as
 costed. That is the signal. Positive deltas are the greedy authority and are
 expected.
+
+## `policy_exceeded` is overloaded and is not a ladder indicator
+
+It was read as "the relaxation ladder fired." It is not. `_flag_starvation`
+sets the same flag whenever any train's `total_hold_s` exceeds
+`GLOBAL_STARVATION_THRESHOLD_S`, on a first-pass OPTIMAL solve that relaxed
+nothing. On scenario10 tick 0 under production settings the flag is True with
+`worst_hold_s = 14722` and `starved = 12280,12626,40201,40208`, and the ladder
+did not run.
+
+Two discriminators, both needed:
+
+  - is `counts["starved"]` present? -> starvation, not relaxation
+  - does wall time match the `tier_log` sum? -> one `build_and_solve`, no ladder
+
+Measured: `single descent 1.57 s` against a `tier_log` summing to 1,556 ms.
+Anything materially above the tier sum means extra `build_and_solve` calls, and
+`solution.solve_count` will not show them -- `solve_with_policy` returns the
+LAST rung's solution, so its counters describe that rung only.
+
+Consequence for the cards: the flag lives on `GlobalSolution` and
+`_scenario_from` copies it onto every scenario for every resource. Six cards
+render "Capacity exceeded" when four trains are starved, including cards whose
+own members are not among them.
+
+## Production timing is not the day-11 bench, and tick 0 is not the worst case
+
+Two figures were in circulation, neither describing what ships:
+
+  - `~7 s` per descent, from `test_descent.py`
+  - `500-1300 ms` per tier, from a `scope_window()` sizing sweep
+
+`scope_window` is a sizing instrument. `optimize_global` builds payloads from
+`candidates`, and that model is about a third the size: 6 resources, 24
+intervals, 106 booleans, tiers at 190-310 ms.
+
+Measured in-container, scenario10, `ENGINE=global`, 157 solves:
+
+    min 0.20  median 0.77  mean 1.04  p90 2.19  p95 2.61  p99 3.19  max 5.09
+
+12% exceed 2.0 s; one exceeds 4.0 s. Both the 5.09 s and 3.50 s solves occur at
+SEVEN conflicts. The host probe measured 2.60-2.68 s at six. Cost tracks
+conflict count, so a tick-0 measurement is a floor, not a ceiling, and any gate
+stated as a single-call ceiling is measuring the wrong quantity.
+
+One evaluate is TWO lexicographic descents -- the plan, then the counterfactual
+under `forbid=headline`. The counterfactual is ~40% of the cost (2.63 s total
+against 1.57 s for the descent alone) and serves only OPT-2. The harness never
+approves OPT-2, so it should run `max_scenarios=1` -- and must record that in
+`ab-enumerate.env.txt`, because its timing column then describes a
+configuration that does not ship.
+
+## T- is not a liveness signal
+
+In a 157-solve container run, six conflicts republished four times each with
+byte-identical `predicted_time_to_conflict_seconds` (T-285s, T-233s, T-360s,
+T-243s, T-234s, T-213s) -- four `ALERT_COOLDOWN_S` cycles, ~20 sim-minutes of
+no movement. Under those frozen cards the plan moved: 12280 held 126 -> 129 ->
+157 min, 40201 174 -> 176 -> 204 min, 12626 stand 12 -> 118 min. Severity, T-
+and `plan_state` all unchanged.
+
+Do not use a stable T- to conclude the fleet is stable or that the plan is
+stable. Whether the cause is the 5 km/h projection floor
+(`MIN_PROJECTION_SPEED_KMH`, detector.py:43, applied at :85) or something else
+is open; the diagnostic is in `tests/time_evaluate.py`. When reading it, note
+that `contested_at = max(window_a.t_in, window_b.t_in)` (detector.py:615) and a
+group takes the MIN across constituent pairs (:713) -- so the train that
+governs a reported T- is the one arriving LATEST within the binding pair, not
+the one nearest the resource. A diagnostic anchored on the nearest train
+compares against a train unrelated to the number being explained.

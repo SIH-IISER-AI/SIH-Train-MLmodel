@@ -248,7 +248,7 @@ const firstSeen = useRef<Map<string, number>>(new Map());
                   {scenarios.map((scenario) => {
                     const recommended = scenario.rank === 1;
                     const holds = (scenario.directives ?? []).filter(
-                      (d) => d.kind === "HOLD_AT_LOOP",
+                      (d) => d.kind === "HOLD_AT_LOOP" || d.kind === "STAND_ON_MAIN",
                     ).length;
                     const alreadySent =
                       committed?.scenarioId === scenario.scenario_id && !diverged;

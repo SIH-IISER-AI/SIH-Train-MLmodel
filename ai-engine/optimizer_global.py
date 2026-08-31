@@ -959,7 +959,7 @@ def _headline(
     """The (i, j, r) day 10 flips: the leading pair on the busiest resource."""
     if not prepared:
         return None
-    busiest = max(prepared, key=lambda r: (len(prepared[r]), r))
+    busiest = min(prepared, key=lambda r: (-len(prepared[r]), r))
     ordered = sorted(
         (t.train_id for t in prepared[busiest]),
         key=lambda tid: (solution.entry_s[(tid, busiest)], tid),
