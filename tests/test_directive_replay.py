@@ -141,6 +141,14 @@ def main() -> int:
         # invariant: it passed while a REGULATE silently cancelled a stand.
         check(f"{train_id} gets exactly one directive", len(emitted), 1)
 
+    priced = {t for t, hold in expected_hold.items() if hold > 0}
+    uncovered = sorted(priced - set(per_train))
+    check("every train the model priced a hold for gets a directive",
+          len(uncovered), 0)
+    for train_id in uncovered:
+        print(f"       UNCOVERED {train_id}: model priced "
+              f"{expected_hold[train_id]}s, no directive emitted")
+
     print("\n--- acceptance ---")
     for directive in directives:
         injector.submit_directive(directive)
@@ -240,8 +248,15 @@ def main() -> int:
               f"{actual_s - model_s:>+8}  {episodes[train_id]:>8}{mark}")
     print("\nObserved standing is the model's holds PLUS whatever the greedy\n"
           "movement authority adds at occupied blocks. A positive delta is\n"
-          "expected. A large NEGATIVE delta means the plan was not executed as\n"
-          "priced, which is worth investigating.")
+          "expected.\n"
+          "\n"
+          "A negative delta is the signal ONLY on a train marked <- ordered.\n"
+          "cumulative_hold_seconds sums standing slack across every resource;\n"
+          "emit_directives issues one directive at one motivating resource. A\n"
+          "train can therefore carry priced standing and receive a REGULATE,\n"
+          "which produces slow running and not standing, so its row compares\n"
+          "two different quantities. Day 13: 12138 read -5119 on exactly this\n"
+          "mismatch while every <- ordered train was positive.")
 
     print("\nFAIL: " + "; ".join(failures[:12]) if failures else "\nPASS")
     return 1 if failures else 0

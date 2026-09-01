@@ -1235,14 +1235,31 @@ def emit_directives(solution: GlobalSolution) -> List[Dict[str, Any]]:
                 "motivating_resource_id": motivating,
             })
         else:
-            station = train.approach_station or solution.topologies.get(
-                resource_id, {}
-            ).get("junction_id")
+            station = train.stand_station
             if station:
                 directives.append({
                     "kind": "STAND_ON_MAIN", "train_id": train_id,
                     "station_id": station, "until_train_id": until,
                     "release_timeout_seconds": timeout,
+                    "motivating_resource_id": motivating,
+                })
+            else:
+                solution.counts["stand_impossible"] = (
+                    solution.counts.get("stand_impossible", 0) + 1
+                )
+                print(
+                    f"[global] FINDING stand impossible: {train_id} at "
+                    f"{resource_id} has no station between it and the resource "
+                    f"entry; degrading to regulation"
+                )
+                directives.append({
+                    "kind": "REGULATE", "train_id": train_id,
+                    "target_speed_kmh": float(round(
+                        kin.regulated_speed_kmh(
+                            train.distance_m, train.speed_ms,
+                            solution.slack_s[key],
+                        )
+                    )),
                     "motivating_resource_id": motivating,
                 })
 

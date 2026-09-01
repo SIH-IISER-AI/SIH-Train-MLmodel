@@ -275,6 +275,11 @@ class _ConflictTrain:
     loop_id: Optional[str]
     loop_station: Optional[str]
     approach_station: Optional[str]
+    #: Last station at or before the contested resource that this train has NOT
+    #: passed; None when a stand is impossible on this approach. Distinct from
+    #: approach_station, which governs loop lookup and must stay on the
+    #: resource's head station.
+    stand_station: Optional[str] = None
     #: Running direction at the contested resource, UP or DOWN. Optional: the
     #: detector supplies it, hand-built payloads may not, and an unknown
     #: direction must not silently forbid a legal plan. See decision 5.
@@ -412,6 +417,11 @@ def _prepare(
                 loop_station=(usable_loop or {}).get("station_id"),
                 approach_station=(
                     str(raw["hold_station_id"]) if raw.get("hold_station_id") else None
+                ),
+                stand_station=(
+                    str(raw["stand_station_id"])
+                    if raw.get("stand_station_id")
+                    else None
                 ),
                 direction=(
                     str(raw["direction"]).upper() if raw.get("direction") else None

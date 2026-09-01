@@ -793,6 +793,13 @@ class ConflictDetector:
                     "train_length_m": length_m,
                     "existing_delay_seconds": int(train.telemetry.get("delay_seconds", 0)),
                     "hold_station_id": window.entry_station_id,
+                    # Loop lookup stays on the resource's governing station
+                    # above; a stand needs a station the train has not passed.
+                    # See HARNESS-NOTES: repointing hold_station_id was tried
+                    # and reverted because it destroyed loop_at().
+                    "stand_station_id": self.topology.station_before(
+                        train.legs, train.distance_km, window.start_km
+                    ),
                     "hold_loop_id": loop.id if loop else None,
                     "hold_loop_length_m": loop.usable_length_m if loop else 0.0,
                     # Decision 5: the global model forbids a same-direction

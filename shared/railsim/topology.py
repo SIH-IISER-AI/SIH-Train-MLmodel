@@ -246,6 +246,36 @@ class Topology:
         station = self.stations.get(station_id)
         return station.loop_for(train_length_m) if station else None
 
+    def station_before(
+        self,
+        legs: Sequence[Leg],
+        from_km: float,
+        to_km: float,
+    ) -> Optional[str]:
+        """Last station in [from_km, to_km] along this route, or None.
+
+        from_km is where the train is now, to_km is where the contested
+        resource begins. A station outside that span is either astern of the
+        train or beyond the thing it is being held short of. None means a
+        stand is genuinely impossible on this approach.
+        """
+        if not legs or to_km < from_km:
+            return None
+        best: Optional[Tuple[float, str]] = None
+        for leg in legs:
+            origin_id, target_id = (
+                (leg.link.from_id, leg.link.to_id)
+                if leg.direction == DOWN
+                else (leg.link.to_id, leg.link.from_id)
+            )
+            for km, station_id in (
+                (leg.route_start_km, origin_id),
+                (leg.route_end_km, target_id),
+            ):
+                if from_km <= km <= to_km and (best is None or km > best[0]):
+                    best = (km, station_id)
+        return best[1] if best else None
+
     def resource_length_km(self, legs: Sequence[Leg], distance_km: float) -> float:
         position = self.resolve(legs, distance_km)
         return position.resource_end_km - position.resource_start_km

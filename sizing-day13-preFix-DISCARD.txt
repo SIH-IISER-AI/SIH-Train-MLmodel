@@ -1,0 +1,46 @@
+[ai] ENGINE=global selected: one CP-SAT model per evaluate, lexicographic descent by IR class, decomposed per decision 3
+harness seed=0 arm=A ticks=1080 engine=global rule=conflict_id cap=5 budget=1000000000.0 limit=5.0
+[sim] 12626 has passed BVH; cannot stand short of it
+[sim] 12280 has passed MTJ; re-targeting hold to the next loop ahead
+[sim] 12626 has passed BVH; cannot stand short of it
+[sim] 40208 has passed MTJ; re-targeting hold to the next loop ahead
+  tick    60/1080  conflicts=4 approvals=18 cleared=0 solves=60 solve_s=9 wall=9s  proj=163s
+  tick   120/1080  conflicts=2 approvals=19 cleared=0 solves=120 solve_s=11 wall=11s  proj=102s
+  tick   180/1080  conflicts=1 approvals=19 cleared=0 solves=180 solve_s=12 wall=12s  proj=74s
+  tick   240/1080  conflicts=3 approvals=20 cleared=0 solves=240 solve_s=14 wall=14s  proj=64s
+  tick   300/1080  conflicts=3 approvals=20 cleared=0 solves=300 solve_s=17 wall=18s  proj=64s
+  tick   360/1080  conflicts=3 approvals=22 cleared=1 solves=360 solve_s=20 wall=21s  proj=63s
+  tick   420/1080  conflicts=3 approvals=22 cleared=1 solves=420 solve_s=23 wall=24s  proj=62s
+  tick   480/1080  conflicts=1 approvals=24 cleared=1 solves=478 solve_s=26 wall=27s  proj=60s
+  tick   540/1080  conflicts=1 approvals=25 cleared=1 solves=538 solve_s=26 wall=27s  proj=55s
+  tick   600/1080  conflicts=1 approvals=25 cleared=1 solves=592 solve_s=27 wall=28s  proj=50s
+  tick   660/1080  conflicts=1 approvals=30 cleared=2 solves=652 solve_s=28 wall=30s  proj=48s
+  tick   720/1080  conflicts=0 approvals=30 cleared=2 solves=675 solve_s=29 wall=31s  proj=46s
+  tick   780/1080  conflicts=0 approvals=30 cleared=2 solves=675 solve_s=29 wall=31s  proj=42s
+  tick   840/1080  conflicts=1 approvals=31 cleared=3 solves=676 solve_s=29 wall=31s  proj=40s
+  tick   900/1080  conflicts=1 approvals=32 cleared=3 solves=736 solve_s=30 wall=31s  proj=38s
+  tick   960/1080  conflicts=0 approvals=32 cleared=4 solves=736 solve_s=30 wall=31s  proj=35s
+  tick  1020/1080  conflicts=1 approvals=33 cleared=4 solves=795 solve_s=30 wall=32s  proj=34s
+  tick  1080/1080  conflicts=1 approvals=34 cleared=4 solves=855 solve_s=30 wall=32s  proj=32s
+done in 32.2s -> /tmp/sizing-day13-preFix-DISCARD.csv
+  seed                                        0
+  arm                                         A
+  approval_rule                               conflict_id
+  ticks                                       1080
+  premier_delay_s                             10877
+  total_fleet_delay_s                         43074
+  cleared_through_SEC-PWL-KSV_per_sim_hour    1.333
+  max_solve_ms                                1732.9
+  largest_group                               9
+  uncovered_trains_t0                         8
+  contradictory_instructions_t0               0
+  refused_directives_t0                       1
+  policy_exceeded_t0                          6
+  uncovered_trains_total                      64
+  contradictory_instructions_total            0
+  refused_directives_total                    2
+  policy_exceeded_total                       12
+  approval_events                             34
+  distinct_conflict_ids                       34
+  directives_submitted                        30
+  seed_attempts                               1
