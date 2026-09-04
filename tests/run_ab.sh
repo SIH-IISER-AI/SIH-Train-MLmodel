@@ -138,6 +138,7 @@ mkdir -p "$(dirname "$CSV")"
 {
   echo "run      : $(date -u +%Y-%m-%dT%H:%M:%SZ)"
   echo "host     : $(uname -srm)"
+  echo "regfrac  : $($PY -c 'import sys; sys.path[:0]=["shared"]; import railsim.kinematics as k; print(k.MIN_REGULATION_FRACTION)')"
   echo "python   : $($PY -V 2>&1)"
   echo "git      : $(git rev-parse --short HEAD 2>/dev/null || echo '(not a repo)')"
   echo "branch   : $(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo '-')"
@@ -149,12 +150,21 @@ mkdir -p "$(dirname "$CSV")"
 import sys
 sys.path[:0] = ["shared", "ai-engine", "simulator", "tests"]
 import optimizer as o, harness as h
+print(f"engine   : {h.ENGINE}")
 print(f"cap      : {o.MAX_TRAINS_ENUMERATED}")
 print(f"workers  : {o.SOLVER_WORKERS}")
 print(f"budget   : {o.ENUMERATION_BUDGET_S}   (lifted for reproducibility)")
 print(f"limit    : {o.SOLVER_TIME_LIMIT_S}    (lifted for reproducibility)")
 print(f"rule     : {h.APPROVAL_RULE}")
 print(f"jitter   : +/-{h.KM_JITTER} km, +/-{h.DELAY_JITTER} s")
+if h.ENGINE == "global":
+    import optimizer_global as g
+    print(f"holdtier : {g.GLOBAL_HOLD_TIER}")
+    print(f"tierbudg : {g.GLOBAL_TIER_BUDGET_S}")
+    print(f"detbudg  : {g.GLOBAL_DET_BUDGET}")
+    print(f"maxstops : {g.GLOBAL_MAX_STOPS}")
+    print(f"starve   : {g.GLOBAL_STARVATION_THRESHOLD_S}")
+    print(f"holdcap  : {g.GLOBAL_HOLD_CAP_MULTIPLIER}")
 PY
 } | tee "$ENVLOG"
 echo

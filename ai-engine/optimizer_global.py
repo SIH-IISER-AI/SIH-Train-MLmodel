@@ -45,6 +45,8 @@ used by tests/count_intervals.py. It is not on the model's path.
 """
 from __future__ import annotations
 
+import atexit
+import json
 import math
 import os
 import time
@@ -124,6 +126,27 @@ GLOBAL_STARVATION_THRESHOLD_S = int(
 #: solve_with_policy before the direction ban, since a plan that stops a train
 #: twice is still a plan.
 GLOBAL_MAX_STOPS = int(os.getenv("GLOBAL_MAX_STOPS", "1"))
+
+#: Which hold objective enters the lexicographic descent below the class
+#: tiers. The makespan-versus-maximum-lateness choice, made explicit so it can
+#: be ablated rather than assumed.
+#:
+#:   worst_hold  (default, shipped) min-max. Minimise the largest total_hold;
+#:               standing is spread across trains.
+#:   sum_hold    min-sum. Minimise fleet standing; one train may be held long
+#:               so the rest run as a platoon.
+#:   off         no hold tier; the descent runs class tiers -> total_delay.
+GLOBAL_HOLD_TIER = os.getenv("GLOBAL_HOLD_TIER", "worst_hold").strip().lower()
+if GLOBAL_HOLD_TIER not in ("worst_hold", "sum_hold", "off"):
+    raise SystemExit(
+        f"GLOBAL_HOLD_TIER={GLOBAL_HOLD_TIER!r}; expected 'worst_hold', "
+        f"'sum_hold' or 'off'"
+    )
+
+#: Written by optimize_global after each plan solve, read by tests/harness.py.
+#: A module-level stash, not a return-value change: optimize_global's return
+#: shape is the contract evaluate() publishes.
+LAST_PLAN_STATS: Dict[str, float] = {}
 
 #: Minimum approach distance for a stand to be EMITTED, in metres.
 #:
@@ -792,7 +815,10 @@ def build_and_solve(
     # The pinned/flat path keeps a generous limit: the encoding gate needs
     # OPTIMAL, and a truncated solve returns FEASIBLE and fails it for a
     # reason that is not an encoding error.
-    expected_solves = (len(class_terms) + 2) if objective == "lexicographic" else 1
+    hold_tiers = 0 if GLOBAL_HOLD_TIER == "off" else 1
+    expected_solves = (
+        (len(class_terms) + 1 + hold_tiers) if objective == "lexicographic" else 1
+    )
     solver = cp_model.CpSolver()
     solver.parameters.num_search_workers = SOLVER_WORKERS
     solver.parameters.log_search_progress = solver_log
@@ -888,7 +914,14 @@ def build_and_solve(
         tiers: List[Tuple[str, Any]] = [
             (f"class{cls}", class_vars[cls]) for cls in sorted(class_vars, reverse=True)
         ]
-        tiers.append(("worst_hold", worst_hold))
+        if GLOBAL_HOLD_TIER == "worst_hold":
+            tiers.append(("worst_hold", worst_hold))
+        elif GLOBAL_HOLD_TIER == "sum_hold":
+            sum_hold = model.NewIntVar(
+                0, horizon * max(1, len(total_hold)), "sum_hold"
+            )
+            model.Add(sum_hold == sum(total_hold.values()))
+            tiers.append(("sum_hold", sum_hold))
         tiers.append(("total_delay", sum(delay.values())))
 
         # Per-tier record. Without it a starved descent is invisible: the
@@ -1155,6 +1188,7 @@ def emit_directives(solution: GlobalSolution) -> List[Dict[str, Any]]:
     once is not a plan the railway can execute -- it is two instructions
     racing, and the simulator resolves the race by discarding the hold.
     """
+    _emit_call_begin()
     if not solution.feasible:
         return []
 
@@ -1180,9 +1214,15 @@ def emit_directives(solution: GlobalSolution) -> List[Dict[str, Any]]:
         # evaluate, after the release, when the train's position has advanced
         # -- which is also how a controller issues them.
         chosen: Optional[Tuple[str, Tuple[str, str]]] = None
+        n_zero_slack = 0
+        n_unreachable = 0
+        first_positive: Optional[Tuple[str, str]] = None
         for k in keys:
             if solution.slack_s[k] <= 0:
+                n_zero_slack += 1
                 continue
+            if first_positive is None:
+                first_positive = k
             if solution.stopped[k]:
                 # Belt and braces on top of the reachability constraint: a
                 # stand the simulator will drop or silently re-target is worse
@@ -1193,12 +1233,20 @@ def emit_directives(solution: GlobalSolution) -> List[Dict[str, Any]]:
                     solution.counts["unreachable_stands"] = (
                         solution.counts.get("unreachable_stands", 0) + 1
                     )
+                    n_unreachable += 1
                     continue
                 chosen = ("STAND", k)
             else:
                 chosen = ("REGULATE", k)
             break
         if chosen is None:
+            _emit_row(
+                solution, train_id,
+                "DROP_ALL_STANDS_UNREACHABLE" if n_unreachable
+                else "DROP_NO_POSITIVE_SLACK",
+                key=first_positive or (keys[0] if keys else None),
+                n_zero_slack=n_zero_slack, n_unreachable=n_unreachable,
+            )
             continue
 
         mode, key = chosen
@@ -1210,15 +1258,21 @@ def emit_directives(solution: GlobalSolution) -> List[Dict[str, Any]]:
             # Only the slack at THIS resource. Aggregating slack the train will
             # not reach until after a downstream decision prices a regulation
             # against time it has not yet had.
+            target = float(round(
+                kin.regulated_speed_kmh(
+                    train.distance_m, train.speed_ms, solution.slack_s[key]
+                )
+            ))
             directives.append({
                 "kind": "REGULATE", "train_id": train_id,
-                "target_speed_kmh": float(round(
-                    kin.regulated_speed_kmh(
-                        train.distance_m, train.speed_ms, solution.slack_s[key]
-                    )
-                )),
+                "target_speed_kmh": target,
                 "motivating_resource_id": motivating,
+                "priced_resource_id": resource_id,
+                "priced_hold_seconds": int(solution.slack_s[key]),
             })
+            _emit_row(solution, train_id, "EMITTED_REGULATE", key=key,
+                      motivating=motivating, target_kmh=target,
+                      n_zero_slack=n_zero_slack, n_unreachable=n_unreachable)
             continue
 
         timeout = solution.delay_s[key] + DIRECTIVE_RELEASE_TIMEOUT_S
@@ -1233,7 +1287,12 @@ def emit_directives(solution: GlobalSolution) -> List[Dict[str, Any]]:
                 "until_train_id": until,
                 "release_timeout_seconds": timeout,
                 "motivating_resource_id": motivating,
+                "priced_resource_id": resource_id,
+                "priced_hold_seconds": int(solution.slack_s[key]),
             })
+            _emit_row(solution, train_id, "EMITTED_HOLD_AT_LOOP", key=key,
+                      motivating=motivating,
+                      n_zero_slack=n_zero_slack, n_unreachable=n_unreachable)
         else:
             station = train.stand_station
             if station:
@@ -1242,7 +1301,12 @@ def emit_directives(solution: GlobalSolution) -> List[Dict[str, Any]]:
                     "station_id": station, "until_train_id": until,
                     "release_timeout_seconds": timeout,
                     "motivating_resource_id": motivating,
+                    "priced_resource_id": resource_id,
+                    "priced_hold_seconds": int(solution.slack_s[key]),
                 })
+                _emit_row(solution, train_id, "EMITTED_STAND_ON_MAIN", key=key,
+                          motivating=motivating,
+                          n_zero_slack=n_zero_slack, n_unreachable=n_unreachable)
             else:
                 solution.counts["stand_impossible"] = (
                     solution.counts.get("stand_impossible", 0) + 1
@@ -1252,19 +1316,101 @@ def emit_directives(solution: GlobalSolution) -> List[Dict[str, Any]]:
                     f"{resource_id} has no station between it and the resource "
                     f"entry; degrading to regulation"
                 )
+                target = float(round(
+                    kin.regulated_speed_kmh(
+                        train.distance_m, train.speed_ms,
+                        solution.slack_s[key],
+                    )
+                ))
                 directives.append({
                     "kind": "REGULATE", "train_id": train_id,
-                    "target_speed_kmh": float(round(
-                        kin.regulated_speed_kmh(
-                            train.distance_m, train.speed_ms,
-                            solution.slack_s[key],
-                        )
-                    )),
+                    "target_speed_kmh": target,
                     "motivating_resource_id": motivating,
+                    "priced_resource_id": resource_id,
+                    "priced_hold_seconds": int(solution.slack_s[key]),
                 })
+                _emit_row(solution, train_id, "EMITTED_REGULATE_DEGRADED",
+                          key=key, motivating=motivating, target_kmh=target,
+                          n_zero_slack=n_zero_slack, n_unreachable=n_unreachable)
 
     return directives
 
+GLOBAL_TRACE_EMIT = os.getenv("GLOBAL_TRACE_EMIT")
+_emit_rows: List[Dict[str, Any]] = []
+_emit_call = 0
+
+
+def _emit_call_begin() -> None:
+    global _emit_call
+    if GLOBAL_TRACE_EMIT is None:
+        return
+    _emit_call += 1
+
+
+def _emit_row(solution, train_id, outcome, key=None, motivating=None,
+              target_kmh=None, n_zero_slack=0, n_unreachable=0):
+    if GLOBAL_TRACE_EMIT is None:
+        return
+    row = {
+        "call": _emit_call,
+        "status": solution.status,
+        "train_id": train_id,
+        "outcome": outcome,
+        "total_hold_s": int(solution.total_hold_s.get(train_id, 0)),
+        "n_keys": len(solution.resources_of(train_id)),
+        "n_zero_slack": n_zero_slack,
+        "n_unreachable": n_unreachable,
+        "motivating": motivating or "",
+        "target_kmh": target_kmh,
+    }
+    if key is None:
+        row.update({
+            "resource_id": "", "slack_s": None, "delay_s": None,
+            "distance_m": None, "speed_ms": None, "stopped": None,
+            "in_loop": None, "on_main": None, "noop_guard": None,
+            "stand_station": None, "loop_station": None,
+        })
+    else:
+        train = solution.train_of(key)
+        distance_m = float(train.distance_m)
+        speed_ms = float(train.speed_ms)
+        slack_s = int(solution.slack_s[key])
+        row.update({
+            "resource_id": key[1],
+            "slack_s": slack_s,
+            "delay_s": int(solution.delay_s[key]),
+            "distance_m": round(distance_m, 1),
+            "speed_ms": round(speed_ms, 2),
+            "stopped": bool(solution.stopped[key]),
+            "in_loop": bool(solution.in_loop[key]),
+            "on_main": bool(solution.on_main[key]),
+            "noop_guard": bool(
+                speed_ms <= 0 or distance_m <= 0 or slack_s <= 0
+            ),
+            "stand_station": getattr(train, "stand_station", None),
+            "loop_station": getattr(train, "loop_station", None),
+        })
+    _emit_rows.append(row)
+
+
+def _emit_flush() -> None:
+    if GLOBAL_TRACE_EMIT is None or not _emit_rows:
+        return
+    counts: Dict[str, int] = {}
+    noops = 0
+    with open(GLOBAL_TRACE_EMIT, "w") as handle:
+        for row in _emit_rows:
+            counts[row["outcome"]] = counts.get(row["outcome"], 0) + 1
+            if row.get("noop_guard"):
+                noops += 1
+            handle.write(json.dumps(row) + "\n")
+    print(f"[global] emit trace: {len(_emit_rows)} rows over {_emit_call} calls")
+    for outcome in sorted(counts):
+        print(f"[global]   {outcome:34} {counts[outcome]:6d}")
+    print(f"[global]   {'(rows hitting the kinematics guard)':34} {noops:6d}")
+
+
+atexit.register(_emit_flush)
 
 def _scenario_from(
     solution: GlobalSolution,
@@ -1407,6 +1553,20 @@ def optimize_global(
         return {}
 
     solution = solve_with_policy(payloads, objective="lexicographic")
+
+    held = list(solution.total_hold_s.values())
+    mean_hold = (sum(held) / len(held)) if held else 0.0
+    LAST_PLAN_STATS.clear()
+    LAST_PLAN_STATS.update({
+        "feasible": float(bool(solution.feasible)),
+        "trains_in_plan": float(len(held)),
+        "trains_held_gt0": float(sum(1 for v in held if v > 0)),
+        "worst_hold_s": float(max(held, default=0)),
+        "total_hold_var": (
+            sum((v - mean_hold) ** 2 for v in held) / len(held) if held else 0.0
+        ),
+    })
+
     if not solution.feasible:
         return {}
     directives = emit_directives(solution)
