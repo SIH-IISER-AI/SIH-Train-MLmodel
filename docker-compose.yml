@@ -71,6 +71,8 @@ services:
       # The simulator carries one hold flag per train, so a two-stop schedule
       # is not expressible as directives at all.
       - GLOBAL_MAX_STOPS=1
+      - TICK_SECONDS=2.0
+      - AI_TRACE_LAG=/tmp/lag.jsonl
     depends_on:
       redis:
         condition: service_healthy

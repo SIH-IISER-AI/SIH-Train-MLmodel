@@ -572,12 +572,52 @@ def main() -> None:
         # absorbed -- not once per message, which would run the solver forty
         # times on partially-updated state.
         if saw_tick:
+            started = time.monotonic()
             try:
                 engine.evaluate()
             except Exception as exc:  # noqa: BLE001
                 print(f"[ai] evaluation failed, continuing: {exc!r}")
+            _record_lag(time.monotonic() - started)
 
     print("[ai] stopped")
+
+
+
+
+#: Day-15 row 1.4. Lag stability, not a single-call ceiling: DECISIONS.md is
+#: explicit that a p95 under one tick period says nothing about whether the
+#: engine is falling behind. Drift is wall-clock elapsed minus ticks processed
+#: times the tick period. Flat drift means keeping up; monotonically rising
+#: drift means a backlog, however fast any single call was.
+#:
+#: Appended at module level, below main(). _record_lag is only reached at
+#: runtime from the read loop, so definition order does not matter.
+LAG_TRACE_PATH = os.getenv("AI_TRACE_LAG")
+LAG_TICK_SECONDS = float(os.getenv("TICK_SECONDS", "2.0"))
+_lag_samples: list = []
+_lag_t0: Optional[float] = None
+_lag_ticks = 0
+
+
+def _record_lag(evaluate_s: float) -> None:
+    global _lag_t0, _lag_ticks
+    if LAG_TRACE_PATH is None:
+        return
+    now = time.monotonic()
+    if _lag_t0 is None:
+        _lag_t0 = now
+    _lag_ticks += 1
+    wall = now - _lag_t0
+    _lag_samples.append({
+        "tick": _lag_ticks,
+        "wall_s": round(wall, 3),
+        "evaluate_s": round(evaluate_s, 4),
+        "drift_s": round(wall - _lag_ticks * LAG_TICK_SECONDS, 3),
+    })
+    if _lag_ticks % 60 == 0:
+        with open(LAG_TRACE_PATH, "w") as handle:
+            for sample in _lag_samples:
+                handle.write(json.dumps(sample) + "\n")
 
 
 if __name__ == "__main__":

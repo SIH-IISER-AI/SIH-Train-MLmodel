@@ -26,9 +26,11 @@ the baseline the OR engine is supposed to beat.
 
 from __future__ import annotations
 
+import atexit
 import json
 
 import math
+import os
 import threading
 from dataclasses import dataclass, field
 from datetime import datetime
@@ -36,8 +38,15 @@ from pathlib import Path
 from typing import Any, Dict, Iterator, List, Optional, Set
 
 import railsim.kinematics as kin
-from railsim.topology import Leg, Topology
+from railsim.topology import Leg, Position, Topology
 
+#: Day-15. Path for the hold-mutation trace, or unset. Hold state is written
+#: at eight sites with four different meanings, and a predicate over
+#: `hold_station_id is None` sees one boolean across all eight -- it cannot
+#: tell "never discharged" from "discharged and re-issued". Three predicates
+#: have already misreported on exactly that. This logs every write so the
+#: post-condition can be read off transitions instead of inferred.
+HOLD_TRACE_PATH = os.getenv("SIM_TRACE_HOLDS")
 
 MINIMAL_KEYS = (
     "event_type", "train_id", "current_block_id",
@@ -108,7 +117,20 @@ class TrainRuntime:
     #: optimiser, which knows who is being given precedence.
     hold_until_train_id: Optional[str] = None
     hold_expires_sim_s: Optional[float] = None
+    #: Identity of the hold currently in force. The assertion that survives
+    #: re-targeting is written against this, never against hold_station_id.
+    hold_seq: Optional[int] = None
+    #: Last hold_seq for which a blocked release was logged. Edge-triggers the
+    #: release_blocked event, which is otherwise level-triggered and fires
+    #: every tick the main stays occupied -- the mistake berthed made.
+    hold_block_logged_seq: Optional[int] = None
     standing_on_main: bool = False
+
+    #: Day-14 A4. Sim-seconds at a stand, and sim-seconds running under a
+    #: binding REGULATE. Counted, not derived from the delay shortfall.
+    standing_s: float = 0.0
+    regulated_s: float = 0.0
+    stand_events: int = 0
 
     position: Optional[Position] = field(default=None, repr=False)
 
@@ -151,6 +173,10 @@ class LiveTelemetryInjector:
         self.tick_seconds = float(tick_seconds)
         self.time_multiplier = int(time_multiplier)
         self.recycle_at_terminus = bool(recycle_at_terminus)
+        self.hold_events: List[Dict[str, Any]] = []
+        self._hold_seq = 0
+        if HOLD_TRACE_PATH is not None:
+            atexit.register(self._flush_hold_trace)
 
         self.tick_id = 0
         self.sim_epoch_ms = start_epoch_ms if start_epoch_ms is not None else self._seed_epoch(scenario)
@@ -263,6 +289,8 @@ class LiveTelemetryInjector:
             kind = str(directive.get("kind", "HOLD_AT_LOOP")).upper()
 
             if kind == "RELEASE":
+                self._hold_event(train, "released")
+                train.hold_seq = None
                 train.hold_station_id = None
                 train.hold_loop_id = None
                 train.hold_until_train_id = None
@@ -272,6 +300,9 @@ class LiveTelemetryInjector:
                 train.standing_since_tick = None
                 train.standing_on_main = False
             elif kind == "REGULATE":
+                if train.hold_seq is not None:
+                    self._hold_event(train, "superseded_by_regulate")
+                    train.hold_seq = None
                 train.regulated_to_kmh = float(directive["target_speed_kmh"])
                 train.hold_station_id = None
                 train.standing_on_main = False
@@ -295,6 +326,10 @@ class LiveTelemetryInjector:
                         f"same-direction {other.train_id}: an overtake needs a loop"
                     )
                     continue
+                if train.hold_seq is not None:
+                    self._hold_event(train, "superseded_by_hold", "stand_on_main")
+                self._hold_seq += 1
+                train.hold_seq = self._hold_seq
                 train.hold_station_id = station_id
                 train.hold_loop_id = None
                 train.standing_on_main = True
@@ -304,6 +339,7 @@ class LiveTelemetryInjector:
                     or directive.get("max_hold_seconds", 1800)
                 )
                 train.regulated_to_kmh = None
+                self._hold_event(train, "issued_stand_on_main")
             else:
                 station_id = directive.get("station_id") or self._next_loop_station(train)
                 if station_id is not None:
@@ -317,6 +353,10 @@ class LiveTelemetryInjector:
                 if station_id is None:
                     continue
                 loop = self.topology.loop_at(station_id, train.train_length_m)
+                if train.hold_seq is not None:
+                    self._hold_event(train, "superseded_by_hold", "hold_at_loop")
+                self._hold_seq += 1
+                train.hold_seq = self._hold_seq
                 train.hold_station_id = station_id
                 train.hold_loop_id = directive.get("loop_id") or (loop.id if loop else None)
                 train.hold_until_train_id = directive.get("until_train_id")
@@ -326,8 +366,48 @@ class LiveTelemetryInjector:
                 )
                 train.regulated_to_kmh = None
                 train.standing_on_main = False
+                self._hold_event(
+                    train, "issued_hold_at_loop",
+                    "retargeted" if station_id != directive.get("station_id") else "",
+                )
 
             self.applied_directives.append({**directive, "tick_id": self.tick_id})
+
+
+    def _hold_event(self, train: TrainRuntime, writer: str, reason: str = "") -> None:
+        """Record one hold-state mutation.
+
+        Call AFTER the write for an issue, BEFORE the write for a clear, so
+        the record always shows the hold that was in force.
+        """
+        if HOLD_TRACE_PATH is None:
+            return
+        self.hold_events.append({
+            "tick": self.tick_id,
+            "sim_s": round(self.elapsed_sim_seconds, 1),
+            "train": train.train_id,
+            "seq": train.hold_seq,
+            "writer": writer,
+            "reason": reason,
+            "station": train.hold_station_id,
+            "loop": train.hold_loop_id,
+            "until": train.hold_until_train_id,
+            "expires_in": (
+                None if train.hold_expires_sim_s is None
+                else round(train.hold_expires_sim_s - self.elapsed_sim_seconds, 1)
+            ),
+            "on_main": train.standing_on_main,
+            "in_loop": train.in_loop,
+            "km": round(train.distance_km, 2),
+        })
+
+    def _flush_hold_trace(self) -> None:
+        if HOLD_TRACE_PATH is None or not self.hold_events:
+            return
+        with open(HOLD_TRACE_PATH, "w") as handle:
+            for event in self.hold_events:
+                handle.write(json.dumps(event) + "\n")
+        print(f"[sim] {len(self.hold_events)} hold events -> {HOLD_TRACE_PATH}")
 
     def _next_loop_station(self, train: TrainRuntime) -> Optional[str]:
         """First station ahead of the train that has a loop the rake fits in."""
@@ -442,6 +522,9 @@ class LiveTelemetryInjector:
                 train.distance_km = 0.0
                 train.scheduled_distance_km = 0.0
                 train.speed_kmh = 0.0
+                if train.hold_seq is not None:
+                    self._hold_event(train, "recycled")
+                    train.hold_seq = None
                 train.hold_station_id = None
                 train.position = origin
             else:
@@ -499,27 +582,41 @@ class LiveTelemetryInjector:
             if hold_km is None:
                 pass
             elif train.distance_km > hold_km + 0.05 and train.in_loop is None:
+                self._hold_event(train, "abandoned_astern")
+                train.hold_seq = None
                 train.hold_station_id = None
                 train.hold_loop_id = None
                 train.hold_until_train_id = None
                 train.hold_expires_sim_s = None
             elif train.distance_km >= hold_km - 0.35:
+                was_in_loop = train.in_loop
                 train.distance_km = max(train.distance_km, hold_km - 0.05)
                 train.in_loop = train.hold_loop_id
                 train.speed_kmh = 0.0
                 train.position = self.topology.resolve(train.legs, train.distance_km)
+                if train.in_loop is not None and was_in_loop is None:
+                    self._hold_event(train, "berthed")
 
         if train.speed_kmh < 1.0:
             if train.standing_since_tick is None:
                 train.standing_since_tick = self.tick_id
+                train.stand_events += 1
+            train.standing_s += step_seconds
         else:
             train.standing_since_tick = None
+            if (
+                train.regulated_to_kmh is not None
+                and train.regulated_to_kmh < booked_limit - 1e-9
+            ):
+                train.regulated_s += step_seconds
 
         # A hold is a LATCH, not a momentary condition. Releasing it the moment
         # the road ahead looks clear defeats the purpose: the road looks clear
         # precisely because the train being given precedence has not arrived
         # yet, and the held train would pull out in front of it again.
         if train.standing_on_main and self._hold_discharged(train):
+            self._hold_event(train, "discharged_stand", self._discharge_reason(train))
+            train.hold_seq = None
             train.standing_on_main = False
             train.hold_station_id = None
             train.hold_until_train_id = None
@@ -540,11 +637,19 @@ class LiveTelemetryInjector:
                 for resource in (head.resource_id, tail.resource_id)
             )
             if main_clear and train.authority_km > train.distance_km + 0.5:
+                self._hold_event(train, "discharged_loop", self._discharge_reason(train))
+                train.hold_seq = None
                 train.in_loop = None
                 train.hold_station_id = None
                 train.hold_loop_id = None
                 train.hold_until_train_id = None
                 train.hold_expires_sim_s = None
+            elif train.hold_block_logged_seq != train.hold_seq:
+                train.hold_block_logged_seq = train.hold_seq
+                self._hold_event(
+                    train, "release_blocked",
+                    "main_occupied" if not main_clear else "no_authority",
+                )
 
     def _hold_discharged(self, train: TrainRuntime) -> bool:
         """Has the reason for this hold gone away?"""
@@ -564,6 +669,14 @@ class LiveTelemetryInjector:
         if marker is None:
             return True
         return other.distance_km > marker + 1.0
+
+    def _discharge_reason(self, train: TrainRuntime) -> str:
+        """Which limb of _hold_discharged fired. Reporting only."""
+        if train.hold_expires_sim_s is not None and (
+            self.elapsed_sim_seconds >= train.hold_expires_sim_s
+        ):
+            return "timeout"
+        return "leader_passed"
 
     def _permitted_speed_at(
         self, train: TrainRuntime, at_km: float, reference_kmh: float

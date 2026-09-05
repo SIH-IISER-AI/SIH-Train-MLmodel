@@ -11,6 +11,7 @@ Units: SI internally (metres, seconds, m/s). Conversions at the boundary only.
 from __future__ import annotations
 
 import math
+import os
 from dataclasses import dataclass
 from typing import Dict
 
@@ -48,7 +49,15 @@ DEFAULT_PROFILE = PROFILES["EXPRESS"]
 
 #: A driver regulating rather than stopping will not go below this fraction of
 #: line speed -- below it, the block section is better cleared by stopping.
-MIN_REGULATION_FRACTION = 0.35
+#: The one fraction. absorbable_delay_s uses it to decide a stand is required;
+#: regulated_speed_kmh saturates at it. A second constant could disagree with
+#: this one, which is the day-14 defect, so there is no second constant.
+MIN_REGULATION_FRACTION = float(os.getenv("MIN_REGULATION_FRACTION", "0.35"))
+if not 0.0 < MIN_REGULATION_FRACTION <= 1.0:
+    raise SystemExit(
+        f"MIN_REGULATION_FRACTION={MIN_REGULATION_FRACTION}; expected "
+        f"0 < f <= 1 (absorbable_delay_s divides by it)"
+    )
 
 
 def profile_for(train_type: str) -> TractionProfile:
@@ -171,9 +180,21 @@ def absorbable_delay_s(
     return (distance_m / speed_ms) * (1.0 / min_fraction - 1.0)
 
 
-def regulated_speed_kmh(distance_m: float, speed_ms: float, wait_s: float) -> float:
-    """Line speed a regulated train should be given to absorb `wait_s` exactly."""
+def regulated_speed_kmh(
+    distance_m: float,
+    speed_ms: float,
+    wait_s: float,
+    min_fraction: float = MIN_REGULATION_FRACTION,
+) -> float:
+    """Line speed a regulated train should be given to absorb `wait_s`.
+
+    Saturates at min_fraction * speed -- the same fraction absorbable_delay_s
+    uses to decide a stand is required. Past that boundary the wait cannot be
+    absorbed by regulation at all and the caller is emitting a degraded stand;
+    a lower target is a speed the model never priced and this module forbids.
+    """
     if speed_ms <= 0 or distance_m <= 0 or wait_s <= 0:
         return ms_to_kmh(speed_ms)
     base = distance_m / speed_ms
-    return ms_to_kmh(distance_m / (base + wait_s))
+    return max(ms_to_kmh(distance_m / (base + wait_s)),
+               ms_to_kmh(speed_ms) * min_fraction)

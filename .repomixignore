@@ -39,3 +39,19 @@ logs/
 repomix-output.txt
 repomix-output.xml
 repomix-output.json
+
+# Logs and Dumps
+*.txt
+*.csv
+*.json
+*DISCARD*
+
+# Irrelevant Context for Current Triage
+docs/baselines/
+frontend/
+data/
+
+# Specific telemetry dumps
+lag.jsonl
+
+# (Ensure you removed the *.json glob we discussed earlier so your two important config files are retained)
