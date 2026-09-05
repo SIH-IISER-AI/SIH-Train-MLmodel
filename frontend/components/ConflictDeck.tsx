@@ -257,7 +257,11 @@ const firstSeen = useRef<Map<string, number>>(new Map());
                       <li key={scenario.scenario_id}>
                         <button
                           type="button"
-                          disabled={pending !== undefined || alreadySent}
+                          disabled={
+                            pending !== undefined ||
+                            alreadySent ||
+                            (scenario.directives ?? []).length === 0
+                          }
                           onClick={() => onCommit(conflict.conflict_id, scenario.scenario_id)}
                           className={[
                             "group w-full border px-3 py-2.5 text-left transition-colors",
@@ -289,7 +293,8 @@ const firstSeen = useRef<Map<string, number>>(new Map());
                             </span>
                           </div>
                           <div className="mt-1 font-sans text-[12px] font-medium leading-5 text-[var(--panel-text)]">
-                            {scenario.action}
+                            {scenario.action ||
+                              "No action at this location. Every train in this conflict is instructed on another card."}
                           </div>
                           <div className="mt-1 font-sans text-[11px] leading-5 text-[var(--panel-muted)]">
                             {scenario.network_impact}
