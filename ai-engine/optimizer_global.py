@@ -1427,10 +1427,15 @@ def _scenario_from(
         d for d in directives
         if d.get("motivating_resource_id") == resource_id and d["train_id"] in members
     ]
+    directive_by_train = {d["train_id"]: d for d in directives}
+    mine_by_train = {d["train_id"]: d for d in mine}
 
     impacts: List[str] = []
     breakdown: List[Dict[str, Any]] = []
     clauses: List[Tuple[int, str]] = []
+    covered_elsewhere: List[Dict[str, Any]] = []
+    uninstructed: List[str] = []
+    from_directive = 0
     for train_id in sorted(members):
         key = (train_id, resource_id)
         if key not in solution.delay_s:
@@ -1450,6 +1455,51 @@ def _scenario_from(
             "cumulative_hold_seconds": solution.total_hold_s.get(train_id, 0),
         })
         impacts.append(f"{train.train_name} {train_id} delayed by {minutes} min")
+
+        directive = mine_by_train.get(train_id)
+        if directive is not None:
+            kind = directive["kind"]
+            if kind == "HOLD_AT_LOOP":
+                at = (
+                    f" at {directive['station_id']}"
+                    if directive.get("station_id") else ""
+                )
+                text = (
+                    f"Hold {train.train_name} {train_id} "
+                    f"at {directive['loop_id']}{at} for {minutes} min"
+                )
+            elif kind == "STAND_ON_MAIN":
+                text = (
+                    f"Stand {train.train_name} {train_id} on the running line "
+                    f"short of {directive['station_id']} for {minutes} min"
+                )
+            else:
+                text = (
+                    f"Regulate {train.train_name} {train_id} to "
+                    f"{round(directive['target_speed_kmh'])} km/h "
+                    f"on approach ({minutes} min)"
+                )
+            clauses.append((delay_s, text))
+            from_directive += 1
+            continue
+
+        priced_here = bool(
+            solution.in_loop[key] or solution.on_main[key] or slack_s > 0
+        )
+        if not priced_here:
+            continue
+
+        other = directive_by_train.get(train_id)
+        if other is not None:
+            covered_elsewhere.append({
+                "train_id": train_id,
+                "kind": other["kind"],
+                "motivating_resource_id": other.get("motivating_resource_id"),
+                "priced_resource_id": other.get("priced_resource_id"),
+            })
+            continue
+
+        uninstructed.append(train_id)
         if solution.in_loop[key]:
             at = f" at {train.loop_station}" if train.loop_station else ""
             clauses.append((
@@ -1463,7 +1513,7 @@ def _scenario_from(
                 f"Stand {train.train_name} {train_id} on the running line short "
                 f"of {resource_id} for {minutes} min",
             ))
-        elif slack_s > 0:
+        else:
             target = round(
                 kin.regulated_speed_kmh(train.distance_m, train.speed_ms, slack_s)
             )
@@ -1472,6 +1522,12 @@ def _scenario_from(
                 f"Regulate {train.train_name} {train_id} to {target} km/h "
                 f"on approach ({minutes} min)",
             ))
+
+    if from_directive != len(mine):
+        solution.counts["card_clause_orphans"] = (
+            solution.counts.get("card_clause_orphans", 0)
+            + len(mine) - from_directive
+        )
 
     lead = min(
         (t for t in members if (t, resource_id) in solution.entry_s),
@@ -1483,6 +1539,8 @@ def _scenario_from(
         action = "; ".join(
             [clauses[0][1]] + [_lower_first(text) for _, text in clauses[1:]]
         )
+    elif covered_elsewhere:
+        action = ""
     else:
         action = f"Clear {lead} through {resource_id} without regulation"
 
@@ -1494,6 +1552,8 @@ def _scenario_from(
         "network_impact": ". ".join(impacts) + ("." if impacts else ""),
         "policy_exceeded": solution.policy_exceeded,
         "directives": mine,
+        "covered_elsewhere": covered_elsewhere,
+        "uninstructed_train_ids": uninstructed,
         "delay_breakdown": breakdown,
         "order_train_ids": sorted(
             (t for t in members if (t, resource_id) in solution.entry_s),
