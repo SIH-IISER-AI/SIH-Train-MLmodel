@@ -454,6 +454,8 @@ def build_and_solve(
     enforce_direction: bool = True,
     max_stops: Optional[int] = None,
     enforce_reachable: bool = True,
+    force_unstopped: Optional[Sequence[Tuple[str, str]]] = None,
+    entry_ceiling: Optional[Sequence[Tuple[str, str, int]]] = None,
     solver_log: bool = False,
 ) -> GlobalSolution:
     """Build one CP-SAT model over every (train, resource) in `payloads`.
@@ -545,15 +547,20 @@ def build_and_solve(
             key = (train.train_id, resource_id)
             spec[key] = train
             tag = f"{train.train_id}_{resource_id}"
-
             entry[key] = model.NewIntVar(
                 train.earliest_arrival_s, horizon, f"entry_{tag}"
             )
+            if entry_ceiling:
+                for c_train, c_resource, c_max in entry_ceiling:
+                    if (c_train, c_resource) == key:
+                        model.Add(entry[key] <= c_max)
             # Decision 2: brought to a stand at the ENTRY to this resource.
             stopped[key] = model.NewBoolVar(f"stopped_{tag}")
             in_loop[key] = model.NewBoolVar(f"in_loop_{tag}")
             on_main[key] = model.NewBoolVar(f"on_main_{tag}")
             model.Add(in_loop[key] + on_main[key] == stopped[key])
+            if force_unstopped and key in force_unstopped:
+                model.Add(stopped[key] == 0)
             if not train.loop_available:
                 model.Add(in_loop[key] == 0)
 
