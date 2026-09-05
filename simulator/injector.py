@@ -185,6 +185,8 @@ class LiveTelemetryInjector:
         self._lock = threading.RLock()
         self._pending: List[Dict[str, Any]] = []
         self.applied_directives: List[Dict[str, Any]] = []
+        self.refused_directives: Dict[str, int] = {}
+        self.retargeted_directives: int = 0
 
         self.trains: Dict[str, TrainRuntime] = {}
         for raw in scenario["trains"]:
@@ -285,6 +287,7 @@ class LiveTelemetryInjector:
         for directive in pending:
             train = self.trains.get(str(directive.get("train_id", "")))
             if train is None:
+                self._refuse("unknown_train", directive)
                 continue
             kind = str(directive.get("kind", "HOLD_AT_LOOP")).upper()
 
@@ -309,21 +312,29 @@ class LiveTelemetryInjector:
             elif kind == "STAND_ON_MAIN":
                 station_id = directive.get("station_id")
                 if station_id is None:
+                    self._refuse("stand_no_station_id", directive, train)
                     continue
                 station_km = train.station_km.get(station_id)
-                if station_km is None or station_km < train.distance_km - 0.05:
-                    print(
-                        f"[sim] {train.train_id} has passed {station_id}; "
-                        f"cannot stand short of it"
+                if station_km is None:
+                    self._refuse(
+                        "stand_station_not_on_route", directive, train,
+                        f"{station_id} is not on {train.train_id}'s route",
+                    )
+                    continue
+                if station_km < train.distance_km - 0.05:
+                    self._refuse(
+                        "stand_station_astern", directive, train,
+                        f"{station_id} at {station_km:.2f} km, "
+                        f"train at {train.distance_km:.2f} km",
                     )
                     continue
                 other = self.trains.get(str(directive.get("until_train_id") or ""))
                 if other is not None and (
                     other.position.direction == train.position.direction
                 ):
-                    print(
-                        f"[sim] {train.train_id} cannot stand on the main for "
-                        f"same-direction {other.train_id}: an overtake needs a loop"
+                    self._refuse(
+                        "stand_same_direction_blocker", directive, train,
+                        f"an overtake of {other.train_id} needs a loop",
                     )
                     continue
                 if train.hold_seq is not None:
@@ -341,7 +352,8 @@ class LiveTelemetryInjector:
                 train.regulated_to_kmh = None
                 self._hold_event(train, "issued_stand_on_main")
             else:
-                station_id = directive.get("station_id") or self._next_loop_station(train)
+                requested = directive.get("station_id")
+                station_id = requested or self._next_loop_station(train)
                 if station_id is not None:
                     station_km = train.station_km.get(station_id)
                     if station_km is None or station_km < train.distance_km - 0.05:
@@ -350,7 +362,13 @@ class LiveTelemetryInjector:
                             f"re-targeting hold to the next loop ahead"
                         )
                         station_id = self._next_loop_station(train)
+                        if station_id is not None:
+                            self.retargeted_directives += 1
                 if station_id is None:
+                    self._refuse(
+                        "hold_no_loop_ahead", directive, train,
+                        f"requested {requested}, no loop the rake fits ahead",
+                    )
                     continue
                 loop = self.topology.loop_at(station_id, train.train_length_m)
                 if train.hold_seq is not None:
@@ -368,11 +386,33 @@ class LiveTelemetryInjector:
                 train.standing_on_main = False
                 self._hold_event(
                     train, "issued_hold_at_loop",
-                    "retargeted" if station_id != directive.get("station_id") else "",
+                    "retargeted" if station_id != requested else "",
                 )
 
             self.applied_directives.append({**directive, "tick_id": self.tick_id})
 
+
+    def _refuse(self, reason: str, directive: Dict[str, Any],
+                train: Optional[TrainRuntime] = None, detail: str = "") -> None:
+        """Account for a directive the simulator will not execute.
+
+        Counts unconditionally, whether or not SIM_TRACE_HOLDS is set. Every
+        path that discards a directive returns through here, so
+        sum(refused_directives.values()) + len(applied_directives) equals the
+        number of directives drained. That identity is the check that no
+        silent path remains.
+        """
+        seen = self.refused_directives.get(reason, 0) + 1
+        self.refused_directives[reason] = seen
+        if seen == 1:
+            print(
+                f"[sim] REFUSED {directive.get('kind')} for "
+                f"{directive.get('train_id')}: {reason}"
+                + (f" ({detail})" if detail else "")
+                + " -- further occurrences counted, not printed"
+            )
+        if train is not None:
+            self._hold_event(train, "refused", reason)
 
     def _hold_event(self, train: TrainRuntime, writer: str, reason: str = "") -> None:
         """Record one hold-state mutation.
