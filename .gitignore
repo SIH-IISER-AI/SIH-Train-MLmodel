@@ -73,3 +73,4 @@ run-report.txt
 bench-report.txt
 docker-report.txtsmoke-log.txt
 run-report-*.txt
+lag.jsonl

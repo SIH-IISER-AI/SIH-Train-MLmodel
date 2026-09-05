@@ -53,7 +53,9 @@ ENGINE = os.getenv("ENGINE", "enumerate").strip().lower()
 if ENGINE not in ("enumerate", "global"):
     raise SystemExit(f"ENGINE={ENGINE!r}; expected 'enumerate' or 'global'")
 optimize_global = None
+optimizer_global = None
 if ENGINE == "global":
+    import optimizer_global  # noqa: E402
     from optimizer_global import optimize_global  # noqa: E402,F811
 
 sys.path.insert(0, "tests")
@@ -100,6 +102,10 @@ DEFAULT_TICKS = int(os.getenv("HARNESS_TICKS", "1080"))
 
 #: The bottleneck the throughput column counts clearances through.
 THROUGHPUT_RESOURCE = os.getenv("THROUGHPUT_RESOURCE", "SEC-PWL-KSV")
+
+#: Day-14 A1. Print a per-train entry/exit table for THROUGHPUT_RESOURCE at the
+#: end of the run. Adds no CSV column and changes no number.
+TRACE_THROUGHPUT = bool(os.getenv("HARNESS_TRACE_THROUGHPUT"))
 
 KM_JITTER = float(os.getenv("SEED_KM_JITTER", "2.0"))
 DELAY_JITTER = float(os.getenv("SEED_DELAY_JITTER", "300"))
@@ -164,6 +170,14 @@ CSV_COLUMNS = [
     "distinct_conflict_ids",
     "directives_submitted",
     "seed_attempts",
+    #: A4. standing vs regulated slow-running, decomposed.
+    "standing_s_total",
+    "regulated_s_total",
+    "premier_standing_s",
+    #: A3 discriminators. ENGINE=global only; 0 under enumerate.
+    "trains_held_gt0_mean",
+    "total_hold_var_mean",
+    "worst_hold_s_max",
 ]
 
 #: Wall-clock columns cannot be expected to reproduce. Step 8 compares
@@ -264,6 +278,10 @@ def run(seed: int, arm: str, ticks: int, progress_every: int = 0) -> dict:
 
     last_resource: dict = {}
     cleared = 0
+    trace: dict = {}
+    held_samples: list = []
+    var_samples: list = []
+    worst_hold_max = 0.0
 
     started = time.perf_counter()
     for tick in range(1, ticks + 1):
@@ -275,9 +293,16 @@ def run(seed: int, arm: str, ticks: int, progress_every: int = 0) -> dict:
             # per tick it spends inside.
             train_id = event["train_id"]
             resource = event["resource_id"]
-            if (last_resource.get(train_id) == THROUGHPUT_RESOURCE
+            previous = last_resource.get(train_id)
+            if (previous == THROUGHPUT_RESOURCE
                     and resource != THROUGHPUT_RESOURCE):
                 cleared += 1
+                if TRACE_THROUGHPUT:
+                    trace.setdefault(train_id, []).append(("exit", tick))
+            elif (previous != THROUGHPUT_RESOURCE
+                    and resource == THROUGHPUT_RESOURCE):
+                if TRACE_THROUGHPUT:
+                    trace.setdefault(train_id, []).append(("enter", tick))
             last_resource[train_id] = resource
 
         candidates, _counts = solvable_conflicts(det)
@@ -295,6 +320,11 @@ def run(seed: int, arm: str, ticks: int, progress_every: int = 0) -> dict:
             max_solve_s = max(max_solve_s, elapsed)
             solve_calls += 1
             solve_total_s += elapsed
+            stats = getattr(optimizer_global, "LAST_PLAN_STATS", None)
+            if stats and stats.get("feasible"):
+                held_samples.append(stats["trains_held_gt0"])
+                var_samples.append(stats["total_hold_var"])
+                worst_hold_max = max(worst_hold_max, stats["worst_hold_s"])
 
         fired: dict = {}
         scenarios_by_conflict: dict = {}
@@ -359,11 +389,35 @@ def run(seed: int, arm: str, ticks: int, progress_every: int = 0) -> dict:
 
     premier = 0
     fleet_total = 0
+    standing_total = 0.0
+    regulated_total = 0.0
+    premier_standing = 0.0
     for train in inj.trains.values():
         delay = inj._delay_seconds(train)
         fleet_total += delay
+        standing_total += getattr(train, "standing_s", 0.0)
+        regulated_total += getattr(train, "regulated_s", 0.0)
         if priority_class(train.train_type) == CLASS_PREMIER:
             premier += delay
+            premier_standing += getattr(train, "standing_s", 0.0)
+
+    if TRACE_THROUGHPUT:
+        print(f"\n-- {THROUGHPUT_RESOURCE} transitions "
+              f"(seed={seed} arm={arm.upper()} engine={ENGINE}) --")
+        for t in sorted(inj.trains.values(), key=lambda x: x.train_id):
+            hops = trace.get(t.train_id, [])
+            if not hops:
+                verdict = "NEVER ENTERED"
+            elif hops[-1][0] == "enter":
+                verdict = f"ENTERED tick {hops[-1][1]}, NEVER LEFT"
+            else:
+                verdict = " ".join(f"{k}@{v}" for k, v in hops)
+            print(f"  {t.train_id:>6} {t.train_type:<14} "
+                  f"km={t.distance_km:>7.2f}/{t.route_length_km:.0f} "
+                  f"stand={t.standing_s:>7.0f}s x{t.stand_events:<3} "
+                  f"reg={t.regulated_s:>7.0f}s "
+                  f"loop={t.in_loop or '-':<10} {verdict}")
+        print()
 
     # Opt-in, prints nothing by default, changes no column. A fleet-delay
     # regression spread evenly across ten trains is the priority trade working
@@ -406,6 +460,16 @@ def run(seed: int, arm: str, ticks: int, progress_every: int = 0) -> dict:
         "distinct_conflict_ids": len(all_conflict_ids),
         "directives_submitted": directives_submitted,
         "seed_attempts": attempts,
+        "standing_s_total": round(standing_total, 1),
+        "regulated_s_total": round(regulated_total, 1),
+        "premier_standing_s": round(premier_standing, 1),
+        "trains_held_gt0_mean": (
+            round(sum(held_samples) / len(held_samples), 3) if held_samples else 0
+        ),
+        "total_hold_var_mean": (
+            round(sum(var_samples) / len(var_samples), 1) if var_samples else 0
+        ),
+        "worst_hold_s_max": round(worst_hold_max),
     }
 
 
@@ -413,6 +477,14 @@ def append_row(path: str, row: dict) -> None:
     target = Path(path)
     target.parent.mkdir(parents=True, exist_ok=True)
     is_new = not target.exists() or target.stat().st_size == 0
+    if not is_new:
+        header = target.open().readline().rstrip("\n").split(",")
+        if header != CSV_COLUMNS:
+            raise SystemExit(
+                f"{path} has a {len(header)}-column header; this harness "
+                f"writes {len(CSV_COLUMNS)}. Day-14 runs go to a new file "
+                f"(docs/baselines/day14-<ablation>.csv)."
+            )
     with target.open("a", newline="") as handle:
         # LF, not the csv module's default CRLF: this file gets committed to
         # docs/baselines/ and a \r on every line makes each rerun look like a

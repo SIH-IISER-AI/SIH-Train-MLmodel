@@ -1,0 +1,90 @@
+harness seed=3 arm=A ticks=1080 engine=enumerate rule=conflict_id cap=5 budget=1000000000.0 limit=5.0
+[sim] 40208 has passed MTJ; re-targeting hold to the next loop ahead
+[sim] 12626 has passed BVH; cannot stand short of it
+[sim] 12280 cannot stand on the main for same-direction 12001: an overtake needs a loop
+[sim] 12626 has passed BVH; cannot stand short of it
+[sim] 12138 has passed MTJ; re-targeting hold to the next loop ahead
+[sim] 12280 has passed MTJ; re-targeting hold to the next loop ahead
+[sim] 40208 has passed MTJ; cannot stand short of it
+[sim] 12138 has passed MTJ; re-targeting hold to the next loop ahead
+[sim] 40201 has passed PWL; re-targeting hold to the next loop ahead
+[sim] 20172 has passed BVH; cannot stand short of it
+[sim] 40208 has passed KSV; cannot stand short of it
+[sim] 40208 has passed KSV; cannot stand short of it
+[sim] 20172 cannot stand on the main for same-direction 12050: an overtake needs a loop
+[sim] 40208 has passed KSV; re-targeting hold to the next loop ahead
+[sim] 40201 has passed PWL; re-targeting hold to the next loop ahead
+  tick   240/1080  conflicts=2 approvals=19 cleared=1 solves=753 solve_s=15 wall=16s  proj=72s
+[sim] 40201 has passed PWL; re-targeting hold to the next loop ahead
+[sim] 40201 has passed PWL; re-targeting hold to the next loop ahead
+[sim] 40201 has passed PWL; re-targeting hold to the next loop ahead
+[sim] 12002 has passed BVH; cannot stand short of it
+[sim] 12626 cannot stand on the main for same-direction 12050: an overtake needs a loop
+  tick   480/1080  conflicts=0 approvals=25 cleared=1 solves=1171 solve_s=23 wall=24s  proj=55s
+[sim] 40201 has passed KSV; cannot stand short of it
+[sim] 12050 has passed PWL; re-targeting hold to the next loop ahead
+[sim] 12138 has passed KSV; cannot stand short of it
+[sim] 54402 has passed MTJ; re-targeting hold to the next loop ahead
+[sim] 12626 cannot stand on the main for same-direction 12050: an overtake needs a loop
+[sim] 40201 has passed KSV; cannot stand short of it
+[sim] 40201 has passed KSV; cannot stand short of it
+[sim] 40201 has passed KSV; re-targeting hold to the next loop ahead
+[sim] 54402 cannot stand on the main for same-direction 12001: an overtake needs a loop
+[sim] 40208 has passed KSV; re-targeting hold to the next loop ahead
+[sim] 12138 has passed KSV; cannot stand short of it
+[sim] 40208 has passed KSV; cannot stand short of it
+  tick   720/1080  conflicts=3 approvals=36 cleared=3 solves=1549 solve_s=26 wall=27s  proj=41s
+  tick   960/1080  conflicts=3 approvals=36 cleared=3 solves=2343 solve_s=34 wall=36s  proj=40s
+[sim] 12138 has passed KSV; cannot stand short of it
+[sim] 12138 has passed KSV; re-targeting hold to the next loop ahead
+
+-- SEC-PWL-KSV transitions (seed=3 arm=A engine=enumerate) --
+   12001 SHATABDI       km=  96.95/195 stand=   3060s x6   reg=      0s loop=LOOP-KSV-01 enter@86 exit@230
+   12002 SHATABDI       km=   7.92/195 stand=   4090s x3   reg=     50s loop=-          enter@525 exit@691
+   12050 GATIMAAN       km=  82.20/195 stand=   9140s x2   reg=      0s loop=-          ENTERED tick 525, NEVER LEFT
+   12138 SUPERFAST      km=  97.95/195 stand=   9860s x3   reg=     10s loop=LOOP-KSV-01 ENTERED tick 524, NEVER LEFT
+   12280 EXPRESS        km=  96.95/195 stand=   9460s x3   reg=    100s loop=LOOP-KSV-01 NEVER ENTERED
+   12626 EXPRESS        km=  58.79/195 stand=  10220s x2   reg=      0s loop=LOOP-PWL-02 ENTERED tick 525, NEVER LEFT
+   20172 VANDE_BHARAT   km=  59.27/195 stand=   9770s x3   reg=     20s loop=LOOP-PWL-02 ENTERED tick 524, NEVER LEFT
+   40201 FREIGHT        km= 148.36/195 stand=   3320s x4   reg=      0s loop=-          enter@31 exit@528
+   40208 FREIGHT        km= 137.98/195 stand=   6870s x3   reg=      0s loop=LOOP-KSV-01 enter@74 exit@999
+   54402 PASSENGER      km=  96.95/195 stand=   5690s x2   reg=    190s loop=LOOP-KSV-01 NEVER ENTERED
+
+   40208 FREIGHT        class=0 delay=6506s
+   54402 PASSENGER      class=1 delay=6441s
+   12626 EXPRESS        class=2 delay=5609s
+   12138 SUPERFAST      class=3 delay=4703s
+   12280 EXPRESS        class=2 delay=4687s
+   40201 FREIGHT        class=0 delay=4530s
+   20172 VANDE_BHARAT   class=5 delay=4475s
+   12050 GATIMAAN       class=5 delay=3384s
+   12001 SHATABDI       class=5 delay=2953s
+   12002 SHATABDI       class=5 delay=75s
+done in 37.6s -> /tmp/seed3-enum.csv
+  seed                                        3
+  arm                                         A
+  approval_rule                               conflict_id
+  ticks                                       1080
+  premier_delay_s                             10887
+  total_fleet_delay_s                         43363
+  cleared_through_SEC-PWL-KSV_per_sim_hour    1.333
+  max_solve_ms                                424.8
+  largest_group                               9
+  uncovered_trains_t0                         4
+  contradictory_instructions_t0               2
+  refused_directives_t0                       1
+  policy_exceeded_t0                          0
+  uncovered_trains_total                      12
+  contradictory_instructions_total            3
+  refused_directives_total                    19
+  policy_exceeded_total                       0
+  approval_events                             38
+  distinct_conflict_ids                       38
+  directives_submitted                        81
+  seed_attempts                               1
+  standing_s_total                            71480.0
+  regulated_s_total                           370.0
+  premier_standing_s                          26060.0
+  trains_held_gt0_mean                        0
+  total_hold_var_mean                         0
+  worst_hold_s_max                            0

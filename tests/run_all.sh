@@ -86,9 +86,17 @@ check "D12 starvation threshold"       present "GLOBAL_STARVATION_THRESHOLD_S"  
 check "F7  deadline hoisted"           present "enumeration_deadline = time"     ai-engine/optimizer.py
 check "F8  unconditional priority sort" absent "        )\[:MAX_TRAINS_ENUMERATED\]" ai-engine/optimizer.py
 check "D11 replay gate exists"  present "submit_directive"  tests/test_directive_replay.py
-
+check "D14 floor gate exists"            present "regulated_speed_kmh"                tests/test_regulation_floor.py
+check "D14 gate discriminates"           present "min_fraction=0.0"                   tests/test_regulation_floor.py
+check "D14 one fraction, env-overridable" present 'MIN_REGULATION_FRACTION", "0.35"'  shared/railsim/kinematics.py
+check "D14 emitter saturates"            present "min_fraction: float = MIN_REGULATION_FRACTION" shared/railsim/kinematics.py
+check "D15 no separate floor constant"   absent  "REGULATION_FLOOR_FRACTION"          shared/railsim/kinematics.py
+check "D15 discharge gate exists"        present "release_blocked"                    tests/test_hold_discharge.py
+check "D15 hold identity present"        present "hold_seq"                           simulator/injector.py
+check "D15 blocked release logged"       present "release_blocked"                    simulator/injector.py
 # A duplicated constant raises no error -- the later definition silently wins.
 # This is how the env override for the cap sweep died without a traceback.
+dupe_check "MIN_REGULATION_FRACTION"    MIN_REGULATION_FRACTION    shared/railsim/kinematics.py
 dupe_check "MAX_TRAINS_ENUMERATED" MAX_TRAINS_ENUMERATED ai-engine/optimizer.py
 dupe_check "ENUMERATION_BUDGET_S"  ENUMERATION_BUDGET_S  ai-engine/optimizer.py
 dupe_check "SOLVER_TIME_LIMIT_S"   SOLVER_TIME_LIMIT_S   ai-engine/optimizer.py
@@ -152,7 +160,8 @@ run_test() {
 for t in test_speed_parity.py test_stand.py test_hold_release.py \
          test_policy_cap.py test_hysteresis.py \
          test_chaining.py test_global_hold.py test_global_encoding.py \
-         test_descent.py test_directive_replay.py; do
+         test_descent.py test_directive_replay.py \
+         test_regulation_floor.py test_hold_discharge.py; do
   run_test "$t"
 done
 
