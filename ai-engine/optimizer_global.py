@@ -1276,13 +1276,18 @@ def emit_directives(solution: GlobalSolution) -> List[Dict[str, Any]]:
                     train.distance_m, train.speed_ms, solution.slack_s[key]
                 )
             ))
-            directives.append({
+            entry = {
                 "kind": "REGULATE", "train_id": train_id,
                 "target_speed_kmh": target,
                 "motivating_resource_id": motivating,
                 "priced_resource_id": resource_id,
                 "priced_hold_seconds": int(solution.slack_s[key]),
-            })
+            }
+            if target > 0 and train.distance_m > 0:
+                entry["release_timeout_seconds"] = round(
+                    train.distance_m / kin.kmh_to_ms(target) + solution.headway_s, 1
+                )
+            directives.append(entry)
             _emit_row(solution, train_id, "EMITTED_REGULATE", key=key,
                       motivating=motivating, target_kmh=target,
                       n_zero_slack=n_zero_slack, n_unreachable=n_unreachable)

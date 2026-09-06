@@ -109,6 +109,12 @@ class TrainRuntime:
     hold_station_id: Optional[str] = None
     hold_loop_id: Optional[str] = None
     regulated_to_kmh: Optional[float] = None
+    #: Sim-seconds at which a REGULATE lapses on its own. Without it a
+    #: regulation clears only on RELEASE or a later hold, so a train ordered
+    #: to run slow keeps running slow for the rest of the session. Deliberately
+    #: NOT hold_expires_sim_s, which is already written at eight sites with
+    #: four meanings and is read by _hold_discharged.
+    regulate_expires_sim_s: Optional[float] = None
     standing_since_tick: Optional[int] = None
     #: Loop the train is standing IN. While set, it holds the loop as its
     #: resource and holds NOTHING on the running line.
@@ -307,6 +313,11 @@ class LiveTelemetryInjector:
                     self._hold_event(train, "superseded_by_regulate")
                     train.hold_seq = None
                 train.regulated_to_kmh = float(directive["target_speed_kmh"])
+                lapse_s = directive.get("release_timeout_seconds")
+                train.regulate_expires_sim_s = (
+                    None if lapse_s is None
+                    else self.elapsed_sim_seconds + float(lapse_s)
+                )
                 train.hold_station_id = None
                 train.standing_on_main = False
             elif kind == "STAND_ON_MAIN":
@@ -649,7 +660,14 @@ class LiveTelemetryInjector:
                 and train.regulated_to_kmh < booked_limit - 1e-9
             ):
                 train.regulated_s += step_seconds
-
+        if (
+            train.regulated_to_kmh is not None
+            and train.regulate_expires_sim_s is not None
+            and self.elapsed_sim_seconds >= train.regulate_expires_sim_s
+        ):
+            self._hold_event(train, "regulation_expired", "lapsed")
+            train.regulated_to_kmh = None
+            train.regulate_expires_sim_s = None
         # A hold is a LATCH, not a momentary condition. Releasing it the moment
         # the road ahead looks clear defeats the purpose: the road looks clear
         # precisely because the train being given precedence has not arrived
