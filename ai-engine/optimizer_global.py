@@ -453,7 +453,6 @@ def build_and_solve(
     hold_bound: Optional[int] = None,
     enforce_direction: bool = True,
     max_stops: Optional[int] = None,
-    enforce_reachable: bool = True,
     force_unstopped: Optional[Sequence[Tuple[str, str]]] = None,
     entry_ceiling: Optional[Sequence[Tuple[str, str, int]]] = None,
     solver_log: bool = False,
@@ -1042,13 +1041,17 @@ def solve_with_policy(
     objective: str = "lexicographic",
     forbid: Optional[Tuple[str, str, str]] = None,
 ) -> GlobalSolution:
-    """Solve, relaxing rather than returning nothing. Two ladders, in order.
-
+    """Solve, relaxing rather than returning nothing. Five rungs, in order.
     Mirrors optimize_precedence: a plan that breaks a guideline beats no plan,
     provided it says so.
-
-      1. the cumulative-hold ceiling, lifted by HOLD_RELAX_MULTIPLIER
-      2. decision 5's same-direction ban, dropped entirely
+      1. unrelaxed
+      2. the cumulative-hold ceiling, lifted by HOLD_RELAX_MULTIPLIER
+      3. the hold ceiling dropped, and stops forbidden (max_stops=0)
+      4. the hold ceiling dropped, stops allowed at the module policy
+      5. decision 5's same-direction ban, dropped entirely
+    hold_bound=0 is a sentinel meaning UNBOUNDED, not a zero ceiling: the
+    constraint at :763 tests truthiness, so 0 skips it. Rungs 3-5 therefore
+    lift the hold ceiling rather than forbidding holds.
 
     The direction ban goes last because it is the one whose violation the
     SIMULATOR will catch: a refused STAND_ON_MAIN costs one directive, whereas
@@ -1083,13 +1086,13 @@ def solve_with_policy(
         relaxed_stops.policy_exceeded = True
         return _flag_starvation(relaxed_stops)
     
-    relaxed_reach = build_and_solve(
+    relaxed_stops_allowed = build_and_solve(
         payloads, objective=objective, forbid=forbid,
-        hold_bound=0, enforce_reachable=False,
+        hold_bound=0,
     )
-    if relaxed_reach.feasible:
-        relaxed_reach.policy_exceeded = True
-        return _flag_starvation(relaxed_reach)
+    if relaxed_stops_allowed.feasible:
+        relaxed_stops_allowed.policy_exceeded = True
+        return _flag_starvation(relaxed_stops_allowed)
 
     solution = build_and_solve(
         payloads, objective=objective, forbid=forbid,
