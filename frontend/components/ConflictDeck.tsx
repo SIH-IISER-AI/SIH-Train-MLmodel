@@ -11,8 +11,12 @@ interface Props {
 }
 
 export default function ConflictDeck({ store, onCommit }: Props) {
-  const { conflicts, acknowledged, recommendations } = useConflicts(store);
+  const { conflicts: allConflicts, acknowledged, recommendations } = useConflicts(store);
   const [, setTick] = useState(0);
+  const [declined, setDeclined] = useState<Map<string, string>>(new Map());
+  const conflicts = allConflicts.filter(
+    (c) => declined.get(c.conflict_id) !== (c.epoch ?? ""),
+  );
 
 const firstSeen = useRef<Map<string, number>>(new Map());
 
@@ -177,9 +181,24 @@ const firstSeen = useRef<Map<string, number>>(new Map());
             </div>
 
             <div className="border-t border-[var(--panel-line)]">
-              <h3 className="px-3 pt-2.5 font-mono text-[9px] font-semibold uppercase tracking-[0.22em] text-[var(--panel-muted)]">
-                Dispatch options
-              </h3>
+              <div className="flex items-baseline justify-between gap-2 px-3 pt-2.5">
+                <h3 className="font-mono text-[9px] font-semibold uppercase tracking-[0.22em] text-[var(--panel-muted)]">
+                  Dispatch options
+                </h3>
+                <button
+                  type="button"
+                  onClick={() =>
+                    setDeclined((prior) => {
+                      const next = new Map(prior);
+                      next.set(conflict.conflict_id, conflict.epoch ?? "");
+                      return next;
+                    })
+                  }
+                  className="font-mono text-[9px] font-semibold uppercase tracking-[0.16em] text-[var(--panel-muted)] underline underline-offset-2 hover:text-[var(--aspect-red)]"
+                >
+                  Decline
+                </button>
+              </div>
 
               {diverged && (
                 <p
@@ -282,7 +301,12 @@ const firstSeen = useRef<Map<string, number>>(new Map());
                               )}
                               {scenario.policy_exceeded && (
                                 <span className="ml-2 text-[var(--aspect-yellow)]">
-                                  Exceeds policy
+                                  Relaxed
+                                </span>
+                              )}
+                              {(scenario.starved_train_ids?.length ?? 0) > 0 && (
+                                <span className="ml-2 text-[var(--aspect-yellow)]">
+                                  Starved · {scenario.starved_train_ids!.join(" ")}
                                 </span>
                               )}
                               {alreadySent && (

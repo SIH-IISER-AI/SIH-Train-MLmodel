@@ -397,6 +397,8 @@ class GlobalSolution:
     #: Decision 4. train_id -> SUM over k of slack[t,k].
     total_hold_s: Dict[str, int] = field(default_factory=dict)
     policy_exceeded: bool = False
+    starvation_flagged: bool = False
+    starved_train_ids: Tuple[str, ...] = ()
     class_costs: Tuple[int, ...] = ()
     counts: Dict[str, int] = field(default_factory=dict)
     links: List[ChainLink] = field(default_factory=list)
@@ -1030,7 +1032,8 @@ def _flag_starvation(solution: GlobalSolution) -> GlobalSolution:
     solution.counts["worst_hold_s"] = max(solution.total_hold_s.values(), default=0)
     
     if starved:
-        solution.policy_exceeded = True
+        solution.starvation_flagged = True
+        solution.starved_train_ids = tuple(starved)
         solution.counts["starved"] = ",".join(starved)
         
     return solution
@@ -1561,6 +1564,7 @@ def _scenario_from(
         "rationale": rationale,
         "network_impact": ". ".join(impacts) + ("." if impacts else ""),
         "policy_exceeded": solution.policy_exceeded,
+        "starved_train_ids": sorted(members & set(solution.starved_train_ids)),
         "directives": mine,
         "covered_elsewhere": covered_elsewhere,
         "uninstructed_train_ids": uninstructed,

@@ -141,6 +141,7 @@ export interface Scenario {
   directives: Directive[];
   delay_breakdown: DelayBreakdown[];
   policy_exceeded: boolean;
+  starved_train_ids?: string[];
   /** Solved entry order through this card's resource. */
   order_train_ids?: string[];
 }
