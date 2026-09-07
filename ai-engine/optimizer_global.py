@@ -1644,6 +1644,9 @@ def optimize_global(
         "total_hold_var": (
             sum((v - mean_hold) ** 2 for v in held) / len(held) if held else 0.0
         ),
+        "truncated": float(solution.counts.get("truncated", 0)),
+        "tiers_completed": float(solution.counts.get("tiers_completed", 0)),
+        "tiers_total": float(solution.counts.get("tiers_total", 0)),
     })
 
     if not solution.feasible:

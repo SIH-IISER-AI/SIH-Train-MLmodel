@@ -397,7 +397,7 @@ class LiveTelemetryInjector:
                 train.standing_on_main = False
                 self._hold_event(
                     train, "issued_hold_at_loop",
-                    "retargeted" if station_id != requested else "",
+                    f"retargeted from {requested}" if station_id != requested else "",
                 )
 
             self.applied_directives.append({**directive, "tick_id": self.tick_id})

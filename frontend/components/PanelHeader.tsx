@@ -151,7 +151,7 @@ export default function PanelHeader({ store, connection }: Props) {
           tone={conflicts.length > 0 ? "var(--aspect-red)" : "var(--aspect-green)"}
         />
         <Stat
-          label="Health"
+          label="Adherence"
           value={health.toFixed(1)}
           tone={
             health >= 80

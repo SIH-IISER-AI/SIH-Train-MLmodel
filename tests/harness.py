@@ -282,6 +282,8 @@ def run(seed: int, arm: str, ticks: int, progress_every: int = 0) -> dict:
     held_samples: list = []
     var_samples: list = []
     worst_hold_max = 0.0
+    truncated_solves = 0
+    tiers_seen: list = []
 
     started = time.perf_counter()
     for tick in range(1, ticks + 1):
@@ -325,6 +327,12 @@ def run(seed: int, arm: str, ticks: int, progress_every: int = 0) -> dict:
                 held_samples.append(stats["trains_held_gt0"])
                 var_samples.append(stats["total_hold_var"])
                 worst_hold_max = max(worst_hold_max, stats["worst_hold_s"])
+                if stats.get("truncated"):
+                    truncated_solves += 1
+                tiers_seen.append(
+                    (int(stats.get("tiers_completed", 0)),
+                     int(stats.get("tiers_total", 0)))
+                )
 
         fired: dict = {}
         scenarios_by_conflict: dict = {}
@@ -435,6 +443,14 @@ def run(seed: int, arm: str, ticks: int, progress_every: int = 0) -> dict:
         "uncovered_trains": 0, "contradictory_instructions": 0,
         "refused": 0, "policy_exceeded": 0,
     }
+
+    if tiers_seen:
+        full = sum(1 for c, t in tiers_seen if t and c >= t)
+        print(f"  [tiers] {len(tiers_seen)} feasible solves, "
+              f"{full} completed all tiers, "
+              f"{truncated_solves} FEASIBLE-not-OPTIMAL, "
+              f"min completed {min(c for c, _ in tiers_seen)}"
+              f"/{max(t for _, t in tiers_seen)}")
 
     return {
         "seed": seed,
